@@ -41,7 +41,7 @@ def split_catalog_by_season(
         season_rows: list[dict[str, str]] = []
 
         for row in rows:
-            availability = row.get("Season Availability", "")
+            availability = row.get("Season Avail.", row.get("Season Availability", ""))
             avail_lower = availability.lower()
 
             # Check if this crop belongs in this season
