@@ -1,0 +1,19 @@
+Crop,Town / Store,Crop Type,Seed Cost (G),Basic Sell Price (G),Growth / Cycle,Cycle ROI (Single / 1st Harvest) (%),Full Season ROI (30 Days) (%)
+Morrocorn,Shatolla / Lethe,Single,200,400,4 days,100.0,100.0
+Unionion,Nemea,Single,105,195,3 days,85.7,85.7
+Islet Watermelon,Shatolla,Repeat,2500,4600,12 days/repeat,84.0,268.0
+Honey Flower,Shatolla,Single,380,630,6 days,65.8,65.8
+Chilly Plant,Argene,Single,800,1300,7 days,62.5,62.5
+Dress Lettuce,Lethe,Single,55,85,2 days,54.5,54.5
+Seatide Garlic,Shatolla,Single,650,1000,6 days,53.8,53.8
+Stellar Wheat,Lethe,Single,40,55,2 days,37.5,37.5
+Tingle Radish,Nemea,Single,390,530,4 days,35.9,35.9
+Carrop,Lethe / Nemea,Single,95,115,1 day,21.1,21.1
+Grass,Lethe,Single,30,35,2 days,16.7,16.7
+Carrop (Lethe),Lethe,Single,105,115,1 day,9.5,9.5
+Nectarcane,Shatolla / Nemea,Repeat,370,250,4 days/repeat,-32.4,373.0
+Strawbuddy,Nemea,Repeat,220,130,4 days/repeat,-40.9,313.6
+Cucumble,Lethe,Repeat,370,200,4 days/repeat,-45.9,278.4
+Shatollan Paprika,Shatolla,Repeat,250,110,5 days/repeat,-56.0,164.0
+Nemean Tomato,Nemea,Repeat,170,65,5 days/repeat,-61.8,129.4
+Bellhop,Shatolla,Repeat,560,45,7 days/repeat,-92.0,-67.9

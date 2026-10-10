@@ -1,0 +1,19 @@
+Crop,Town / Store,Crop Type,Seed Cost (G),Basic Sell (G),Growth Time (Days),Cash Turnaround (+1d),Cycle Multiplier,True Cash Compounded Rate (%/day),Soil Turnover Rate (Plot Velocity) (%/day),30-Day Total Wealth Multiplier
+Unionion,Nemea,Single,105,195,3,4,1.857,16.74,22.92,103.83
+Dress Lettuce,Lethe,Single,55,85,2,3,1.545,15.62,24.32,77.73
+Morrocorn,Shatolla / Lethe,Single,200,400,4,5,2.0,14.87,18.92,64.0
+Stellar Wheat,Lethe,Single,40,55,2,3,1.375,11.2,17.26,24.16
+Carrop,Nemea,Single,95,115,1,2,1.211,10.02,21.05,17.56
+Honey Flower,Shatolla,Single,380,630,6,7,1.658,7.49,8.79,8.73
+Seatide Garlic,Shatolla,Single,650,1000,6,7,1.538,6.35,7.44,6.34
+Tingle Radish,Nemea,Single,390,530,4,5,1.359,6.33,7.97,6.3
+Chilly Plant,Argene,Single,800,1300,7,8,1.625,6.26,7.18,6.18
+Nectarcane,Shatolla / Nemea,Repeat (4d),370,250,4,5,0.676,5.32,5.32,4.73
+Grass,Lethe,Single,30,35,2,3,1.167,5.27,8.01,4.67
+Strawbuddy,Nemea,Repeat (4d),220,130,4,5,0.591,4.85,4.85,4.14
+Carrop (Lethe),Lethe,Single,105,115,1,2,1.095,4.65,9.52,3.91
+Cucumble,Lethe,Repeat (4d),370,200,4,5,0.541,4.54,4.54,3.78
+Islet Watermelon,Shatolla,Repeat (12d),2500,4600,12,13,1.84,4.44,4.44,3.68
+Shatollan Paprika,Shatolla,Repeat (5d),250,110,5,6,0.44,3.29,3.29,2.64
+Nemean Tomato,Nemea,Repeat (5d),170,65,5,6,0.382,2.81,2.81,2.29
+Bellhop,Shatolla,Repeat (7d),560,45,7,8,0.08,-3.71,-3.71,0.32
