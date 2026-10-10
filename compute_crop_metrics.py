@@ -60,6 +60,7 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
         return {
             "Full Net Profit (Basic)": "Multi-Season (Tree)",
             "Cash Compound Rate": "Tree",
+            "Capital Days": "Tree",
             "Latest Plant Day": "Day 1 (All Year)",
         }
 
@@ -67,6 +68,7 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
         return {
             "Full Net Profit (Basic)": "N/A",
             "Cash Compound Rate": "N/A",
+            "Capital Days": "N/A",
             "Latest Plant Day": "N/A",
         }
 
@@ -83,10 +85,9 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
         profit_per_cycle = basic_sell - seed_cost
         full_season_profit = harvest_count * profit_per_cycle
 
-    # Latest Plant Day to reach full season profit
-    # Crop needs (harvest_count * cycle_days) growth days before Quietus (Day 30)
+    # Latest Plant Day to reach full season profit before Quietus (Day 30)
     required_growth_days = harvest_count * cycle_days
-    latest_start_day = SEASON_LENGTH_DAYS - required_growth_days + 1
+    latest_start_day = max(1, SEASON_LENGTH_DAYS - required_growth_days)
     latest_start_date_str = f"Day {latest_start_day}"
 
     # Cash Compound Rate (%/day)
@@ -111,6 +112,10 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
         else:
             compounded_rate_str = "Neg."
 
+    # Capital Days (Seed Cost * Turnaround Days)
+    capital_days = seed_cost * turnaround_days
+    capital_days_str = f"{capital_days:,.0f} G*d"
+
     # Format profit string with sign and G
     profit_sign = "+" if full_season_profit > 0 else ""
     full_season_profit_str = f"{profit_sign}{full_season_profit:,.0f} G"
@@ -118,6 +123,7 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
     return {
         "Full Net Profit (Basic)": full_season_profit_str,
         "Cash Compound Rate": compounded_rate_str,
+        "Capital Days": capital_days_str,
         "Latest Plant Day": latest_start_date_str,
     }
 
@@ -151,6 +157,7 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
     new_cols = [
         "Full Net Profit (Basic)",
         "Cash Compound Rate",
+        "Capital Days",
         "Latest Plant Day",
     ]
 
@@ -160,6 +167,7 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
         "Latest Start Date (Full Season)",
         "Full Net Profit (Basic)",
         "Cash Compound Rate",
+        "Capital Days",
         "Latest Plant Day",
     }
 
@@ -188,10 +196,10 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
     )
 
     # Print summary table to console
-    print(f"\n{'='*112}")
+    print(f"\n{'='*128}")
     print(f" Seasonal Analysis: {csv_path.name.upper()} (30-Day Season)")
-    print(f"{'='*112}")
-    header_fmt = "{:<18} | {:<14} | {:<9} | {:<10} | {:<23} | {:<18} | {:<16}"
+    print(f"{'='*128}")
+    header_fmt = "{:<18} | {:<14} | {:<9} | {:<10} | {:<23} | {:<18} | {:<12} | {:<16}"
     print(
         header_fmt.format(
             "Crop Name",
@@ -200,10 +208,11 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
             "Cycle",
             "Full Net Profit (Basic)",
             "Cash Compound Rate",
+            "Capital Days",
             "Latest Plant Day",
         )
     )
-    print("-" * 112)
+    print("-" * 128)
 
     for r in enriched_rows:
         print(
@@ -214,10 +223,11 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
                 r.get("Harvest Cycle", "")[:10],
                 r.get("Full Net Profit (Basic)", "")[:23],
                 r.get("Cash Compound Rate", "")[:18],
+                r.get("Capital Days", "")[:12],
                 r.get("Latest Plant Day", "")[:16],
             )
         )
-    print(f"{'='*112}\n")
+    print(f"{'='*128}\n")
 
     if save_enriched:
         dest_path = output_path or csv_path
