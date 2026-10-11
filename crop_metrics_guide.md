@@ -37,7 +37,7 @@ Where:
 ### Examples
 * **Unionion**: $\left(\left(\frac{195}{105}\right)^{\frac{1}{4}} - 1\right) \times 100\% = \mathbf{+16.74\%/\text{day}}$
 * **Dress Lettuce**: $\left(\left(\frac{85}{55}\right)^{\frac{1}{3}} - 1\right) \times 100\% = \mathbf{+15.62\%/\text{day}}$
-* **Morrocorn**: $\left(\left(\frac{400}{200}\right)^{\frac{1}{5}} - 1\right) \times 100\% = \mathbf{+14.87\%/\text{day}}$
+* **Morrocorn (Shatolla)**: $\left(\left(\frac{400}{200}\right)^{\frac{1}{5}} - 1\right) \times 100\% = \mathbf{+14.87\%/\text{day}}$ *(Lethe @ 230 G: $\mathbf{+11.70\%/\text{day}}$)*
 
 ## 4. Capital Days (G*d)
 
@@ -50,7 +50,7 @@ Where:
 
 ### Examples
 * **Dress Lettuce**: $55 \times 3 = \mathbf{165\text{ G}\cdot\text{d}}$ *(ultra-safe liquidity)*
-* **Morrocorn**: $200 \times 5 = \mathbf{1,000\text{ G}\cdot\text{d}}$ *(moderate commitment)*
+* **Morrocorn (Shatolla)**: $200 \times 5 = \mathbf{1,000\text{ G}\cdot\text{d}}$ *(Lethe: $230 \times 5 = \mathbf{1,150\text{ G}\cdot\text{d}}$)*
 * **Lantern Pumpkin**: $3,750 \times 12 = \mathbf{45,000\text{ G}\cdot\text{d}}$ *(extreme cash freeze)*
 
 ## 5. Full Net Profit (Basic)
@@ -71,7 +71,7 @@ Where:
 
 ### Examples
 * **Islet Watermelon**: $(2 \times 4,600) - 2,500 = \mathbf{+6,700\text{ G}}$
-* **Morrocorn**: $7 \times (400 - 200) = \mathbf{+1,400\text{ G}}$
+* **Morrocorn (Shatolla)**: $7 \times (400 - 200) = \mathbf{+1,400\text{ G}}$ *(Lethe: $7 \times (400 - 230) = \mathbf{+1,190\text{ G}}$)*
 * **Dress Lettuce**: $15 \times (85 - 55) = \mathbf{+450\text{ G}}$
 
 ## 6. Latest Plant Day

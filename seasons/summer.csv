@@ -1,6 +1,7 @@
 Crop Name,Vendor Town,Land Req.,Seed Cost,Basic Sell,Prem. Sell,Harvest Cycle,Turnaround (+1d),Season Avail.,Full Net Profit (Basic),Cash Compound Rate,Capital Days,Latest Plant Day
 Dress Lettuce,Lethe,Farm,55 G,85 G,105 G,2 days,3 days,"Spring, Summer, Fall",+450 G,+15.62%,165 G*d,Day 1
-Morrocorn,Shatolla/Lethe,Farm,200 G,400 G,500 G,4 days,5 days,Summer,"+1,400 G",+14.87%,"1,000 G*d",Day 2
+Morrocorn (Shatolla),Shatolla,Farm,200 G,400 G,500 G,4 days,5 days,Summer,"+1,400 G",+14.87%,"1,000 G*d",Day 2
+Morrocorn (Lethe),Lethe,Farm,230 G,400 G,500 G,4 days,5 days,Summer,"+1,190 G",+11.70%,"1,150 G*d",Day 2
 Stellar Wheat,Lethe,Farm,40 G,55 G,70 G,2 days,3 days,"Spring, Summer, Fall",+225 G,+11.20%,120 G*d,Day 1
 Carrop (Nemea),Nemea,Farm,95 G,115 G,145 G,1 day,2 days,"Spring, Summer",+600 G,+10.02%,190 G*d,Day 1
 Honey Flower,Shatolla,Waterside,380 G,630 G,785 G,6 days,7 days,Summer,"+1,250 G",+7.49%,"2,660 G*d",Day 1

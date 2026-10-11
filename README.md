@@ -104,7 +104,7 @@ For full mathematical definitions, derivations, and formulas, see [crop_metrics_
    - *Top Picks*: **Unionion** (+16.74%/day), **Dress Lettuce** (+15.62%/day), and **Carrop**.
 2. **Days 11–20 (Transition & Expansion)**:
    - As your wallet grows and tillable plots become the bottleneck, transition towards higher **Full Season Net Profit** crops.
-   - *Top Picks*: **Morrocorn** (Summer), **Argene Cabbage** / **Chilly Plant** (Winter).
+   - *Top Picks*: **Morrocorn** (Summer — Shatolla at +1,400 G / Lethe at +1,190 G), **Argene Cabbage** / **Chilly Plant** (Winter).
 3. **Days 21–30 (Quietus Deadline Awareness)**:
    - Check the **Latest Plant Day** column before buying seeds late in the month.
    - Planting after the cutoff will result in lost harvests or withered crops when Quietus strikes on Day 30.
