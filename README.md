@@ -58,11 +58,15 @@ python compute_crop_metrics.py -i spring
 To analyze all seasons simultaneously:
 ```bash
 python compute_crop_metrics.py --all
+# or using shorthand:
+python compute_crop_metrics.py -a
 ```
 
 To compute metrics and write the calculated columns directly into the CSV files in `seasons/`:
 ```bash
-python compute_crop_metrics.py --all --save
+python compute_crop_metrics.py -a -s
+# or combined:
+python compute_crop_metrics.py -as
 ```
 
 To output the analysis to a custom file:

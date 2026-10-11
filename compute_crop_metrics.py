@@ -39,20 +39,24 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
     """Calculate the financial and scheduling metrics for a crop entry."""
     crop_name = row.get("Crop Name", "").strip()
     seed_cost_str = row.get("Seed Cost", "")
-    basic_sell_str = row.get("Basic Sell", "")
+    basic_sell_str = row.get("NQ Sale", "")
     cycle_str = row.get("Harvest Cycle", "")
-    availability = row.get("Season Avail.", row.get("Season Availability", ""))
+    biome_str = row.get("Biome", "")
+    growth_season = row.get("Growth Season", "")
+    fruit_season = row.get("Fruit Season", "")
 
     seed_cost = clean_currency(seed_cost_str)
     basic_sell = clean_currency(basic_sell_str)
     cycle_days, is_repeat = parse_cycle(cycle_str)
 
-    is_tree = "tree" in row.get("Land Req.", "").lower() or "(all year)" in availability.lower() or "sapling" in crop_name.lower() or seed_cost and seed_cost >= 2000 and "repeat" in cycle_str and crop_name in [
+    is_all_year = all(s in growth_season.lower() for s in ["spring", "summer", "fall", "winter"])
+    is_tree = "tree" in biome_str.lower() or is_all_year or "sapling" in crop_name.lower() or seed_cost and seed_cost >= 2000 and "repeat" in cycle_str and crop_name in [
         "Grouply Grape",
         "Princess Chestnut",
         "SnowCap Mikan",
         "Lococonut",
         "Wisty Peach",
+        "Numblemon",
     ]
 
     # Special handling for Trees (Multi-Season investments)
@@ -171,18 +175,12 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
         "Latest Plant Day",
     }
 
-    normalized_fieldnames = ["Season Avail." if col == "Season Availability" else col for col in fieldnames]
-    out_fieldnames = [col for col in normalized_fieldnames if col not in legacy_and_new_cols] + new_cols
+    out_fieldnames = [col for col in fieldnames if col not in legacy_and_new_cols] + new_cols
     enriched_rows = []
 
     for row in rows:
         computed = compute_crop_row(row)
-        clean_row = {}
-        for k, v in row.items():
-            if k in legacy_and_new_cols:
-                continue
-            col_name = "Season Avail." if k == "Season Availability" else k
-            clean_row[col_name] = v
+        clean_row = {k: v for k, v in row.items() if k not in legacy_and_new_cols}
         clean_row.update(computed)
         enriched_rows.append(clean_row)
 
@@ -252,6 +250,7 @@ def main() -> None:
         help="Path or name of CSV in seasons/ (e.g., seasons/spring.csv or 'spring').",
     )
     parser.add_argument(
+        "-a",
         "--all",
         action="store_true",
         help="Process all CSV files in seasons/ directory.",

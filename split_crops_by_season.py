@@ -41,12 +41,14 @@ def split_catalog_by_season(
         season_rows: list[dict[str, str]] = []
 
         for row in rows:
-            availability = row.get("Season Avail.", row.get("Season Availability", ""))
-            avail_lower = availability.lower()
+            fruit_season = row.get("Fruit Season", "")
+            growth_season = row.get("Growth Season", "")
 
             # Check if this crop belongs in this season
-            matches_season = season_lower in avail_lower
-            if include_all_year_everywhere and "all year" in avail_lower:
+            matches_season = season_lower in fruit_season.lower()
+            if include_all_year_everywhere and all(
+                s in growth_season.lower() for s in ["spring", "summer", "fall", "winter"]
+            ):
                 matches_season = True
 
             if matches_season:
