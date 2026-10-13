@@ -11,12 +11,12 @@ A concise reference guide explaining how to compute the core metrics in `compute
 
 ## 2. Metric Overview
 
-| Metric | Why We Need It | When to Use |
-| :--- | :--- | :--- |
-| **Cash Compound Rate** | Multiplies small amounts of gold as fast as possible. | Early season / Low wallet gold |
-| **Capital Days** | Tracks how much gold is frozen in the soil and for how long. | Managing cash flow to avoid running out of gold |
-| **Daily NQ Profit** | Measures normal quality net gold earned per plot per active growth day. | Comparing profit efficiency across different growth cycle lengths |
-| **Latest Plant Day** | Tells the exact cutoff date to plant without losing a harvest cycle. | Mid-to-late season / Quietus planning |
+| Metric | What It Measures | The Question It Answers | When to Use |
+| :--- | :--- | :--- | :--- |
+| **Cash Compound Rate (%/day)** | Return on Capital (Gold efficiency) | *"How fast will my wallet multiply if I reinvest every payout?"* | **Low Gold / Early Game** (You have free farm plots, but an empty wallet) |
+| **Daily NQ Profit (G/d)** | Return on Space & Time (Plot efficiency) | *"How much raw gold does each tilled tile produce per day?"* | **High Gold / Mid-to-Late Game** (You have plenty of gold, but limited farm tiles & watering stamina) |
+| **Capital Days ($G \cdot d$)** | Liquidity & Capital Lockup | *"How much cash is frozen in the soil, and for how many days?"* | **Cash Flow Management** (Ensuring you don't run out of gold before crops pay out) |
+| **Latest Plant Day** | Quietus Harvest Cutoff | *"What is the last calendar day to plant and still get maximum harvests?"* | **Late Season Planning** (Avoiding crops withering on Day 30) |
 
 ## 3. Cash Compound Rate (%/day)
 
