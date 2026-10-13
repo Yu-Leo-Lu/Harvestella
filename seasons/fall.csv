@@ -1,6 +1,7 @@
 Crop Name,Vendor Town,Biome,Seed Cost,NQ Sale,HQ Sale,Mature Days,Regrowth,Max Harvests,Growth Season,Fruit Season,Daily NQ Profit,Cash Compound Rate,Capital Days,Latest Plant Day
 Unionion (Nemea),Nemea,Farm,105 G,195 G,245 G,3 days,—,1,"Spring, Fall","Spring, Fall",+30.0 G/d,+16.74%,420 G*d,Day 27
 Dress Lettuce,Lethe,Farm,55 G,85 G,105 G,2 days,—,1,"Spring, Summer, Fall","Spring, Summer, Fall",+15.0 G/d,+15.62%,165 G*d,Day 28
+Eden Rice,Abandoned Eden,Farm,20 G,35 G,45 G,3 days,—,1,"Summer, Fall","Summer, Fall",+5.0 G/d,+15.02%,80 G*d,Day 27
 Stellar Wheat,Lethe,Farm,40 G,55 G,70 G,2 days,—,1,"Spring, Summer, Fall","Spring, Summer, Fall",+7.5 G/d,+11.20%,120 G*d,Day 28
 Unionion (Lethe),Lethe,Farm,130 G,195 G,245 G,3 days,—,1,"Spring, Fall","Spring, Fall",+21.7 G/d,+10.67%,520 G*d,Day 27
 Lumpotato (Argene),Argene,Farm,80 G,120 G,150 G,3 days,—,1,"Fall, Winter","Fall, Winter",+13.3 G/d,+10.67%,320 G*d,Day 27
@@ -11,5 +12,8 @@ Royal Eggplant,Lethe,Farm,780 G,480 G,960 G,7 days,2 days,3,Fall,Fall,+60.0 G/d,
 Curry Herbs,Lethe,Cave,270 G,350 G,435 G,6 days,—,1,"Spring, Summer, Fall","Spring, Summer, Fall",+13.3 G/d,+3.78%,"1,890 G*d",Day 24
 Rainbow Bean,Lethe,Farm,180 G,40 G,50 G,6 days,2 days,5,Fall,Fall,+1.4 G/d,+0.70%,"1,260 G*d",Day 16
 Lantern Pumpkin,Lethe,Farm,"3,750 G","3,750 G",—,11 days,—,1,Fall,Fall,0.0 G/d,+0.00%,"45,000 G*d",Day 19
+Nitro Pineapple,Astrum Helix,Cave,—,5 G,5 G,6 days,—,1,"Spring, Summer, Fall","Spring, Summer, Fall",+0.8 G/d,Free Drop,0 G*d,Day 24
 Grouply Grape,Lethe,Farm,"2,000 G",85 G,105 G,6 days,1 day,Multi-Season,"Spring, Summer, Fall, Winter",Fall,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
 Princess Chestnut,Lethe,Farm,"2,200 G",60 G,75 G,7 days,2 days,Multi-Season,"Spring, Summer, Fall, Winter",Fall,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
+Promised Fruit,Astrum Helix,Farm,—,30 G,35 G,7 days,2 days,Tree,"Spring, Summer, Fall, Winter","Spring, Summer, Fall, Winter",Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
+Moonfruit,Stella Cradle,Farm,—,100 G,125 G,12 days,3 days,Tree,"Spring, Summer, Fall, Winter","Spring, Summer, Fall, Winter",Multi-Season (Tree),Tree,Tree,Day 1 (All Year)

@@ -1,5 +1,6 @@
 Crop Name,Vendor Town,Biome,Seed Cost,NQ Sale,HQ Sale,Mature Days,Regrowth,Max Harvests,Growth Season,Fruit Season,Daily NQ Profit,Cash Compound Rate,Capital Days,Latest Plant Day
 Dress Lettuce,Lethe,Farm,55 G,85 G,105 G,2 days,—,1,"Spring, Summer, Fall","Spring, Summer, Fall",+15.0 G/d,+15.62%,165 G*d,Day 28
+Eden Rice,Abandoned Eden,Farm,20 G,35 G,45 G,3 days,—,1,"Summer, Fall","Summer, Fall",+5.0 G/d,+15.02%,80 G*d,Day 27
 Morrocorn (Shatolla),Shatolla,Farm,200 G,400 G,500 G,4 days,—,1,Summer,Summer,+50.0 G/d,+14.87%,"1,000 G*d",Day 26
 Morrocorn (Lethe),Lethe,Farm,230 G,400 G,500 G,4 days,—,1,Summer,Summer,+42.5 G/d,+11.70%,"1,150 G*d",Day 26
 Stellar Wheat,Lethe,Farm,40 G,55 G,70 G,2 days,—,1,"Spring, Summer, Fall","Spring, Summer, Fall",+7.5 G/d,+11.20%,120 G*d,Day 28
@@ -13,5 +14,9 @@ Islet Watermelon,Shatolla,Waterside,"2,500 G","4,600 G","5,800 G",12 days,—,1,
 Carrop (Lethe),Lethe,Farm,105 G,115 G,145 G,1 day,—,1,"Spring, Summer","Spring, Summer",+10.0 G/d,+4.65%,210 G*d,Day 29
 Curry Herbs,Lethe,Cave,270 G,350 G,435 G,6 days,—,1,"Spring, Summer, Fall","Spring, Summer, Fall",+13.3 G/d,+3.78%,"1,890 G*d",Day 24
 Bellhop Seeds,Shatolla,Farm,560 G,45 G,55 G,7 days,1 day,24,Summer,Summer,+17.3 G/d,+2.14%,"4,480 G*d",Day 1
+Nitro Pineapple,Astrum Helix,Cave,—,5 G,5 G,6 days,—,1,"Spring, Summer, Fall","Spring, Summer, Fall",+0.8 G/d,Free Drop,0 G*d,Day 24
 Lococonut,Shatolla,Waterside,"3,200 G",35 G,45 G,7 days,2 days,Multi-Season,"Spring, Summer, Fall, Winter",Summer,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
 Numblemon,Shatolla,Farm,"2,000 G",95 G,120 G,6 days,1 day,Multi-Season,"Spring, Summer, Fall, Winter",Summer,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
+Macocoa,Abandoned Eden,Farm,"2,400 G",100 G,125 G,6 days,1 day,Tree,"Spring, Summer, Fall, Winter",Summer,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
+Promised Fruit,Astrum Helix,Farm,—,30 G,35 G,7 days,2 days,Tree,"Spring, Summer, Fall, Winter","Spring, Summer, Fall, Winter",Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
+Moonfruit,Stella Cradle,Farm,—,100 G,125 G,12 days,3 days,Tree,"Spring, Summer, Fall, Winter","Spring, Summer, Fall, Winter",Multi-Season (Tree),Tree,Tree,Day 1 (All Year)

@@ -81,6 +81,9 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
         "Lococonut",
         "Wisty Peach",
         "Numblemon",
+        "Macocoa",
+        "Promised Fruit",
+        "Moonfruit",
     ]
 
     # Special handling for Trees (Multi-Season investments)
@@ -92,7 +95,18 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
             "Latest Plant Day": "Day 1 (All Year)",
         }
 
-    if seed_cost is None or basic_sell is None or seed_cost <= 0:
+    # Handling for drops / foraged crops with no purchase cost (e.g. Nitro Pineapple)
+    if seed_cost is None or seed_cost <= 0:
+        if basic_sell is not None:
+            profit_per_cycle = basic_sell
+            daily_profit = profit_per_cycle / mature_days if mature_days > 0 else 0.0
+            latest_start_day = max(1, SEASON_LENGTH_DAYS - mature_days)
+            return {
+                "Daily NQ Profit": f"+{daily_profit:.1f} G/d",
+                "Cash Compound Rate": "Free Drop",
+                "Capital Days": "0 G*d",
+                "Latest Plant Day": f"Day {latest_start_day}",
+            }
         return {
             "Daily NQ Profit": "N/A",
             "Cash Compound Rate": "N/A",
@@ -264,11 +278,15 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
         elif "multi" in max_h_display.lower():
             max_h_display = "Tree"
 
+        seed_cost_display = r.get("Seed Cost", "-")
+        if seed_cost_display in ("—", "", None):
+            seed_cost_display = "-"
+
         print(
             header_fmt.format(
                 r.get("Crop Name", "")[:18],
                 r.get("Vendor Town", "")[:12],
-                r.get("Seed Cost", "")[:9],
+                seed_cost_display[:9],
                 (r.get("Mature Days") or r.get("Harvest Cycle", ""))[:7],
                 regrow_display[:7],
                 max_h_display[:8],
