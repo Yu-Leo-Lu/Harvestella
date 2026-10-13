@@ -11,6 +11,10 @@ $RECYCLE.BIN/
 *.swp
 *.swo
 
+# Python Files
+__pycache__/
+*.py[cod]
+
 # Temporary Files
 *.tmp
 *.bak

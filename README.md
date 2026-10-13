@@ -20,8 +20,10 @@ This repository models realistic agricultural economics in Harvestella, accounti
   - **Daily NQ Profit**: Normal quality daily gold return per farm plot per growth day ($G/\text{day}$).
   - **Latest Plant Day**: The exact cutoff calendar day to plant seeds without forfeiting a harvest cycle before Quietus.
 - **Automated CLI Tools**:
+  - `run_all.py`: Runs the complete pipeline (reorders catalog, splits seasons, computes & saves metrics).
   - `compute_crop_metrics.py`: Computes financial and scheduling rankings across seasons.
   - `split_crops_by_season.py`: Generates clean, per-season CSV data subsets from the master catalog.
+  - `reorder_crop_catalog.py`: Reorders the master catalog by vendor town and crop name.
 
 ---
 
@@ -31,8 +33,10 @@ This repository models realistic agricultural economics in Harvestella, accounti
 Harvestella/
 ├── crop_master_catalog.csv    # Master catalog of all crops, costs, cycles, and biomes
 ├── crop_metrics_guide.md      # Mathematical derivation and formula guide for metrics
+├── run_all.py                 # Master pipeline runner (reorder -> split -> compute)
 ├── compute_crop_metrics.py    # CLI tool to calculate profit, compound rates, and deadlines
 ├── split_crops_by_season.py   # Utility to regenerate seasonal CSV files from master catalog
+├── reorder_crop_catalog.py    # Utility to sort master catalog by vendor town and crop name
 ├── seasons/                   # Per-season CSV data
 │   ├── spring.csv
 │   ├── summer.csv
@@ -48,7 +52,14 @@ Harvestella/
 ### Prerequisites
 - Python 3.10+ (uses standard library only—no external pip packages required).
 
-### 1. Compute Crop Economics & Schedules
+### 1. Run Complete Pipeline (One-Click)
+
+To reorder the catalog, regenerate seasonal CSVs, and compute/save all metrics in one command:
+```bash
+python run_all.py
+```
+
+### 2. Compute Crop Economics & Schedules
 
 To analyze a specific season (e.g., Spring):
 ```bash
