@@ -23,7 +23,7 @@ A concise reference guide explaining how to compute the core metrics in `compute
 ### Formula
 
 For single crops (accounting for $+1\text{d}$ shipping delay):
-$$r = \left(\left(\frac{p}{s}\right)^{\frac{1}{d + 1}} - 1\right) \times 100\%$$
+$$r = \left(\left(\frac{p}{s}\right)^{\frac{1}{m + 1}} - 1\right) \times 100\%$$
 
 For repeat crops (30-day wealth compounding):
 $$r = \left(\left(\frac{n \cdot p}{s}\right)^{\frac{1}{30}} - 1\right) \times 100\%$$
@@ -31,8 +31,8 @@ $$r = \left(\left(\frac{n \cdot p}{s}\right)^{\frac{1}{30}} - 1\right) \times 10
 Where:
 * $p$ = sell price
 * $s$ = seed cost
-* $d$ = growth days
-* $n = \lfloor 30 / d \rfloor$ (harvest count)
+* $m$ = mature / growth days
+* $n = \lfloor 30 / m \rfloor$ (harvest count)
 
 ### Examples
 * **Unionion (Nemea)**: $\left(\left(\frac{195}{105}\right)^{\frac{1}{4}} - 1\right) \times 100\% = \mathbf{+16.74\%/\text{day}}$ *(Lethe @ 130 G: $\mathbf{+10.67\%/\text{day}}$)*
@@ -42,11 +42,11 @@ Where:
 ## 4. Capital Days (G*d)
 
 ### Formula
-$$k = s \cdot (d + 1)$$
+$$k = s \cdot (m + 1)$$
 
 Where:
 * $s$ = seed cost
-* $d$ = growth days (with $+1$ for shipping payout delay)
+* $m$ = mature / growth days (with $+1$ for shipping payout delay)
 
 ### Examples
 * **Dress Lettuce**: $55 \times 3 = \mathbf{165\text{ G}\cdot\text{d}}$ *(ultra-safe liquidity)*
@@ -58,54 +58,55 @@ Where:
 ### Formula
 
 For single crops:
-$$\delta = \frac{p - s}{M}$$
+$$\delta = \frac{p - s}{m}$$
 
 For repeat crops:
-$$\delta = \frac{(n \cdot p) - s}{M + (n - 1) \cdot R}$$
+$$\delta = \frac{(n \cdot p) - s}{m + (n - 1) \cdot r}$$
 
 Where:
 * $p$ = NQ sell price
 * $s$ = seed cost
-* $M$ = mature days
-* $R$ = regrowth days
+* $m$ = mature days
+* $r$ = regrowth days
 * $n$ = harvest count (capped by $\text{Max Harvests}$ or season duration)
-* $M + (n - 1) \cdot R$ = total active growth days
+* $m + (n - 1) \cdot r$ = total active growth days
 
 ### Examples
 * **Unionion (Nemea)**: $\frac{195 - 105}{3} = \mathbf{+30.0\text{ G/d}}$ *(Lethe @ 130 G: $\mathbf{+21.7\text{ G/d}}$)*
 * **Dress Lettuce**: $\frac{85 - 55}{2} = \mathbf{+15.0\text{ G/d}}$
 * **Morrocorn (Shatolla)**: $\frac{400 - 200}{4} = \mathbf{+50.0\text{ G/d}}$
-* **Cucumble** ($M=4, R=3, n=6$): $\frac{(6 \cdot 200) - 370}{4 + (5 \cdot 3)} = \frac{830}{19} = \mathbf{+43.7\text{ G/d}}$
-* **Nemean Tomato** ($M=5, R=1, n=6$): $\frac{(6 \cdot 65) - 170}{5 + (5 \cdot 1)} = \frac{220}{10} = \mathbf{+22.0\text{ G/d}}$
-* **Bellhop Seeds** ($M=7, R=1, n=24$): $\frac{(24 \cdot 45) - 560}{7 + (23 \cdot 1)} = \frac{520}{30} = \mathbf{+17.3\text{ G/d}}$
+* **Cucumble** ($m=4, r=3, n=6$): $\frac{(6 \cdot 200) - 370}{4 + (5 \cdot 3)} = \frac{830}{19} = \mathbf{+43.7\text{ G/d}}$
+* **Nemean Tomato** ($m=5, r=1, n=6$): $\frac{(6 \cdot 65) - 170}{5 + (5 \cdot 1)} = \frac{220}{10} = \mathbf{+22.0\text{ G/d}}$
+* **Bellhop Seeds** ($m=7, r=1, n=24$): $\frac{(24 \cdot 45) - 560}{7 + (23 \cdot 1)} = \frac{520}{30} = \mathbf{+17.3\text{ G/d}}$
 
 ## 6. Latest Plant Day
 
 ### Formula
 
 For single crops (latest day to reap a harvest before Quietus):
-$$L = 30 - M$$
+$$l = 30 - m$$
 
 For repeat crops (latest day to achieve full harvest run of $n$ yields):
-$$L = 30 - [M + (n - 1) \cdot R]$$
+$$l = 30 - [m + (n - 1) \cdot r]$$
 
 Where:
-* $M$ = mature days
-* $R$ = regrowth days
+* $m$ = mature days
+* $r$ = regrowth days
 * $n$ = harvest count achieved before Quietus
+* $l$ = latest plant day
 
 ### Examples
 
-#### Single Crop: Dress Lettuce ($M = 2$)
+#### Single Crop: Dress Lettuce ($m = 2$)
 
 Dress Lettuce takes 2 days to mature. To harvest on or before Day 30 prior to Quietus:
 
-$$L = 30 - 2 = \mathbf{\text{Day } 28}$$
+$$l = 30 - 2 = \mathbf{\text{Day } 28}$$
 
 *(Planting on the morning of Day 28 yields on the morning of Day 30, right before Quietus).*
 
-#### Repeat Crop: Cucumble ($M = 4$, $R = 3$, $n = 6$)
+#### Repeat Crop: Cucumble ($m = 4$, $r = 3$, $n = 6$)
 
-Cucumble yields its 1st harvest on Day $P + 4$, and each of the remaining 5 harvests every 3 days ($5 \times 3 = 15$ days), requiring $4 + 15 = 19$ growth days total for all 6 harvests:
+Cucumble yields its 1st harvest on Day $p + 4$, and each of the remaining 5 harvests every 3 days ($5 \times 3 = 15$ days), requiring $4 + 15 = 19$ growth days total for all 6 harvests:
 
-$$L = 30 - 19 = \mathbf{\text{Day } 11}$$
+$$l = 30 - 19 = \mathbf{\text{Day } 11}$$
