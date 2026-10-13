@@ -24,15 +24,41 @@ def clean_currency(val: str) -> float | None:
     return float(cleaned) if cleaned else None
 
 
-def parse_cycle(val: str) -> tuple[int, bool]:
-    """Parse cycle string like '4 days', '5 days/repeat', '1 day'.
+def parse_growth(row: dict[str, str]) -> tuple[int, int | None, int | None, bool]:
+    """Parse growth parameters: Mature Days, Regrowth, Max Harvests.
 
-    Returns (cycle_days, is_repeat).
+    Returns (mature_days, regrowth_days, max_harvests, is_repeat).
     """
-    is_repeat = "repeat" in val.lower()
-    match = re.search(r"(\d+)", val)
-    cycle_days = int(match.group(1)) if match else 1
-    return cycle_days, is_repeat
+    mature_val = row.get("Mature Days") or row.get("Harvest Cycle", "")
+    regrowth_val = row.get("Regrowth", "")
+    max_harvests_val = row.get("Max Harvests", "")
+
+    # Mature days
+    match_m = re.search(r"(\d+)", mature_val)
+    mature_days = int(match_m.group(1)) if match_m else 1
+
+    # Regrowth
+    regrowth_days = None
+    is_repeat = False
+    if regrowth_val and regrowth_val.strip() not in ("—", "-", "", "N/A"):
+        match_r = re.search(r"(\d+)", regrowth_val)
+        if match_r:
+            regrowth_days = int(match_r.group(1))
+            is_repeat = True
+    elif "repeat" in mature_val.lower():
+        is_repeat = True
+        regrowth_days = mature_days
+
+    # Max harvests
+    max_harvests = None
+    if max_harvests_val and max_harvests_val.strip() not in ("—", "-", "", "N/A"):
+        match_h = re.search(r"(\d+)", max_harvests_val)
+        if match_h:
+            max_harvests = int(match_h.group(1))
+    if not is_repeat:
+        max_harvests = 1
+
+    return mature_days, regrowth_days, max_harvests, is_repeat
 
 
 def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
@@ -40,17 +66,15 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
     crop_name = row.get("Crop Name", "").strip()
     seed_cost_str = row.get("Seed Cost", "")
     basic_sell_str = row.get("NQ Sale", "")
-    cycle_str = row.get("Harvest Cycle", "")
     biome_str = row.get("Biome", "")
     growth_season = row.get("Growth Season", "")
-    fruit_season = row.get("Fruit Season", "")
 
     seed_cost = clean_currency(seed_cost_str)
     basic_sell = clean_currency(basic_sell_str)
-    cycle_days, is_repeat = parse_cycle(cycle_str)
+    mature_days, regrowth_days, max_harvests, is_repeat = parse_growth(row)
 
     is_all_year = all(s in growth_season.lower() for s in ["spring", "summer", "fall", "winter"])
-    is_tree = "tree" in biome_str.lower() or is_all_year or "sapling" in crop_name.lower() or seed_cost and seed_cost >= 2000 and "repeat" in cycle_str and crop_name in [
+    is_tree = "tree" in biome_str.lower() or is_all_year or "sapling" in crop_name.lower() or crop_name in [
         "Grouply Grape",
         "Princess Chestnut",
         "SnowCap Mikan",
@@ -76,28 +100,37 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
             "Latest Plant Day": "N/A",
         }
 
-    # Number of harvests possible within a standard 30-day season
-    harvest_count = SEASON_LENGTH_DAYS // cycle_days
-    required_growth_days = harvest_count * cycle_days
-
-    # Daily NQ Profit
-    if is_repeat:
-        # Repeat crop: buy seed once, harvest harvest_count times over full season
+    if is_repeat and regrowth_days:
+        # Repeat crop: 1st harvest at mature_days, subsequent harvests every regrowth_days
+        if mature_days <= SEASON_LENGTH_DAYS:
+            possible_in_season = 1 + (SEASON_LENGTH_DAYS - mature_days) // regrowth_days
+        else:
+            possible_in_season = 0
+        harvest_count = min(max_harvests, possible_in_season) if max_harvests else possible_in_season
+        required_growth_days = mature_days + (harvest_count - 1) * regrowth_days if harvest_count > 0 else mature_days
         total_revenue = harvest_count * basic_sell
         net_profit = total_revenue - seed_cost
         daily_profit = net_profit / required_growth_days if required_growth_days > 0 else 0.0
+        turnaround_days = mature_days + 1
     else:
         # Single crop: buy seed and sell every cycle
+        harvest_count = SEASON_LENGTH_DAYS // mature_days
+        required_growth_days = harvest_count * mature_days
         profit_per_cycle = basic_sell - seed_cost
-        daily_profit = profit_per_cycle / cycle_days
+        daily_profit = profit_per_cycle / mature_days
+        turnaround_days = mature_days + 1
 
-    # Latest Plant Day to reach full season profit before Quietus (Day 30)
-    latest_start_day = max(1, SEASON_LENGTH_DAYS - required_growth_days)
+    # Latest Plant Day before Quietus (Day 30):
+    # - Repeat crops: latest day to achieve full multi-harvest run
+    # - Single crops: latest day to plant and achieve a harvest before Quietus
+    if is_repeat:
+        latest_start_day = max(1, SEASON_LENGTH_DAYS - required_growth_days)
+    else:
+        latest_start_day = max(1, SEASON_LENGTH_DAYS - mature_days)
     latest_start_date_str = f"Day {latest_start_day}"
 
     # Cash Compound Rate (%/day)
     # Accounting for shipping delay (Growth + 1 day cash turnaround)
-    turnaround_days = cycle_days + 1
     multiplier = basic_sell / seed_cost
 
     if not is_repeat:
@@ -108,11 +141,12 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
         else:
             compounded_rate_str = "0.00%"
     else:
-        # Repeat crop: 30-day realized cash compounded velocity
+        # Repeat crop: realized cash velocity across full production run
         total_revenue = harvest_count * basic_sell
         wealth_ratio = total_revenue / seed_cost
+        realization_days = required_growth_days + 1
         if wealth_ratio > 0:
-            daily_rate = (math.pow(wealth_ratio, 1.0 / SEASON_LENGTH_DAYS) - 1.0) * 100.0
+            daily_rate = (math.pow(wealth_ratio, 1.0 / realization_days) - 1.0) * 100.0
             compounded_rate_str = f"+{daily_rate:.2f}%" if daily_rate >= 0 else f"{daily_rate:.2f}%"
         else:
             compounded_rate_str = "Neg."
@@ -178,6 +212,7 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
         "Cash Compound Rate",
         "Capital Days",
         "Latest Plant Day",
+        "Harvest Cycle",
     }
 
     out_fieldnames = [col for col in fieldnames if col not in legacy_and_new_cols] + new_cols
@@ -199,38 +234,51 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
     )
 
     # Print summary table to console
-    print(f"\n{'='*134}")
+    print(f"\n{'='*145}")
     print(f" Seasonal Analysis: {csv_path.name.upper()} (30-Day Season)")
-    print(f"{'='*134}")
-    header_fmt = "{:<18} | {:<14} | {:<9} | {:<10} | {:<19} | {:<18} | {:<12} | {:<16}"
+    print(f"{'='*145}")
+    header_fmt = "{:<18} | {:<12} | {:<9} | {:<7} | {:<7} | {:<8} | {:<19} | {:<18} | {:<12} | {:<16}"
     print(
         header_fmt.format(
             "Crop Name",
             "Town",
             "Seed Cost",
-            "Cycle",
+            "Mature",
+            "Regrow",
+            "Max H.",
             "Daily NQ Profit",
             "Cash Compound Rate",
             "Capital Days",
             "Latest Plant Day",
         )
     )
-    print("-" * 134)
+    print("-" * 145)
 
     for r in enriched_rows:
+        regrow_display = r.get("Regrowth", "-")
+        if regrow_display in ("—", "", None):
+            regrow_display = "-"
+        max_h_display = r.get("Max Harvests", "1")
+        if max_h_display in ("—", "", None):
+            max_h_display = "1"
+        elif "multi" in max_h_display.lower():
+            max_h_display = "Tree"
+
         print(
             header_fmt.format(
                 r.get("Crop Name", "")[:18],
-                r.get("Vendor Town", "")[:14],
+                r.get("Vendor Town", "")[:12],
                 r.get("Seed Cost", "")[:9],
-                r.get("Harvest Cycle", "")[:10],
+                (r.get("Mature Days") or r.get("Harvest Cycle", ""))[:7],
+                regrow_display[:7],
+                max_h_display[:8],
                 r.get("Daily NQ Profit", "")[:19],
                 r.get("Cash Compound Rate", "")[:18],
                 r.get("Capital Days", "")[:12],
                 r.get("Latest Plant Day", "")[:16],
             )
         )
-    print(f"{'='*134}\n")
+    print(f"{'='*145}\n")
 
     if save_enriched:
         dest_path = output_path or csv_path

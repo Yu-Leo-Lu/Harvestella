@@ -108,7 +108,7 @@ For full mathematical definitions, derivations, and formulas, see [crop_metrics_
 | **Cash Compound Rate (%/day)** | $r = \left(\left(\frac{\text{Sell}}{\text{Seed}}\right)^{\frac{1}{\text{Days} + 1}} - 1\right) \times 100\%$ | **Early Game / Low Gold:** Maximize the speed at which your initial wallet multiplies. |
 | **Capital Days ($G \cdot d$)** | $k = \text{Seed Cost} \times (\text{Growth Days} + 1)$ | **Cash Flow & Liquidity:** Low values mean your cash is returned quickly, keeping you agile. |
 | **Daily NQ Profit** | $\delta = \frac{\text{Net Profit}}{\text{Growth Days}}$ | **Cycle Efficiency & Plot Profit:** Compares normal quality profit generation velocity per plot across crops of different harvest lengths. |
-| **Latest Plant Day** | $L = 30 - (n \times \text{Cycle Days})$ | **Quietus Management:** Plant before this day to guarantee the maximum possible harvest count. |
+| **Latest Plant Day** | Single: $30 - M$ <br> Repeat: $30 - [M + (n - 1) \cdot R]$ | **Quietus Management:** Cutoff day to plant without withering at Quietus (single crops) or to achieve full harvest run (repeat crops). |
 
 ---
 

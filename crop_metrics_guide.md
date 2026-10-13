@@ -35,7 +35,7 @@ Where:
 * $n = \lfloor 30 / d \rfloor$ (harvest count)
 
 ### Examples
-* **Unionion**: $\left(\left(\frac{195}{105}\right)^{\frac{1}{4}} - 1\right) \times 100\% = \mathbf{+16.74\%/\text{day}}$
+* **Unionion (Nemea)**: $\left(\left(\frac{195}{105}\right)^{\frac{1}{4}} - 1\right) \times 100\% = \mathbf{+16.74\%/\text{day}}$ *(Lethe @ 130 G: $\mathbf{+10.67\%/\text{day}}$)*
 * **Dress Lettuce**: $\left(\left(\frac{85}{55}\right)^{\frac{1}{3}} - 1\right) \times 100\% = \mathbf{+15.62\%/\text{day}}$
 * **Morrocorn (Shatolla)**: $\left(\left(\frac{400}{200}\right)^{\frac{1}{5}} - 1\right) \times 100\% = \mathbf{+14.87\%/\text{day}}$ *(Lethe @ 230 G: $\mathbf{+11.70\%/\text{day}}$)*
 
@@ -58,40 +58,54 @@ Where:
 ### Formula
 
 For single crops:
-$$\delta = \frac{p - s}{d}$$
+$$\delta = \frac{p - s}{M}$$
 
 For repeat crops:
-$$\delta = \frac{(n \cdot p) - s}{n \cdot d}$$
+$$\delta = \frac{(n \cdot p) - s}{M + (n - 1) \cdot R}$$
 
 Where:
 * $p$ = NQ sell price
 * $s$ = seed cost
-* $d$ = cycle days
-* $n = \lfloor 30 / d \rfloor$ (harvest count)
-* $n \cdot d$ = total active growth days
+* $M$ = mature days
+* $R$ = regrowth days
+* $n$ = harvest count (capped by $\text{Max Harvests}$ or season duration)
+* $M + (n - 1) \cdot R$ = total active growth days
 
 ### Examples
-* **Unionion**: $\frac{195 - 105}{3} = \mathbf{+30.0\text{ G/d}}$
+* **Unionion (Nemea)**: $\frac{195 - 105}{3} = \mathbf{+30.0\text{ G/d}}$ *(Lethe @ 130 G: $\mathbf{+21.7\text{ G/d}}$)*
 * **Dress Lettuce**: $\frac{85 - 55}{2} = \mathbf{+15.0\text{ G/d}}$
 * **Morrocorn (Shatolla)**: $\frac{400 - 200}{4} = \mathbf{+50.0\text{ G/d}}$
-* **Nemean Tomato**: $\frac{(6 \cdot 65) - 170}{6 \cdot 5} = \frac{220}{30} = \mathbf{+7.3\text{ G/d}}$
+* **Cucumble** ($M=4, R=3, n=6$): $\frac{(6 \cdot 200) - 370}{4 + (5 \cdot 3)} = \frac{830}{19} = \mathbf{+43.7\text{ G/d}}$
+* **Nemean Tomato** ($M=5, R=1, n=6$): $\frac{(6 \cdot 65) - 170}{5 + (5 \cdot 1)} = \frac{220}{10} = \mathbf{+22.0\text{ G/d}}$
+* **Bellhop Seeds** ($M=7, R=1, n=24$): $\frac{(24 \cdot 45) - 560}{7 + (23 \cdot 1)} = \frac{520}{30} = \mathbf{+17.3\text{ G/d}}$
 
 ## 6. Latest Plant Day
 
 ### Formula
-$$L = 30 - (n \cdot d)$$
+
+For single crops (latest day to reap a harvest before Quietus):
+$$L = 30 - M$$
+
+For repeat crops (latest day to achieve full harvest run of $n$ yields):
+$$L = 30 - [M + (n - 1) \cdot R]$$
 
 Where:
-* $n = \lfloor 30 / d \rfloor$ (harvest count)
-* $d$ = cycle days
-* $n \cdot d$ = total growth days needed for maximum harvests
+* $M$ = mature days
+* $R$ = regrowth days
+* $n$ = harvest count achieved before Quietus
 
-### Example: Nectarcane ($d = 4$, $n = 7$)
+### Examples
 
-Crops grow overnight. A 4-day crop planted on Day $P$ yields its first harvest on Day $P + 4$, requiring $7 \times 4 = 28$ growth days total for all 7 harvests:
+#### Single Crop: Dress Lettuce ($M = 2$)
 
-* **Planted on Day 1**: Harvests on Days 5, 9, 13, 17, 21, 25, **29** (7 full harvests).
-* **Planted on Day 2**: Harvests on Days 6, 10, 14, 18, 22, 26, **30** (7 full harvests on the season's last day).
-* **Planted on Day 3**: 7th harvest lands on **Day 31 $\rightarrow$ Quietus** (crop withers; only 6 harvests).
+Dress Lettuce takes 2 days to mature. To harvest on or before Day 30 prior to Quietus:
 
-$$L = 30 - 28 = \mathbf{\text{Day } 2}$$
+$$L = 30 - 2 = \mathbf{\text{Day } 28}$$
+
+*(Planting on the morning of Day 28 yields on the morning of Day 30, right before Quietus).*
+
+#### Repeat Crop: Cucumble ($M = 4$, $R = 3$, $n = 6$)
+
+Cucumble yields its 1st harvest on Day $P + 4$, and each of the remaining 5 harvests every 3 days ($5 \times 3 = 15$ days), requiring $4 + 15 = 19$ growth days total for all 6 harvests:
+
+$$L = 30 - 19 = \mathbf{\text{Day } 11}$$
