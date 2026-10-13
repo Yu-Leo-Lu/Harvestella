@@ -25,19 +25,29 @@ A concise reference guide explaining how to compute the core metrics in `compute
 For single crops (accounting for $+1\text{d}$ shipping delay):
 $$r = \left(\left(\frac{p}{s}\right)^{\frac{1}{m + 1}} - 1\right) \times 100\%$$
 
-For repeat crops (30-day wealth compounding):
-$$r = \left(\left(\frac{n \cdot p}{s}\right)^{\frac{1}{30}} - 1\right) \times 100\%$$
+For repeat crops (realized cash velocity across active production run):
+$$r = \left(\left(\frac{n \cdot p}{s}\right)^{\frac{1}{m + (n - 1) \cdot g + 1}} - 1\right) \times 100\%$$
 
 Where:
 * $p$ = sell price
 * $s$ = seed cost
-* $m$ = mature / growth days
-* $n = \lfloor 30 / m \rfloor$ (harvest count)
+* $m$ = mature days
+* $g$ = regrowth days
+* $n$ = harvest count (capped by Max Harvests or season)
+* $m + (n - 1) \cdot g + 1$ = cash realization days (growth days plus overnight payout delay)
 
 ### Examples
-* **Unionion (Nemea)**: $\left(\left(\frac{195}{105}\right)^{\frac{1}{4}} - 1\right) \times 100\% = \mathbf{+16.74\%/\text{day}}$ *(Lethe @ 130 G: $\mathbf{+10.67\%/\text{day}}$)*
-* **Dress Lettuce**: $\left(\left(\frac{85}{55}\right)^{\frac{1}{3}} - 1\right) \times 100\% = \mathbf{+15.62\%/\text{day}}$
-* **Morrocorn (Shatolla)**: $\left(\left(\frac{400}{200}\right)^{\frac{1}{5}} - 1\right) \times 100\% = \mathbf{+14.87\%/\text{day}}$ *(Lethe @ 230 G: $\mathbf{+11.70\%/\text{day}}$)*
+
+#### Single Crop: Dress Lettuce ($m = 2$)
+$$\left(\left(\frac{85}{55}\right)^{\frac{1}{2 + 1}} - 1\right) \times 100\% = \mathbf{+15.62\%/\text{day}}$$
+
+#### Repeat Crop: Shatollan Paprika ($m = 5, g = 2, n = 9$)
+* Seed Cost: $s = 250\text{ G}$, NQ Sale: $p = 110\text{ G}$
+* Total Realization Days: $5 + (9 - 1) \cdot 2 + 1 = 22\text{ days}$
+* Total Revenue: $9 \times 110 = 990\text{ G}$
+* Wealth Multiplier: $\frac{990}{250} = 3.96$
+$$\left((3.96)^{\frac{1}{22}} - 1\right) \times 100\% = \mathbf{+6.46\%/\text{day}}$$
+
 
 ## 4. Capital Days (G*d)
 
@@ -61,23 +71,19 @@ For single crops:
 $$\delta = \frac{p - s}{m}$$
 
 For repeat crops:
-$$\delta = \frac{(n \cdot p) - s}{m + (n - 1) \cdot r}$$
+$$\delta = \frac{(n \cdot p) - s}{m + (n - 1) \cdot g}$$
 
 Where:
 * $p$ = NQ sell price
 * $s$ = seed cost
 * $m$ = mature days
-* $r$ = regrowth days
+* $g$ = regrowth days
 * $n$ = harvest count (capped by $\text{Max Harvests}$ or season duration)
-* $m + (n - 1) \cdot r$ = total active growth days
+* $m + (n - 1) \cdot g$ = total active growth days
 
 ### Examples
-* **Unionion (Nemea)**: $\frac{195 - 105}{3} = \mathbf{+30.0\text{ G/d}}$ *(Lethe @ 130 G: $\mathbf{+21.7\text{ G/d}}$)*
 * **Dress Lettuce**: $\frac{85 - 55}{2} = \mathbf{+15.0\text{ G/d}}$
-* **Morrocorn (Shatolla)**: $\frac{400 - 200}{4} = \mathbf{+50.0\text{ G/d}}$
-* **Cucumble** ($m=4, r=3, n=6$): $\frac{(6 \cdot 200) - 370}{4 + (5 \cdot 3)} = \frac{830}{19} = \mathbf{+43.7\text{ G/d}}$
-* **Nemean Tomato** ($m=5, r=1, n=6$): $\frac{(6 \cdot 65) - 170}{5 + (5 \cdot 1)} = \frac{220}{10} = \mathbf{+22.0\text{ G/d}}$
-* **Bellhop Seeds** ($m=7, r=1, n=24$): $\frac{(24 \cdot 45) - 560}{7 + (23 \cdot 1)} = \frac{520}{30} = \mathbf{+17.3\text{ G/d}}$
+* **Cucumble** ($m=4, g=3, n=6$): $\frac{(6 \cdot 200) - 370}{4 + (5 \cdot 3)} = \frac{830}{19} = \mathbf{+43.7\text{ G/d}}$
 
 ## 6. Latest Plant Day
 
@@ -87,11 +93,11 @@ For single crops (latest day to reap a harvest before Quietus):
 $$l = 30 - m$$
 
 For repeat crops (latest day to achieve full harvest run of $n$ yields):
-$$l = 30 - [m + (n - 1) \cdot r]$$
+$$l = 30 - [m + (n - 1) \cdot g]$$
 
 Where:
 * $m$ = mature days
-* $r$ = regrowth days
+* $g$ = regrowth days
 * $n$ = harvest count achieved before Quietus
 * $l$ = latest plant day
 
@@ -105,7 +111,7 @@ $$l = 30 - 2 = \mathbf{\text{Day } 28}$$
 
 *(Planting on the morning of Day 28 yields on the morning of Day 30, right before Quietus).*
 
-#### Repeat Crop: Cucumble ($m = 4$, $r = 3$, $n = 6$)
+#### Repeat Crop: Cucumble ($m = 4$, $g = 3$, $n = 6$)
 
 Cucumble yields its 1st harvest on Day $p + 4$, and each of the remaining 5 harvests every 3 days ($5 \times 3 = 15$ days), requiring $4 + 15 = 19$ growth days total for all 6 harvests:
 
