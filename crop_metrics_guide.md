@@ -1,6 +1,6 @@
 # Harvestella Agricultural Economics & Metrics Guide
 
-A concise reference guide explaining how to compute the four core metrics in `compute_crop_metrics.py` and how to apply them across a 30-day season.
+A concise reference guide explaining how to compute the core metrics in `compute_crop_metrics.py` and how to apply them across a 30-day season.
 
 ## 1. Farming Constraints in Harvestella
 
@@ -15,7 +15,7 @@ A concise reference guide explaining how to compute the four core metrics in `co
 | :--- | :--- | :--- |
 | **Cash Compound Rate** | Multiplies small amounts of gold as fast as possible. | Early season / Low wallet gold |
 | **Capital Days** | Tracks how much gold is frozen in the soil and for how long. | Managing cash flow to avoid running out of gold |
-| **Full Net Profit (Basic)** | Maximizes total gold earned per plot over the 30-day season. | Mid-to-late season / Land-limited farming |
+| **Daily NQ Profit** | Measures normal quality net gold earned per plot per active growth day. | Comparing profit efficiency across different growth cycle lengths |
 | **Latest Plant Day** | Tells the exact cutoff date to plant without losing a harvest cycle. | Mid-to-late season / Quietus planning |
 
 ## 3. Cash Compound Rate (%/day)
@@ -53,26 +53,28 @@ Where:
 * **Morrocorn (Shatolla)**: $200 \times 5 = \mathbf{1,000\text{ G}\cdot\text{d}}$ *(Lethe: $230 \times 5 = \mathbf{1,150\text{ G}\cdot\text{d}}$)*
 * **Lantern Pumpkin**: $3,750 \times 12 = \mathbf{45,000\text{ G}\cdot\text{d}}$ *(extreme cash freeze)*
 
-## 5. Full Net Profit (Basic)
+## 5. Daily NQ Profit
 
 ### Formula
 
 For single crops:
-$$\pi = n \cdot (p - s)$$
+$$\delta = \frac{p - s}{d}$$
 
 For repeat crops:
-$$\pi = (n \cdot p) - s$$
+$$\delta = \frac{(n \cdot p) - s}{n \cdot d}$$
 
 Where:
-* $n = \lfloor 30 / d \rfloor$ (harvest count)
-* $p$ = sell price
+* $p$ = NQ sell price
 * $s$ = seed cost
 * $d$ = cycle days
+* $n = \lfloor 30 / d \rfloor$ (harvest count)
+* $n \cdot d$ = total active growth days
 
 ### Examples
-* **Islet Watermelon**: $(2 \times 4,600) - 2,500 = \mathbf{+6,700\text{ G}}$
-* **Morrocorn (Shatolla)**: $7 \times (400 - 200) = \mathbf{+1,400\text{ G}}$ *(Lethe: $7 \times (400 - 230) = \mathbf{+1,190\text{ G}}$)*
-* **Dress Lettuce**: $15 \times (85 - 55) = \mathbf{+450\text{ G}}$
+* **Unionion**: $\frac{195 - 105}{3} = \mathbf{+30.0\text{ G/d}}$
+* **Dress Lettuce**: $\frac{85 - 55}{2} = \mathbf{+15.0\text{ G/d}}$
+* **Morrocorn (Shatolla)**: $\frac{400 - 200}{4} = \mathbf{+50.0\text{ G/d}}$
+* **Nemean Tomato**: $\frac{(6 \cdot 65) - 170}{6 \cdot 5} = \frac{220}{30} = \mathbf{+7.3\text{ G/d}}$
 
 ## 6. Latest Plant Day
 

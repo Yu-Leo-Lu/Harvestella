@@ -2,8 +2,8 @@
 
 Loads seasonal CSV files from the `seasons/` directory and computes:
 1. True Cash Compounded Rate (%/day)
-2. Full Season Net Profit (Basic)
-3. Latest Start Date (to achieve full season profit within a 30-day season)
+2. Daily NQ Profit
+3. Latest Start Date (to achieve maximum harvests within a 30-day season)
 """
 
 import argparse
@@ -62,7 +62,7 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
     # Special handling for Trees (Multi-Season investments)
     if is_tree:
         return {
-            "Full Net Profit (Basic)": "Multi-Season (Tree)",
+            "Daily NQ Profit": "Multi-Season (Tree)",
             "Cash Compound Rate": "Tree",
             "Capital Days": "Tree",
             "Latest Plant Day": "Day 1 (All Year)",
@@ -70,7 +70,7 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
 
     if seed_cost is None or basic_sell is None or seed_cost <= 0:
         return {
-            "Full Net Profit (Basic)": "N/A",
+            "Daily NQ Profit": "N/A",
             "Cash Compound Rate": "N/A",
             "Capital Days": "N/A",
             "Latest Plant Day": "N/A",
@@ -78,19 +78,20 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
 
     # Number of harvests possible within a standard 30-day season
     harvest_count = SEASON_LENGTH_DAYS // cycle_days
+    required_growth_days = harvest_count * cycle_days
 
-    # Full Net Profit (Basic)
+    # Daily NQ Profit
     if is_repeat:
-        # Repeat crop: buy seed once, harvest harvest_count times
+        # Repeat crop: buy seed once, harvest harvest_count times over full season
         total_revenue = harvest_count * basic_sell
-        full_season_profit = total_revenue - seed_cost
+        net_profit = total_revenue - seed_cost
+        daily_profit = net_profit / required_growth_days if required_growth_days > 0 else 0.0
     else:
         # Single crop: buy seed and sell every cycle
         profit_per_cycle = basic_sell - seed_cost
-        full_season_profit = harvest_count * profit_per_cycle
+        daily_profit = profit_per_cycle / cycle_days
 
     # Latest Plant Day to reach full season profit before Quietus (Day 30)
-    required_growth_days = harvest_count * cycle_days
     latest_start_day = max(1, SEASON_LENGTH_DAYS - required_growth_days)
     latest_start_date_str = f"Day {latest_start_day}"
 
@@ -120,12 +121,12 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
     capital_days = seed_cost * turnaround_days
     capital_days_str = f"{capital_days:,.0f} G*d"
 
-    # Format profit string with sign and G
-    profit_sign = "+" if full_season_profit > 0 else ""
-    full_season_profit_str = f"{profit_sign}{full_season_profit:,.0f} G"
+    # Format daily profit string with sign and G/d
+    daily_profit_sign = "+" if daily_profit > 0 else ""
+    daily_profit_str = f"{daily_profit_sign}{daily_profit:,.1f} G/d"
 
     return {
-        "Full Net Profit (Basic)": full_season_profit_str,
+        "Daily NQ Profit": daily_profit_str,
         "Cash Compound Rate": compounded_rate_str,
         "Capital Days": capital_days_str,
         "Latest Plant Day": latest_start_date_str,
@@ -159,7 +160,7 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
         rows = list(reader)
 
     new_cols = [
-        "Full Net Profit (Basic)",
+        "Daily NQ Profit",
         "Cash Compound Rate",
         "Capital Days",
         "Latest Plant Day",
@@ -169,6 +170,10 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
         "Full Season Net Profit (Basic)",
         "True Cash Compounded Rate (%/day)",
         "Latest Start Date (Full Season)",
+        "Daily Net Profit (Basic)",
+        "Daily Profit (Basic)",
+        "Daily Profit",
+        "Daily NQ Profit",
         "Full Net Profit (Basic)",
         "Cash Compound Rate",
         "Capital Days",
@@ -184,33 +189,33 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
         clean_row.update(computed)
         enriched_rows.append(clean_row)
 
-    # Sort by Cash Compound Rate descending, then Full Net Profit (Basic) descending
+    # Sort by Cash Compound Rate descending, then Daily NQ Profit descending
     enriched_rows.sort(
         key=lambda r: (
             parse_numeric_metric(r.get("Cash Compound Rate")),
-            parse_numeric_metric(r.get("Full Net Profit (Basic)")),
+            parse_numeric_metric(r.get("Daily NQ Profit")),
         ),
         reverse=True,
     )
 
     # Print summary table to console
-    print(f"\n{'='*128}")
+    print(f"\n{'='*134}")
     print(f" Seasonal Analysis: {csv_path.name.upper()} (30-Day Season)")
-    print(f"{'='*128}")
-    header_fmt = "{:<18} | {:<14} | {:<9} | {:<10} | {:<23} | {:<18} | {:<12} | {:<16}"
+    print(f"{'='*134}")
+    header_fmt = "{:<18} | {:<14} | {:<9} | {:<10} | {:<19} | {:<18} | {:<12} | {:<16}"
     print(
         header_fmt.format(
             "Crop Name",
             "Town",
             "Seed Cost",
             "Cycle",
-            "Full Net Profit (Basic)",
+            "Daily NQ Profit",
             "Cash Compound Rate",
             "Capital Days",
             "Latest Plant Day",
         )
     )
-    print("-" * 128)
+    print("-" * 134)
 
     for r in enriched_rows:
         print(
@@ -219,13 +224,13 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
                 r.get("Vendor Town", "")[:14],
                 r.get("Seed Cost", "")[:9],
                 r.get("Harvest Cycle", "")[:10],
-                r.get("Full Net Profit (Basic)", "")[:23],
+                r.get("Daily NQ Profit", "")[:19],
                 r.get("Cash Compound Rate", "")[:18],
                 r.get("Capital Days", "")[:12],
                 r.get("Latest Plant Day", "")[:16],
             )
         )
-    print(f"{'='*128}\n")
+    print(f"{'='*134}\n")
 
     if save_enriched:
         dest_path = output_path or csv_path

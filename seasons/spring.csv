@@ -1,13 +1,13 @@
-Crop Name,Vendor Town,Biome,Seed Cost,NQ Sale,HQ Sale,Harvest Cycle,Growth Season,Fruit Season,Full Net Profit (Basic),Cash Compound Rate,Capital Days,Latest Plant Day
-Unionion,Nemea,Farm,105 G,195 G,245 G,3 days,Spring,Spring,+900 G,+16.74%,420 G*d,Day 1
-Dress Lettuce,Lethe,Farm,55 G,85 G,105 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+450 G,+15.62%,165 G*d,Day 1
-Stellar Wheat,Lethe,Farm,40 G,55 G,70 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+225 G,+11.20%,120 G*d,Day 1
-Carrop (Nemea),Nemea,Farm,95 G,115 G,145 G,1 day,"Spring, Summer","Spring, Summer",+600 G,+10.02%,190 G*d,Day 1
-Tingle Radish,Nemea,Farm,390 G,530 G,660 G,4 days,Spring,Spring,+980 G,+6.33%,"1,950 G*d",Day 2
-Nectarcane,Shatolla/Nemea,Waterside,370 G,250 G,310 G,4 days/repeat,"Spring, Summer, Fall","Spring, Summer, Fall","+1,380 G",+5.32%,"1,850 G*d",Day 2
-Grass,Lethe,Farm,30 G,35 G,45 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+75 G,+5.27%,90 G*d,Day 1
-Strawbuddy,Nemea,Farm,220 G,130 G,160 G,4 days/repeat,Spring,Spring,+690 G,+4.85%,"1,100 G*d",Day 2
-Carrop (Lethe),Lethe,Farm,105 G,115 G,145 G,1 day,"Spring, Summer","Spring, Summer",+300 G,+4.65%,210 G*d,Day 1
-Cucumble,Lethe,Farm,370 G,200 G,250 G,4 days/repeat,Spring,Spring,"+1,030 G",+4.54%,"1,850 G*d",Day 2
-Nemean Tomato,Nemea,Farm,170 G,65 G,95 G,5 days/repeat,Spring,Spring,+220 G,+2.81%,"1,020 G*d",Day 1
+Crop Name,Vendor Town,Biome,Seed Cost,NQ Sale,HQ Sale,Harvest Cycle,Growth Season,Fruit Season,Daily NQ Profit,Cash Compound Rate,Capital Days,Latest Plant Day
+Unionion,Nemea,Farm,105 G,195 G,245 G,3 days,Spring,Spring,+30.0 G/d,+16.74%,420 G*d,Day 1
+Dress Lettuce,Lethe,Farm,55 G,85 G,105 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+15.0 G/d,+15.62%,165 G*d,Day 1
+Stellar Wheat,Lethe,Farm,40 G,55 G,70 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+7.5 G/d,+11.20%,120 G*d,Day 1
+Carrop (Nemea),Nemea,Farm,95 G,115 G,145 G,1 day,"Spring, Summer","Spring, Summer",+20.0 G/d,+10.02%,190 G*d,Day 1
+Tingle Radish,Nemea,Farm,390 G,530 G,660 G,4 days,Spring,Spring,+35.0 G/d,+6.33%,"1,950 G*d",Day 2
+Nectarcane,Shatolla/Nemea,Waterside,370 G,250 G,310 G,4 days/repeat,"Spring, Summer, Fall","Spring, Summer, Fall",+49.3 G/d,+5.32%,"1,850 G*d",Day 2
+Grass,Lethe,Farm,30 G,35 G,45 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+2.5 G/d,+5.27%,90 G*d,Day 1
+Strawbuddy,Nemea,Farm,220 G,130 G,160 G,4 days/repeat,Spring,Spring,+24.6 G/d,+4.85%,"1,100 G*d",Day 2
+Carrop (Lethe),Lethe,Farm,105 G,115 G,145 G,1 day,"Spring, Summer","Spring, Summer",+10.0 G/d,+4.65%,210 G*d,Day 1
+Cucumble,Lethe,Farm,370 G,200 G,250 G,4 days/repeat,Spring,Spring,+36.8 G/d,+4.54%,"1,850 G*d",Day 2
+Nemean Tomato,Nemea,Farm,170 G,65 G,95 G,5 days/repeat,Spring,Spring,+7.3 G/d,+2.81%,"1,020 G*d",Day 1
 Wisty Peach,Nemea,Farm,"4,200 G",115 G,230 G,10 days/repeat,"Spring, Summer, Fall, Winter",Spring,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)

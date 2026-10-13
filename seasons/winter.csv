@@ -1,6 +1,6 @@
-Crop Name,Vendor Town,Biome,Seed Cost,NQ Sale,HQ Sale,Harvest Cycle,Growth Season,Fruit Season,Full Net Profit (Basic),Cash Compound Rate,Capital Days,Latest Plant Day
-Argene Cabbage,Argene,Farm,220 G,320 G,400 G,4 days,Winter,Winter,+700 G,+7.78%,"1,100 G*d",Day 2
-Sudor Pepper,Argene,Cave,400 G,250 G,310 G,3 days/repeat,Winter,Winter,"+2,100 G",+6.30%,"1,600 G*d",Day 1
-Chilly Plant,Argene,Farm,800 G,"1,300 G","1,625 G",7 days,Winter,Winter,"+2,000 G",+6.26%,"6,400 G*d",Day 2
-Revol Pepper,Argene,Cave,560 G,265 G,330 G,4 days/repeat,Winter,Winter,"+1,295 G",+4.07%,"2,800 G*d",Day 2
+Crop Name,Vendor Town,Biome,Seed Cost,NQ Sale,HQ Sale,Harvest Cycle,Growth Season,Fruit Season,Daily NQ Profit,Cash Compound Rate,Capital Days,Latest Plant Day
+Argene Cabbage,Argene,Farm,220 G,320 G,400 G,4 days,Winter,Winter,+25.0 G/d,+7.78%,"1,100 G*d",Day 2
+Sudor Pepper,Argene,Cave,400 G,250 G,310 G,3 days/repeat,Winter,Winter,+70.0 G/d,+6.30%,"1,600 G*d",Day 1
+Chilly Plant,Argene,Farm,800 G,"1,300 G","1,625 G",7 days,Winter,Winter,+71.4 G/d,+6.26%,"6,400 G*d",Day 2
+Revol Pepper,Argene,Cave,560 G,265 G,330 G,4 days/repeat,Winter,Winter,+46.2 G/d,+4.07%,"2,800 G*d",Day 2
 SnowCap Mikan,Lethe,Farm,"2,300 G",65 G,80 G,7 days/repeat,"Spring, Summer, Fall, Winter",Winter,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)

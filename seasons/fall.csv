@@ -1,8 +1,8 @@
-Crop Name,Vendor Town,Biome,Seed Cost,NQ Sale,HQ Sale,Harvest Cycle,Growth Season,Fruit Season,Full Net Profit (Basic),Cash Compound Rate,Capital Days,Latest Plant Day
-Dress Lettuce,Lethe,Farm,55 G,85 G,105 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+450 G,+15.62%,165 G*d,Day 1
-Stellar Wheat,Lethe,Farm,40 G,55 G,70 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+225 G,+11.20%,120 G*d,Day 1
-Nectarcane,Shatolla/Nemea,Waterside,370 G,250 G,310 G,4 days/repeat,"Spring, Summer, Fall","Spring, Summer, Fall","+1,380 G",+5.32%,"1,850 G*d",Day 2
-Grass,Lethe,Farm,30 G,35 G,45 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+75 G,+5.27%,90 G*d,Day 1
-Lantern Pumpkin,Lethe,Farm,"3,750 G","3,750 G",—,11 days,Fall,Fall,0 G,+0.00%,"45,000 G*d",Day 8
+Crop Name,Vendor Town,Biome,Seed Cost,NQ Sale,HQ Sale,Harvest Cycle,Growth Season,Fruit Season,Daily NQ Profit,Cash Compound Rate,Capital Days,Latest Plant Day
+Dress Lettuce,Lethe,Farm,55 G,85 G,105 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+15.0 G/d,+15.62%,165 G*d,Day 1
+Stellar Wheat,Lethe,Farm,40 G,55 G,70 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+7.5 G/d,+11.20%,120 G*d,Day 1
+Nectarcane,Shatolla/Nemea,Waterside,370 G,250 G,310 G,4 days/repeat,"Spring, Summer, Fall","Spring, Summer, Fall",+49.3 G/d,+5.32%,"1,850 G*d",Day 2
+Grass,Lethe,Farm,30 G,35 G,45 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+2.5 G/d,+5.27%,90 G*d,Day 1
+Lantern Pumpkin,Lethe,Farm,"3,750 G","3,750 G",—,11 days,Fall,Fall,0.0 G/d,+0.00%,"45,000 G*d",Day 8
 Grouply Grape,Lethe,Farm,"2,000 G",85 G,105 G,6 days/repeat,"Spring, Summer, Fall, Winter",Fall,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
 Princess Chestnut,Lethe,Farm,"2,200 G",60 G,75 G,7 days/repeat,"Spring, Summer, Fall, Winter",Fall,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)

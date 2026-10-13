@@ -1,16 +1,16 @@
-Crop Name,Vendor Town,Biome,Seed Cost,NQ Sale,HQ Sale,Harvest Cycle,Growth Season,Fruit Season,Full Net Profit (Basic),Cash Compound Rate,Capital Days,Latest Plant Day
-Dress Lettuce,Lethe,Farm,55 G,85 G,105 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+450 G,+15.62%,165 G*d,Day 1
-Morrocorn (Shatolla),Shatolla,Farm,200 G,400 G,500 G,4 days,Summer,Summer,"+1,400 G",+14.87%,"1,000 G*d",Day 2
-Morrocorn (Lethe),Lethe,Farm,230 G,400 G,500 G,4 days,Summer,Summer,"+1,190 G",+11.70%,"1,150 G*d",Day 2
-Stellar Wheat,Lethe,Farm,40 G,55 G,70 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+225 G,+11.20%,120 G*d,Day 1
-Carrop (Nemea),Nemea,Farm,95 G,115 G,145 G,1 day,"Spring, Summer","Spring, Summer",+600 G,+10.02%,190 G*d,Day 1
-Honey Flower,Shatolla,Waterside,380 G,630 G,785 G,6 days,Summer,Summer,"+1,250 G",+7.49%,"2,660 G*d",Day 1
-Seatide Garlic,Shatolla,Farm,650 G,"1,000 G","1,250 G",6 days,Summer,Summer,"+1,750 G",+6.35%,"4,550 G*d",Day 1
-Nectarcane,Shatolla/Nemea,Waterside,370 G,250 G,310 G,4 days/repeat,"Spring, Summer, Fall","Spring, Summer, Fall","+1,380 G",+5.32%,"1,850 G*d",Day 2
-Grass,Lethe,Farm,30 G,35 G,45 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+75 G,+5.27%,90 G*d,Day 1
-Carrop (Lethe),Lethe,Farm,105 G,115 G,145 G,1 day,"Spring, Summer","Spring, Summer",+300 G,+4.65%,210 G*d,Day 1
-Islet Watermelon,Shatolla,Waterside,"2,500 G","4,600 G","5,800 G",12 days/repeat,Summer,Summer,"+6,700 G",+4.44%,"32,500 G*d",Day 6
-Shatollan Paprika,Shatolla,Farm,250 G,110 G,135 G,5 days/repeat,Summer,Summer,+410 G,+3.29%,"1,500 G*d",Day 1
-Bellhop Seeds,Shatolla,Farm,560 G,45 G,55 G,7 days/repeat,Summer,Summer,-380 G,-3.71%,"4,480 G*d",Day 2
+Crop Name,Vendor Town,Biome,Seed Cost,NQ Sale,HQ Sale,Harvest Cycle,Growth Season,Fruit Season,Daily NQ Profit,Cash Compound Rate,Capital Days,Latest Plant Day
+Dress Lettuce,Lethe,Farm,55 G,85 G,105 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+15.0 G/d,+15.62%,165 G*d,Day 1
+Morrocorn (Shatolla),Shatolla,Farm,200 G,400 G,500 G,4 days,Summer,Summer,+50.0 G/d,+14.87%,"1,000 G*d",Day 2
+Morrocorn (Lethe),Lethe,Farm,230 G,400 G,500 G,4 days,Summer,Summer,+42.5 G/d,+11.70%,"1,150 G*d",Day 2
+Stellar Wheat,Lethe,Farm,40 G,55 G,70 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+7.5 G/d,+11.20%,120 G*d,Day 1
+Carrop (Nemea),Nemea,Farm,95 G,115 G,145 G,1 day,"Spring, Summer","Spring, Summer",+20.0 G/d,+10.02%,190 G*d,Day 1
+Honey Flower,Shatolla,Waterside,380 G,630 G,785 G,6 days,Summer,Summer,+41.7 G/d,+7.49%,"2,660 G*d",Day 1
+Seatide Garlic,Shatolla,Farm,650 G,"1,000 G","1,250 G",6 days,Summer,Summer,+58.3 G/d,+6.35%,"4,550 G*d",Day 1
+Nectarcane,Shatolla/Nemea,Waterside,370 G,250 G,310 G,4 days/repeat,"Spring, Summer, Fall","Spring, Summer, Fall",+49.3 G/d,+5.32%,"1,850 G*d",Day 2
+Grass,Lethe,Farm,30 G,35 G,45 G,2 days,"Spring, Summer, Fall","Spring, Summer, Fall",+2.5 G/d,+5.27%,90 G*d,Day 1
+Carrop (Lethe),Lethe,Farm,105 G,115 G,145 G,1 day,"Spring, Summer","Spring, Summer",+10.0 G/d,+4.65%,210 G*d,Day 1
+Islet Watermelon,Shatolla,Waterside,"2,500 G","4,600 G","5,800 G",12 days/repeat,Summer,Summer,+279.2 G/d,+4.44%,"32,500 G*d",Day 6
+Shatollan Paprika,Shatolla,Farm,250 G,110 G,135 G,5 days/repeat,Summer,Summer,+13.7 G/d,+3.29%,"1,500 G*d",Day 1
+Bellhop Seeds,Shatolla,Farm,560 G,45 G,55 G,7 days/repeat,Summer,Summer,-13.6 G/d,-3.71%,"4,480 G*d",Day 2
 Numblemon,Shatolla,Farm,"2,000 G",95 G,120 G,6 days/repeat,"Spring, Summer, Fall, Winter",Summer,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
 Lococonut,Shatolla,Waterside,"3,200 G",35 G,45 G,7 days/repeat,"Spring, Summer, Fall, Winter",Summer,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)

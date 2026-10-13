@@ -17,7 +17,7 @@ This repository models realistic agricultural economics in Harvestella, accounti
 - **Four Core Financial Metrics**:
   - **Cash Compound Rate (%/day)**: Daily exponential growth rate of capital—essential when starting with low gold.
   - **Capital Days ($G \cdot d$)**: Liquidity risk indicator tracking how much capital is locked up and for how long.
-  - **Full Season Net Profit**: Maximum net gold generated per farm plot across the full 30-day season.
+  - **Daily NQ Profit**: Normal quality daily gold return per farm plot per growth day ($G/\text{day}$).
   - **Latest Plant Day**: The exact cutoff calendar day to plant seeds without forfeiting a harvest cycle before Quietus.
 - **Automated CLI Tools**:
   - `compute_crop_metrics.py`: Computes financial and scheduling rankings across seasons.
@@ -96,7 +96,7 @@ For full mathematical definitions, derivations, and formulas, see [crop_metrics_
 | :--- | :--- | :--- |
 | **Cash Compound Rate (%/day)** | $r = \left(\left(\frac{\text{Sell}}{\text{Seed}}\right)^{\frac{1}{\text{Days} + 1}} - 1\right) \times 100\%$ | **Early Game / Low Gold:** Maximize the speed at which your initial wallet multiplies. |
 | **Capital Days ($G \cdot d$)** | $k = \text{Seed Cost} \times (\text{Growth Days} + 1)$ | **Cash Flow & Liquidity:** Low values mean your cash is returned quickly, keeping you agile. |
-| **Full Season Net Profit** | $\pi = (n \times \text{Sell}) - \text{Seed Cost}$ | **Late Game / Plot-Constrained:** Maximize total revenue per tilled tile over 30 days. |
+| **Daily NQ Profit** | $\delta = \frac{\text{Net Profit}}{\text{Growth Days}}$ | **Cycle Efficiency & Plot Profit:** Compares normal quality profit generation velocity per plot across crops of different harvest lengths. |
 | **Latest Plant Day** | $L = 30 - (n \times \text{Cycle Days})$ | **Quietus Management:** Plant before this day to guarantee the maximum possible harvest count. |
 
 ---
@@ -107,8 +107,8 @@ For full mathematical definitions, derivations, and formulas, see [crop_metrics_
    - Prioritize high **Cash Compound Rate** crops with fast turnarounds to exponentially grow your bankroll.
    - *Top Picks*: **Unionion** (+16.74%/day), **Dress Lettuce** (+15.62%/day), and **Carrop**.
 2. **Days 11–20 (Transition & Expansion)**:
-   - As your wallet grows and tillable plots become the bottleneck, transition towards higher **Full Season Net Profit** crops.
-   - *Top Picks*: **Morrocorn** (Summer — Shatolla at +1,400 G / Lethe at +1,190 G), **Argene Cabbage** / **Chilly Plant** (Winter).
+   - As your wallet grows and tillable plots become the bottleneck, transition towards higher **Daily NQ Profit** crops.
+   - *Top Picks*: **Morrocorn** (Summer — Shatolla at +50.0 G/d / Lethe at +42.5 G/d), **Seatide Garlic** (+58.3 G/d), **Chilly Plant** (+71.4 G/d), and **Sudor Pepper** (+70.0 G/d).
 3. **Days 21–30 (Quietus Deadline Awareness)**:
    - Check the **Latest Plant Day** column before buying seeds late in the month.
    - Planting after the cutoff will result in lost harvests or withered crops when Quietus strikes on Day 30.
