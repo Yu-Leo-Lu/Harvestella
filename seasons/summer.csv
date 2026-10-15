@@ -1,25 +1,25 @@
-Crop Name,Vendor Town,Biome,Seed Cost,NQ Sale,HQ Sale,Mature Days,Regrowth,Max Harvests,Growth Season,Fruit Season,Daily NQ Profit,Cash Compound Rate,Production Days,Latest Plant Day
-Islet Watermelon,Shatolla,Waterside,"2,500 G","4,600 G","5,800 G",12 days,—,1,Summer,Summer,+175.0 G/d,+4.80%,12 days,Day 18
-Seatide Garlic,Shatolla,Farm,650 G,"1,000 G","1,250 G",6 days,—,1,Summer,Summer,+58.3 G/d,+6.35%,6 days,Day 24
-Morrocorn (Shatolla),Shatolla,Farm,200 G,400 G,500 G,4 days,—,1,Summer,Summer,+50.0 G/d,+14.87%,4 days,Day 26
-Revol Pepper,Argene,Cave,560 G,265 G,330 G,4 days,3 days,5,"Spring, Summer, Fall","Spring, Summer, Fall",+47.8 G/d,+5.20%,16 days,Day 14
-Morrocorn (Lethe),Lethe,Farm,230 G,400 G,500 G,4 days,—,1,Summer,Summer,+42.5 G/d,+11.70%,4 days,Day 26
-Honey Flower,Shatolla,Waterside,380 G,630 G,785 G,6 days,—,1,Summer,Summer,+41.7 G/d,+7.49%,6 days,Day 24
-Sudor Pepper,Argene,Cave,400 G,250 G,310 G,3 days,3 days,3,"Spring, Summer, Fall","Spring, Summer, Fall",+38.9 G/d,+6.49%,9 days,Day 21
-Nectarcane,Shatolla/Nemea,Waterside,370 G,250 G,310 G,4 days,3 days,3,"Spring, Summer, Fall","Spring, Summer, Fall",+38.0 G/d,+6.63%,10 days,Day 20
-Shatollan Paprika,Shatolla,Farm,250 G,110 G,135 G,5 days,2 days,9,Summer,Summer,+35.2 G/d,+6.46%,21 days,Day 9
-Nemean Tomato,Nemea,Farm,170 G,65 G,95 G,5 days,1 day,6,"Spring, Summer","Spring, Summer",+22.0 G/d,+7.84%,10 days,Day 20
-Carrop (Nemea),Nemea,Farm,95 G,115 G,145 G,1 day,—,1,"Spring, Summer","Spring, Summer",+20.0 G/d,+10.02%,1 day,Day 29
-Curry Herbs,Argene,Cave,240 G,350 G,435 G,6 days,—,1,"Spring, Summer, Fall","Spring, Summer, Fall",+18.3 G/d,+5.54%,6 days,Day 24
-Bellhop Seeds,Shatolla,Farm,560 G,45 G,55 G,7 days,1 day,24,Summer,Summer,+17.3 G/d,+2.14%,30 days,Day 1
-Dress Lettuce,Lethe,Farm,55 G,85 G,105 G,2 days,—,1,"Spring, Summer, Fall","Spring, Summer, Fall",+15.0 G/d,+15.62%,2 days,Day 28
-Carrop (Lethe),Lethe,Farm,105 G,115 G,145 G,1 day,—,1,"Spring, Summer","Spring, Summer",+10.0 G/d,+4.65%,1 day,Day 29
-Stellar Wheat,Lethe,Farm,40 G,55 G,70 G,2 days,—,1,"Spring, Summer, Fall","Spring, Summer, Fall",+7.5 G/d,+11.20%,2 days,Day 28
-Eden Rice,Abandoned Eden,Farm,20 G,35 G,45 G,3 days,—,1,"Summer, Fall","Summer, Fall",+5.0 G/d,+15.02%,3 days,Day 27
-Grass,Lethe,Farm,30 G,35 G,45 G,2 days,—,1,"Spring, Summer, Fall","Spring, Summer, Fall",+2.5 G/d,+5.27%,2 days,Day 28
-Nitro Pineapple,Astrum Helix,Cave,—,5 G,5 G,6 days,—,1,"Spring, Summer, Fall","Spring, Summer, Fall",+0.8 G/d,Free Drop,6 days,Day 24
-Lococonut,Shatolla,Waterside,"3,200 G",35 G,45 G,7 days,2 days,Multi-Season,"Spring, Summer, Fall, Winter",Summer,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
-Numblemon,Shatolla,Farm,"2,000 G",95 G,120 G,6 days,1 day,Multi-Season,"Spring, Summer, Fall, Winter",Summer,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
-Macocoa,Abandoned Eden,Farm,"2,400 G",100 G,125 G,6 days,1 day,Tree,"Spring, Summer, Fall, Winter",Summer,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
-Promised Fruit,Astrum Helix,Farm,—,30 G,35 G,7 days,2 days,Tree,"Spring, Summer, Fall, Winter","Spring, Summer, Fall, Winter",Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
-Moonfruit,Stella Cradle,Farm,—,100 G,125 G,12 days,3 days,Tree,"Spring, Summer, Fall, Winter","Spring, Summer, Fall, Winter",Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
+Crop Name,Vendor Town,Biome,Seed Cost (G),NQ Sale (G),HQ Sale (G),Mature (Days),Regrowth (Days),Max Harvests,Growth Season,Fruit Season,Daily NQ Profit,Cash Compound Rate,Production Days,Latest Plant Day
+Islet Watermelon,Shatolla,Waterside,2500,4600,5800,12,,1,Summer,Summer,+175.0 G/d,+4.80%,12 days,Day 18
+Seatide Garlic,Shatolla,Farm,650,1000,1250,6,,1,Summer,Summer,+58.3 G/d,+6.35%,6 days,Day 24
+Morrocorn (Shatolla),Shatolla,Farm,200,400,500,4,,1,Summer,Summer,+50.0 G/d,+14.87%,4 days,Day 26
+Revol Pepper,Argene,Cave,560,265,330,4,3,5,"Spring, Summer, Fall","Spring, Summer, Fall",+47.8 G/d,+5.20%,16 days,Day 14
+Morrocorn (Lethe),Lethe,Farm,230,400,500,4,,1,Summer,Summer,+42.5 G/d,+11.70%,4 days,Day 26
+Honey Flower,Shatolla,Waterside,380,630,785,6,,1,Summer,Summer,+41.7 G/d,+7.49%,6 days,Day 24
+Sudor Pepper,Argene,Cave,400,250,310,3,3,3,"Spring, Summer, Fall","Spring, Summer, Fall",+38.9 G/d,+6.49%,9 days,Day 21
+Nectarcane,Shatolla/Nemea,Waterside,370,250,310,4,3,3,"Spring, Summer, Fall","Spring, Summer, Fall",+38.0 G/d,+6.63%,10 days,Day 20
+Shatollan Paprika,Shatolla,Farm,250,110,135,5,2,9,Summer,Summer,+35.2 G/d,+6.46%,21 days,Day 9
+Nemean Tomato,Nemea,Farm,170,65,95,5,1,6,"Spring, Summer","Spring, Summer",+22.0 G/d,+7.84%,10 days,Day 20
+Carrop (Nemea),Nemea,Farm,95,115,145,1,,1,"Spring, Summer","Spring, Summer",+20.0 G/d,+10.02%,1 day,Day 29
+Curry Herbs,Argene,Cave,240,350,435,6,,1,"Spring, Summer, Fall","Spring, Summer, Fall",+18.3 G/d,+5.54%,6 days,Day 24
+Bellhop Seeds,Shatolla,Farm,560,45,55,7,1,24,Summer,Summer,+17.3 G/d,+2.14%,30 days,Day 1
+Dress Lettuce,Lethe,Farm,55,85,105,2,,1,"Spring, Summer, Fall","Spring, Summer, Fall",+15.0 G/d,+15.62%,2 days,Day 28
+Carrop (Lethe),Lethe,Farm,105,115,145,1,,1,"Spring, Summer","Spring, Summer",+10.0 G/d,+4.65%,1 day,Day 29
+Stellar Wheat,Lethe,Farm,40,55,70,2,,1,"Spring, Summer, Fall","Spring, Summer, Fall",+7.5 G/d,+11.20%,2 days,Day 28
+Eden Rice,Abandoned Eden,Farm,20,35,45,3,,1,"Summer, Fall","Summer, Fall",+5.0 G/d,+15.02%,3 days,Day 27
+Grass,Lethe,Farm,30,35,45,2,,1,"Spring, Summer, Fall","Spring, Summer, Fall",+2.5 G/d,+5.27%,2 days,Day 28
+Nitro Pineapple,Astrum Helix,Cave,,5,5,6,,1,"Spring, Summer, Fall","Spring, Summer, Fall",+0.8 G/d,Free Drop,6 days,Day 24
+Lococonut,Shatolla,Waterside,3200,35,45,7,2,Multi-Season,"Spring, Summer, Fall, Winter",Summer,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
+Numblemon,Shatolla,Farm,2000,95,120,6,1,Multi-Season,"Spring, Summer, Fall, Winter",Summer,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
+Macocoa,Abandoned Eden,Farm,2400,100,125,6,1,Tree,"Spring, Summer, Fall, Winter",Summer,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
+Promised Fruit,Astrum Helix,Farm,,30,35,7,2,Tree,"Spring, Summer, Fall, Winter","Spring, Summer, Fall, Winter",Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
+Moonfruit,Stella Cradle,Farm,,100,125,12,3,Tree,"Spring, Summer, Fall, Winter","Spring, Summer, Fall, Winter",Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
