@@ -114,15 +114,27 @@ For full mathematical definitions, derivations, and formulas, see [crop_metrics_
 
 ## Strategy Cheat-Sheet
 
-1. **Days 1–10 (Capital Accumulation)**:
-   - Prioritize high **Cash Compound Rate** crops with fast turnarounds to exponentially grow your bankroll.
-   - *Top Picks*: **Unionion** (+16.74%/day), **Dress Lettuce** (+15.62%/day), and **Carrop**.
-2. **Days 11–20 (Transition & Expansion)**:
-   - As your wallet grows and tillable plots become the bottleneck, transition towards higher **Daily NQ Profit** crops.
-   - *Top Picks*: **Morrocorn** (Summer — Shatolla at +50.0 G/d / Lethe at +42.5 G/d), **Seatide Garlic** (+58.3 G/d), **Islet Watermelon** (+175.0 G/d), and **Chilly Plant** (Winter at +71.4 G/d).
-3. **Days 21–30 (Quietus Deadline Awareness)**:
-   - Check the **Latest Plant Day** column before buying seeds late in the month.
-   - Planting after the cutoff will result in lost harvests or withered crops when Quietus strikes on Day 30.
+Every season in Harvestella lasts exactly **30 days** before Quietus wipes out unharvested annual crops. Maximize seasonal gold by pairing universal 30-day lifecycle pacing with season-specific crop rosters:
+
+### Universal 30-Day Seasonal Flow
+
+1. **Days 1–10 (Capital Velocity)**:
+   - Reinvest every coin into high **Cash Compound Rate** crops with short turnarounds (1–3 days) to exponentially multiply wallet gold.
+2. **Days 11–20 (Plot Maximization)**:
+   - Shift plots toward high **Daily NQ Profit** crops as gold stops being the bottleneck and tillable tiles / stamina become the constraint.
+3. **Days 21–30 (Quietus Shutdown)**:
+   - Check **Production Days** and only plant before each crop's **Latest Plant Day** ($30 - \text{Production Days}$) to prevent crops from dying on Day 30.
+
+---
+
+### Season-by-Season Playbook
+
+| Season | Phase 1: High Compounding (Days 1–10) | Phase 2: Top Plot Profit (Days 11–20) | Key Deadlines & Notes |
+| :--- | :--- | :--- | :--- |
+| **Spring** | **Unionion** (+16.74%/d)<br>**Dress Lettuce** (+15.62%/d)<br>**Stellar Wheat** (+11.20%/d) | **Revol Pepper** (+47.8 G/d)<br>**Cucumble** (+43.7 G/d)<br>**Sudor Pepper** (+38.9 G/d)<br>**Strawbuddy** (+35.8 G/d) | • **Cucumble** cutoff is **Day 11** (19 production days).<br>• **Strawbuddy** cutoff is **Day 18** (12 production days).<br>• Plant **Unionion** or **Dress Lettuce** up to **Day 27–28**. |
+| **Summer** | **Dress Lettuce** (+15.62%/d)<br>**Eden Rice** (+15.02%/d)<br>**Morrocorn** (+14.87%/d) | **Islet Watermelon** (+175.0 G/d)<br>**Seatide Garlic** (+58.3 G/d)<br>**Morrocorn** (+50.0 G/d)<br>**Revol Pepper** (+47.8 G/d) | • **Islet Watermelon** cutoff is **Day 18** (2,500 G seed, massive payout).<br>• **Shatollan Paprika** cutoff is **Day 9** (21 production days).<br>• **Morrocorn** is the ultimate hybrid (top rate & profit). |
+| **Fall** | **Unionion** (+16.74%/d)<br>**Dress Lettuce** (+15.62%/d)<br>**Eden Rice** (+15.02%/d)<br>**Lumpotato** (+10.67%/d) | **Royal Eggplant** (+60.0 G/d)<br>**Revol Pepper** (+47.8 G/d)<br>**Sudor Pepper** (+38.9 G/d)<br>**Nectarcane** (+38.0 G/d) | • **Royal Eggplant** cutoff is **Day 19** (11 production days).<br>• **Revol Pepper** cutoff is **Day 14** (16 production days).<br>• Great season for cave biome peppers. |
+| **Winter** | **Lumpotato** (+10.67%/d)<br>**Argene Cabbage** (+7.78%/d) | **Chilly Plant** (+71.4 G/d)<br>**Argene Cabbage** (+25.0 G/d)<br>**Lumpotato** (+13.3 G/d) | • Restricted seed catalog in Argene.<br>• **Chilly Plant** cutoff is **Day 23** (7 production days).<br>• **Lumpotato** can be planted until **Day 27** (3 production days). |
 
 ---
 
