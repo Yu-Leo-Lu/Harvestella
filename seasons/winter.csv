@@ -1,8 +1,8 @@
-Crop Name,Vendor Town,Biome,Seed Cost (G),NQ Sale (G),HQ Sale (G),Mature (Days),Regrowth (Days),Max Harvests,Growth Season,Fruit Season,Daily NQ Profit,Cash Compound Rate,Production Days,Latest Plant Day
-Chilly Plant,Argene,Farm,800,1300,1625,7,,1,Winter,Winter,+71.4 G/d,+6.26%,7 days,Day 23
-Argene Cabbage,Argene,Farm,220,320,400,4,,1,Winter,Winter,+25.0 G/d,+7.78%,4 days,Day 26
-Lumpotato (Argene),Argene,Farm,80,120,150,3,,1,"Fall, Winter","Fall, Winter",+13.3 G/d,+10.67%,3 days,Day 27
-Lumpotato (Lethe),Lethe,Farm,90,120,150,3,,1,"Fall, Winter","Fall, Winter",+10.0 G/d,+7.46%,3 days,Day 27
-SnowCap Mikan,Lethe,Farm,2300,65,80,7,2,Multi-Season,"Spring, Summer, Fall, Winter",Winter,Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
-Promised Fruit,Astrum Helix,Farm,,30,35,7,2,Tree,"Spring, Summer, Fall, Winter","Spring, Summer, Fall, Winter",Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
-Moonfruit,Stella Cradle,Farm,,100,125,12,3,Tree,"Spring, Summer, Fall, Winter","Spring, Summer, Fall, Winter",Multi-Season (Tree),Tree,Tree,Day 1 (All Year)
+Crop Name,Vendor Town,Biome,Seed Cost (G),NQ Sale (G),HQ Sale (G),Mature (Days),Regrowth (Days),Max Harvests,Growth Season,Fruit Season,Daily NQ Profit (G/d),Cash Compound Rate (%/d),Production (Days),Latest Plant Day
+Chilly Plant,Argene,Farm,800,1300,1625,7,,1,Wi,Wi,71.4,6.26,7,23
+Argene Cabbage,Argene,Farm,220,320,400,4,,1,Wi,Wi,25.0,7.78,4,26
+Lumpotato (Argene),Argene,Farm,80,120,150,3,,1,"Fa, Wi","Fa, Wi",13.3,10.67,3,27
+Lumpotato (Lethe),Lethe,Farm,90,120,150,3,,1,"Fa, Wi","Fa, Wi",10.0,7.46,3,27
+SnowCap Mikan,Lethe,Farm,2300,65,80,7,2,Multi-Season,"Sp, Su, Fa, Wi",Wi,,,,
+Promised Fruit,Astrum Helix,Farm,,30,35,7,2,Tree,"Sp, Su, Fa, Wi","Sp, Su, Fa, Wi",,,,
+Moonfruit,Stella Cradle,Farm,,100,125,12,3,Tree,"Sp, Su, Fa, Wi","Sp, Su, Fa, Wi",,,,

@@ -1,41 +1,41 @@
 Crop Name,Vendor Town,Biome,Seed Cost (G),NQ Sale (G),HQ Sale (G),Mature (Days),Regrowth (Days),Max Harvests,Growth Season,Fruit Season
-Carrop (Lethe),Lethe,Farm,105,115,145,1,,1,"Spring, Summer","Spring, Summer"
-Cucumble,Lethe,Farm,370,200,250,4,3,6,Spring,Spring
-Dress Lettuce,Lethe,Farm,55,85,105,2,,1,"Spring, Summer, Fall","Spring, Summer, Fall"
-Grass,Lethe,Farm,30,35,45,2,,1,"Spring, Summer, Fall","Spring, Summer, Fall"
-Grouply Grape,Lethe,Farm,2000,85,105,6,1,Multi-Season,"Spring, Summer, Fall, Winter",Fall
-Lantern Pumpkin,Lethe,Farm,3750,3750,,11,,1,Fall,Fall
-Lumpotato (Lethe),Lethe,Farm,90,120,150,3,,1,"Fall, Winter","Fall, Winter"
-Morrocorn (Lethe),Lethe,Farm,230,400,500,4,,1,Summer,Summer
-Princess Chestnut,Lethe,Farm,2200,60,75,7,2,Multi-Season,"Spring, Summer, Fall, Winter",Fall
-Rainbow Bean,Lethe,Farm,180,40,50,6,2,5,Fall,Fall
-Royal Eggplant,Lethe,Farm,780,480,960,7,2,3,Fall,Fall
-SnowCap Mikan,Lethe,Farm,2300,65,80,7,2,Multi-Season,"Spring, Summer, Fall, Winter",Winter
-Stellar Wheat,Lethe,Farm,40,55,70,2,,1,"Spring, Summer, Fall","Spring, Summer, Fall"
-Unionion (Lethe),Lethe,Farm,130,195,245,3,,1,"Spring, Fall","Spring, Fall"
-Carrop (Nemea),Nemea,Farm,95,115,145,1,,1,"Spring, Summer","Spring, Summer"
-Nemean Tomato,Nemea,Farm,170,65,95,5,1,6,"Spring, Summer","Spring, Summer"
-Strawbuddy,Nemea,Farm,220,130,160,4,2,5,Spring,Spring
-Tingle Radish,Nemea,Farm,390,530,660,4,,1,Spring,Spring
-Unionion (Nemea),Nemea,Farm,105,195,245,3,,1,"Spring, Fall","Spring, Fall"
-Wisty Peach,Nemea,Farm,4200,115,230,10,2,Multi-Season,"Spring, Summer, Fall, Winter",Spring
-Bellhop Seeds,Shatolla,Farm,560,45,55,7,1,24,Summer,Summer
-Honey Flower,Shatolla,Waterside,380,630,785,6,,1,Summer,Summer
-Islet Watermelon,Shatolla,Waterside,2500,4600,5800,12,,1,Summer,Summer
-Lococonut,Shatolla,Waterside,3200,35,45,7,2,Multi-Season,"Spring, Summer, Fall, Winter",Summer
-Morrocorn (Shatolla),Shatolla,Farm,200,400,500,4,,1,Summer,Summer
-Numblemon,Shatolla,Farm,2000,95,120,6,1,Multi-Season,"Spring, Summer, Fall, Winter",Summer
-Seatide Garlic,Shatolla,Farm,650,1000,1250,6,,1,Summer,Summer
-Shatollan Paprika,Shatolla,Farm,250,110,135,5,2,9,Summer,Summer
-Nectarcane,Shatolla/Nemea,Waterside,370,250,310,4,3,3,"Spring, Summer, Fall","Spring, Summer, Fall"
-Argene Cabbage,Argene,Farm,220,320,400,4,,1,Winter,Winter
-Chilly Plant,Argene,Farm,800,1300,1625,7,,1,Winter,Winter
-Curry Herbs,Argene,Cave,240,350,435,6,,1,"Spring, Summer, Fall","Spring, Summer, Fall"
-Lumpotato (Argene),Argene,Farm,80,120,150,3,,1,"Fall, Winter","Fall, Winter"
-Revol Pepper,Argene,Cave,560,265,330,4,3,5,"Spring, Summer, Fall","Spring, Summer, Fall"
-Sudor Pepper,Argene,Cave,400,250,310,3,3,3,"Spring, Summer, Fall","Spring, Summer, Fall"
-Eden Rice,Abandoned Eden,Farm,20,35,45,3,,1,"Summer, Fall","Summer, Fall"
-Macocoa,Abandoned Eden,Farm,2400,100,125,6,1,Tree,"Spring, Summer, Fall, Winter",Summer
-Nitro Pineapple,Astrum Helix,Cave,,5,5,6,,1,"Spring, Summer, Fall","Spring, Summer, Fall"
-Promised Fruit,Astrum Helix,Farm,,30,35,7,2,Tree,"Spring, Summer, Fall, Winter","Spring, Summer, Fall, Winter"
-Moonfruit,Stella Cradle,Farm,,100,125,12,3,Tree,"Spring, Summer, Fall, Winter","Spring, Summer, Fall, Winter"
+Carrop (Lethe),Lethe,Farm,105,115,145,1,,1,"Sp, Su","Sp, Su"
+Cucumble,Lethe,Farm,370,200,250,4,3,6,Sp,Sp
+Dress Lettuce,Lethe,Farm,55,85,105,2,,1,"Sp, Su, Fa","Sp, Su, Fa"
+Grass,Lethe,Farm,30,35,45,2,,1,"Sp, Su, Fa","Sp, Su, Fa"
+Grouply Grape,Lethe,Farm,2000,85,105,6,1,Multi-Season,"Sp, Su, Fa, Wi",Fa
+Lantern Pumpkin,Lethe,Farm,3750,3750,,11,,1,Fa,Fa
+Lumpotato (Lethe),Lethe,Farm,90,120,150,3,,1,"Fa, Wi","Fa, Wi"
+Morrocorn (Lethe),Lethe,Farm,230,400,500,4,,1,Su,Su
+Princess Chestnut,Lethe,Farm,2200,60,75,7,2,Multi-Season,"Sp, Su, Fa, Wi",Fa
+Rainbow Bean,Lethe,Farm,180,40,50,6,2,5,Fa,Fa
+Royal Eggplant,Lethe,Farm,780,480,960,7,2,3,Fa,Fa
+SnowCap Mikan,Lethe,Farm,2300,65,80,7,2,Multi-Season,"Sp, Su, Fa, Wi",Wi
+Stellar Wheat,Lethe,Farm,40,55,70,2,,1,"Sp, Su, Fa","Sp, Su, Fa"
+Unionion (Lethe),Lethe,Farm,130,195,245,3,,1,"Sp, Fa","Sp, Fa"
+Carrop (Nemea),Nemea,Farm,95,115,145,1,,1,"Sp, Su","Sp, Su"
+Nemean Tomato,Nemea,Farm,170,65,95,5,1,6,"Sp, Su","Sp, Su"
+Strawbuddy,Nemea,Farm,220,130,160,4,2,5,Sp,Sp
+Tingle Radish,Nemea,Farm,390,530,660,4,,1,Sp,Sp
+Unionion (Nemea),Nemea,Farm,105,195,245,3,,1,"Sp, Fa","Sp, Fa"
+Wisty Peach,Nemea,Farm,4200,115,230,10,2,Multi-Season,"Sp, Su, Fa, Wi",Sp
+Bellhop Seeds,Shatolla,Farm,560,45,55,7,1,24,Su,Su
+Honey Flower,Shatolla,Waterside,380,630,785,6,,1,Su,Su
+Islet Watermelon,Shatolla,Waterside,2500,4600,5800,12,,1,Su,Su
+Lococonut,Shatolla,Waterside,3200,35,45,7,2,Multi-Season,"Sp, Su, Fa, Wi",Su
+Morrocorn (Shatolla),Shatolla,Farm,200,400,500,4,,1,Su,Su
+Numblemon,Shatolla,Farm,2000,95,120,6,1,Multi-Season,"Sp, Su, Fa, Wi",Su
+Seatide Garlic,Shatolla,Farm,650,1000,1250,6,,1,Su,Su
+Shatollan Paprika,Shatolla,Farm,250,110,135,5,2,9,Su,Su
+Nectarcane,Shatolla/Nemea,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa"
+Argene Cabbage,Argene,Farm,220,320,400,4,,1,Wi,Wi
+Chilly Plant,Argene,Farm,800,1300,1625,7,,1,Wi,Wi
+Curry Herbs,Argene,Cave,240,350,435,6,,1,"Sp, Su, Fa","Sp, Su, Fa"
+Lumpotato (Argene),Argene,Farm,80,120,150,3,,1,"Fa, Wi","Fa, Wi"
+Revol Pepper,Argene,Cave,560,265,330,4,3,5,"Sp, Su, Fa","Sp, Su, Fa"
+Sudor Pepper,Argene,Cave,400,250,310,3,3,3,"Sp, Su, Fa","Sp, Su, Fa"
+Eden Rice,Abandoned Eden,Farm,20,35,45,3,,1,"Su, Fa","Su, Fa"
+Macocoa,Abandoned Eden,Farm,2400,100,125,6,1,Tree,"Sp, Su, Fa, Wi",Su
+Nitro Pineapple,Astrum Helix,Cave,,5,5,6,,1,"Sp, Su, Fa","Sp, Su, Fa"
+Promised Fruit,Astrum Helix,Farm,,30,35,7,2,Tree,"Sp, Su, Fa, Wi","Sp, Su, Fa, Wi"
+Moonfruit,Stella Cradle,Farm,,100,125,12,3,Tree,"Sp, Su, Fa, Wi","Sp, Su, Fa, Wi"

@@ -14,6 +14,13 @@ from pathlib import Path
 
 SEASONS = ["Spring", "Summer", "Fall", "Winter"]
 
+SEASON_MAP = {
+    "spring": ("sp", "spring"),
+    "summer": ("su", "summer"),
+    "fall": ("fa", "fall"),
+    "winter": ("wi", "winter"),
+}
+
 
 def split_catalog_by_season(
     input_file: Path,
@@ -39,16 +46,25 @@ def split_catalog_by_season(
     for season in SEASONS:
         season_lower = season.lower()
         season_rows: list[dict[str, str]] = []
+        target_tokens = SEASON_MAP[season_lower]
 
         for row in rows:
             fruit_season = row.get("Fruit Season", "")
             growth_season = row.get("Growth Season", "")
 
+            fruit_tokens = [s.strip().lower() for s in fruit_season.split(",")]
+            growth_tokens = [s.strip().lower() for s in growth_season.split(",")]
+
             # Check if this crop belongs in this season
-            matches_season = season_lower in fruit_season.lower()
-            if include_all_year_everywhere and all(
-                s in growth_season.lower() for s in ["spring", "summer", "fall", "winter"]
-            ):
+            matches_season = any(t in target_tokens for t in fruit_tokens) or season_lower in fruit_season.lower()
+
+            is_all_year = (
+                all(c in growth_tokens for c in ["sp", "su", "fa", "wi"])
+                or all(s in growth_season.lower() for s in ["spring", "summer", "fall", "winter"])
+                or "all" in growth_season.lower()
+            )
+
+            if include_all_year_everywhere and is_all_year:
                 matches_season = True
 
             if matches_season:
