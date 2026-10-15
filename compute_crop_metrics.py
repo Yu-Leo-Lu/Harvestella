@@ -197,7 +197,12 @@ def parse_numeric_metric(val: Any) -> float:
         return -float("inf")
 
 
-def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: Path | None = None) -> list[dict[str, Any]]:
+def analyze_csv_file(
+    csv_path: Path,
+    save_enriched: bool = False,
+    output_path: Path | None = None,
+    sort_by: str = "profit",
+) -> list[dict[str, Any]]:
     """Load a seasonal CSV, compute metrics, print table, and optionally save."""
     if not csv_path.exists():
         raise FileNotFoundError(f"File not found: {csv_path}")
@@ -241,14 +246,23 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
         clean_row.update(computed)
         enriched_rows.append(clean_row)
 
-    # Sort by Cash Compound Rate descending, then Daily NQ Profit descending
-    enriched_rows.sort(
-        key=lambda r: (
-            parse_numeric_metric(r.get("Cash Compound Rate")),
-            parse_numeric_metric(r.get("Daily NQ Profit")),
-        ),
-        reverse=True,
-    )
+    # Sort rows: defaults to Daily NQ Profit descending
+    if sort_by.lower() in ("compound", "rate", "cash"):
+        enriched_rows.sort(
+            key=lambda r: (
+                parse_numeric_metric(r.get("Cash Compound Rate")),
+                parse_numeric_metric(r.get("Daily NQ Profit")),
+            ),
+            reverse=True,
+        )
+    else:
+        enriched_rows.sort(
+            key=lambda r: (
+                parse_numeric_metric(r.get("Daily NQ Profit")),
+                parse_numeric_metric(r.get("Cash Compound Rate")),
+            ),
+            reverse=True,
+        )
 
     # Print summary table to console
     print(f"\n{'='*144}")
@@ -342,6 +356,13 @@ def main() -> None:
         default=None,
         help="Custom output file path (only used when single input is provided).",
     )
+    parser.add_argument(
+        "--sort",
+        type=str,
+        default="profit",
+        choices=["profit", "compound"],
+        help="Metric to sort by: 'profit' (Daily NQ Profit, default) or 'compound' (Cash Compound Rate).",
+    )
 
     args = parser.parse_args()
     seasons_dir = Path("seasons")
@@ -355,7 +376,7 @@ def main() -> None:
             print(f"No CSV files found in {seasons_dir}.")
             return
         for f in files:
-            analyze_csv_file(f, save_enriched=args.save)
+            analyze_csv_file(f, save_enriched=args.save, sort_by=args.sort)
     else:
         # Determine target file
         target_file: Path
@@ -382,7 +403,7 @@ def main() -> None:
                     return
                 target_file = csvs[0]
 
-        analyze_csv_file(target_file, save_enriched=args.save, output_path=args.output)
+        analyze_csv_file(target_file, save_enriched=args.save, output_path=args.output, sort_by=args.sort)
 
 
 if __name__ == "__main__":

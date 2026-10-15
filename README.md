@@ -85,6 +85,11 @@ To output the analysis to a custom file:
 python compute_crop_metrics.py -i summer -o summer_analyzed.csv
 ```
 
+To sort by **Cash Compound Rate** instead of the default **Daily NQ Profit**:
+```bash
+python compute_crop_metrics.py -i spring --sort compound
+```
+
 ### 2. Regenerate Seasonal CSVs
 
 If you update `crop_master_catalog.csv`, regenerate the seasonal tables using:
