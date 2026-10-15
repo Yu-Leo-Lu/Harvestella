@@ -148,11 +148,16 @@ flowchart TD
     
     C2 --> P1{"Can wallet fill all free plots<br/>with top seed?"}
     P1 -->|"Yes"| B1["Fill all plots with top seed"]
-    P1 -->|"No / Sold Out"| P2["Step to next highest profit seed<br/>with lower/affordable seed cost"]
-    P2 --> P1
+    
+    P1 -->|"No / Sold Out"| P2{"Does candidate crop finish<br/>on or before next restock morning?<br/>(Production Days ≤ Days to Restock)"}
+    
+    P2 -->|"Yes"| B2["Plant candidate crop<br/>(Frees plots on or before restock)"]
+    P2 -->|"No"| P3["Step to next seed with shorter cycle<br/>that fits before next restock"]
+    P3 --> P2
     
     C1 --> F{"Top seed sold out<br/>with plots still free?"}
     B1 --> F
+    B2 --> F
     
     F -->|"Yes"| G["Take next seed in ranking"]
     G --> F
@@ -166,6 +171,12 @@ flowchart TD
   - If you have 70 free plots and 10,000 G in Summer, buying 4 Islet Watermelons (@ 2,500 G) spends all 10,000 G but leaves **66 plots empty**, generating only **700 G/d**.
   - Jumping straight to pure cheap compounders (Dress Lettuce @ 55 G) fills all 70 plots for 3,850 G, but generates only **1,050 G/d** while leaving **6,150 G idle**.
   - **The Solution**: Cascade down the Daily Profit ranking to **Morrocorn** (@ 200 G seed). Buying 50 Morrocorn fills 50 plots and generates **2,500 G/d** ($>3.5\times$ Watermelon and $>2\times$ Lettuce).
+- **Restock Horizon Alignment ($\text{Production Days} \le \text{Days to Restock}$)**:
+  - Vendors restock inventory every 10 days on **Day 1, Day 11, and Day 21** ($R \in \{11, 21, 31\}$).
+  - If your top seed is sold out or unaffordable, **never plant a slow crop that overhangs the restock day**.
+  - **Example on Day 16** ($R = 21$, remaining window $= 5$ days):
+    - Planting **Nemean Tomato** (10 days) locks plots until Day 26, completely missing the Day 21 restock.
+    - Instead, pick crops where $\text{Production Days} \le 5$ (e.g., **Morrocorn** 4d, **Dress Lettuce** 2d, or **Carrop** 1d). They finish before Day 21 morning, keeping your plots open and your wallet flush to purchase the restocked seeds.
 - **Re-check constraints every time a plot frees up**: A 2-day crop frees its plot every 2 days, while a 12-day crop locks it for 12.
 - **Never replace a growing crop**: The seed is a sunk cost; re-ranking only applies to newly empty plots.
 
