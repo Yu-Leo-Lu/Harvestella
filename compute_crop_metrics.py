@@ -91,7 +91,7 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
         return {
             "Daily NQ Profit": "Multi-Season (Tree)",
             "Cash Compound Rate": "Tree",
-            "Capital Days": "Tree",
+            "Production Days": "Tree",
             "Latest Plant Day": "Day 1 (All Year)",
         }
 
@@ -101,16 +101,17 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
             profit_per_cycle = basic_sell
             daily_profit = profit_per_cycle / mature_days if mature_days > 0 else 0.0
             latest_start_day = max(1, SEASON_LENGTH_DAYS - mature_days)
+            days_unit = "day" if mature_days == 1 else "days"
             return {
                 "Daily NQ Profit": f"+{daily_profit:.1f} G/d",
                 "Cash Compound Rate": "Free Drop",
-                "Capital Days": "0 G*d",
+                "Production Days": f"{mature_days} {days_unit}",
                 "Latest Plant Day": f"Day {latest_start_day}",
             }
         return {
             "Daily NQ Profit": "N/A",
             "Cash Compound Rate": "N/A",
-            "Capital Days": "N/A",
+            "Production Days": "N/A",
             "Latest Plant Day": "N/A",
         }
 
@@ -165,9 +166,10 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
         else:
             compounded_rate_str = "Neg."
 
-    # Capital Days (Seed Cost * Turnaround Days)
-    capital_days = seed_cost * turnaround_days
-    capital_days_str = f"{capital_days:,.0f} G*d"
+    # Production Days (Total active growth days)
+    active_days = required_growth_days if is_repeat else mature_days
+    days_unit = "day" if active_days == 1 else "days"
+    production_days_str = f"{active_days} {days_unit}"
 
     # Format daily profit string with sign and G/d
     daily_profit_sign = "+" if daily_profit > 0 else ""
@@ -176,7 +178,7 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
     return {
         "Daily NQ Profit": daily_profit_str,
         "Cash Compound Rate": compounded_rate_str,
-        "Capital Days": capital_days_str,
+        "Production Days": production_days_str,
         "Latest Plant Day": latest_start_date_str,
     }
 
@@ -210,7 +212,7 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
     new_cols = [
         "Daily NQ Profit",
         "Cash Compound Rate",
-        "Capital Days",
+        "Production Days",
         "Latest Plant Day",
     ]
 
@@ -224,6 +226,7 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
         "Daily NQ Profit",
         "Full Net Profit (Basic)",
         "Cash Compound Rate",
+        "Production Days",
         "Capital Days",
         "Latest Plant Day",
         "Harvest Cycle",
@@ -248,10 +251,10 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
     )
 
     # Print summary table to console
-    print(f"\n{'='*145}")
+    print(f"\n{'='*144}")
     print(f" Seasonal Analysis: {csv_path.name.upper()} (30-Day Season)")
-    print(f"{'='*145}")
-    header_fmt = "{:<18} | {:<12} | {:<9} | {:<7} | {:<7} | {:<8} | {:<19} | {:<18} | {:<12} | {:<16}"
+    print(f"{'='*144}")
+    header_fmt = "{:<18} | {:<12} | {:<9} | {:<7} | {:<7} | {:<7} | {:<19} | {:<18} | {:<15} | {:<16}"
     print(
         header_fmt.format(
             "Crop Name",
@@ -262,11 +265,11 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
             "Max H.",
             "Daily NQ Profit",
             "Cash Compound Rate",
-            "Capital Days",
+            "Production Days",
             "Latest Plant Day",
         )
     )
-    print("-" * 145)
+    print("-" * 144)
 
     for r in enriched_rows:
         regrow_display = r.get("Regrowth", "-")
@@ -289,14 +292,14 @@ def analyze_csv_file(csv_path: Path, save_enriched: bool = False, output_path: P
                 seed_cost_display[:9],
                 (r.get("Mature Days") or r.get("Harvest Cycle", ""))[:7],
                 regrow_display[:7],
-                max_h_display[:8],
+                max_h_display[:7],
                 r.get("Daily NQ Profit", "")[:19],
                 r.get("Cash Compound Rate", "")[:18],
-                r.get("Capital Days", "")[:12],
+                r.get("Production Days", "")[:15],
                 r.get("Latest Plant Day", "")[:16],
             )
         )
-    print(f"{'='*145}\n")
+    print(f"{'='*144}\n")
 
     if save_enriched:
         dest_path = output_path or csv_path

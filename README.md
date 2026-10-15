@@ -14,11 +14,11 @@ This repository models realistic agricultural economics in Harvestella, accounti
   - **Shipping Delay (+1d)**: Shipped crops yield gold the following morning, impacting cash turnaround.
   - **Quietus Deadlines**: Seasons run exactly 30 days. Unharvested annual crops die on Day 30 without payout.
   - **Single vs. Repeat Harvests**: Distinct mathematical models for one-time plantings versus recurring crops (e.g., Nemean Tomato, Morrocorn, Islet Watermelon) and multi-season orchard trees.
-- **Four Core Financial Metrics**:
-  - **Cash Compound Rate (%/day)**: Daily exponential growth rate of capital—essential when starting with low gold.
-  - **Capital Days ($G \cdot d$)**: Liquidity risk indicator tracking how much capital is locked up and for how long.
+- **Core Financial & Scheduling Metrics**:
   - **Daily NQ Profit**: Normal quality daily gold return per farm plot per growth day ($G/\text{day}$).
-  - **Latest Plant Day**: The exact cutoff calendar day to plant seeds without forfeiting a harvest cycle before Quietus.
+  - **Cash Compound Rate (%/day)**: Daily exponential growth rate of capital—essential when starting with low gold.
+  - **Production Days**: Total active lifecycle days a crop occupies the plot through all harvest cycles.
+  - **Latest Plant Day**: The exact cutoff calendar day to plant seeds without forfeiting a harvest cycle before Quietus ($30 - \text{Production Days}$).
 - **Automated CLI Tools**:
   - `run_all.py`: Runs the complete pipeline (reorders catalog, splits seasons, computes & saves metrics).
   - `compute_crop_metrics.py`: Computes financial and scheduling rankings across seasons.
@@ -106,9 +106,9 @@ For full mathematical definitions, derivations, and formulas, see [crop_metrics_
 | Metric | Formula / Concept | When to Prioritize |
 | :--- | :--- | :--- |
 | **Cash Compound Rate (%/day)** | $r = \left(\left(\frac{\text{Sell}}{\text{Seed}}\right)^{\frac{1}{\text{Days} + 1}} - 1\right) \times 100\%$ | **Early Game / Low Gold:** Maximize the speed at which your initial wallet multiplies. |
-| **Capital Days ($G \cdot d$)** | $k = \text{Seed Cost} \times (\text{Growth Days} + 1)$ | **Cash Flow & Liquidity:** Low values mean your cash is returned quickly, keeping you agile. |
-| **Daily NQ Profit** | $\delta = \frac{\text{Net Profit}}{\text{Growth Days}}$ | **Cycle Efficiency & Plot Profit:** Compares normal quality profit generation velocity per plot across crops of different harvest lengths. |
-| **Latest Plant Day** | Single: $30 - m$ <br> Repeat: $30 - [m + (n - 1) \cdot g]$ | **Quietus Management:** Cutoff day to plant without withering at Quietus (single crops) or to achieve full harvest run (repeat crops). |
+| **Daily NQ Profit** | $\delta = \frac{\text{Net Profit}}{\text{Production Days}}$ | **Cycle Efficiency & Plot Profit:** Compares normal quality profit generation velocity per plot across crops of different harvest lengths. |
+| **Production Days** | Single: $m\text{ days}$ <br> Repeat: $m + (n - 1) \cdot g\text{ days}$ | **Turnaround Planning:** Total calendar time the crop occupies the soil before the plot is freed up. |
+| **Latest Plant Day** | $30 - \text{Production Days}$ | **Quietus Management:** Cutoff day to plant without withering at Quietus or losing harvest cycles. |
 
 ---
 

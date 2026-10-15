@@ -15,7 +15,7 @@ A concise reference guide explaining how to compute the core metrics in `compute
 | :--- | :--- | :--- | :--- |
 | **Cash Compound Rate (%/day)** | Return on Capital (Gold efficiency) | *"How fast will my wallet multiply if I reinvest every payout?"* | **Low Gold / Early Game** (You have free farm plots, but an empty wallet) |
 | **Daily NQ Profit (G/d)** | Return on Space & Time (Plot efficiency) | *"How much raw gold does each tilled tile produce per day?"* | **High Gold / Mid-to-Late Game** (You have plenty of gold, but limited farm tiles & watering stamina) |
-| **Capital Days ($G \cdot d$)** | Liquidity & Capital Lockup | *"How much cash is frozen in the soil, and for how many days?"* | **Cash Flow Management** (Ensuring you don't run out of gold before crops pay out) |
+| **Production Days** | Crop Lifecycle & Soil Commitment | *"How many total calendar days will this crop occupy the plot?"* | **Plot Scheduling & Crop Rotation** (Turnaround planning before replanting) |
 | **Latest Plant Day** | Quietus Harvest Cutoff | *"What is the last calendar day to plant and still get maximum harvests?"* | **Late Season Planning** (Avoiding crops withering on Day 30) |
 
 ## 3. Cash Compound Rate (%/day)
@@ -49,19 +49,29 @@ $$\left(\left(\frac{85}{55}\right)^{\frac{1}{2 + 1}} - 1\right) \times 100\% = \
 $$\left((3.96)^{\frac{1}{22}} - 1\right) \times 100\% = \mathbf{+6.46\%/\text{day}}$$
 
 
-## 4. Capital Days (G*d)
+## 4. Production Days
 
 ### Formula
-$$k = s \cdot (m + 1)$$
+
+For single crops:
+$$d_{\text{prod}} = m\text{ days}$$
+
+For repeat crops:
+$$d_{\text{prod}} = m + (n - 1) \cdot g\text{ days}$$
 
 Where:
-* $s$ = seed cost
-* $m$ = mature / growth days (with $+1$ for shipping payout delay)
+* $m$ = mature / initial growth days
+* $g$ = regrowth days
+* $n$ = total harvest count (capped by $\text{Max Harvests}$ or season duration)
 
 ### Examples
-* **Dress Lettuce**: $55 \times 3 = \mathbf{165\text{ G}\cdot\text{d}}$ *(ultra-safe liquidity)*
-* **Morrocorn (Shatolla)**: $200 \times 5 = \mathbf{1,000\text{ G}\cdot\text{d}}$ *(Lethe: $230 \times 5 = \mathbf{1,150\text{ G}\cdot\text{d}}$)*
-* **Lantern Pumpkin**: $3,750 \times 12 = \mathbf{45,000\text{ G}\cdot\text{d}}$ *(extreme cash freeze)*
+* **Dress Lettuce**: $m = 2 \implies \mathbf{2\text{ days}}$
+* **Carrop**: $m = 1 \implies \mathbf{1\text{ day}}$
+* **Strawbuddy** ($m = 4, g = 2, n = 5$): $4 + (5 - 1) \times 2 = \mathbf{12\text{ days}}$
+* **Cucumble** ($m = 4, g = 3, n = 6$): $4 + (6 - 1) \times 3 = \mathbf{19\text{ days}}$
+* **Shatollan Paprika** ($m = 5, g = 2, n = 9$): $5 + (9 - 1) \times 2 = \mathbf{21\text{ days}}$
+* **Bellhop Seeds** ($m = 7, g = 1, n = 24$): $7 + (24 - 1) \times 1 = \mathbf{30\text{ days}}$
+
 
 ## 5. Daily NQ Profit
 
@@ -71,7 +81,7 @@ For single crops:
 $$\delta = \frac{p - s}{m}$$
 
 For repeat crops:
-$$\delta = \frac{(n \cdot p) - s}{m + (n - 1) \cdot g}$$
+$$\delta = \frac{(n \cdot p) - s}{m + (n - 1) \cdot g} = \frac{(n \cdot p) - s}{d_{\text{prod}}}$$
 
 Where:
 * $p$ = NQ sell price
@@ -79,11 +89,12 @@ Where:
 * $m$ = mature days
 * $g$ = regrowth days
 * $n$ = harvest count (capped by $\text{Max Harvests}$ or season duration)
-* $m + (n - 1) \cdot g$ = total active growth days
+* $d_{\text{prod}} = m + (n - 1) \cdot g$ = total active production days
 
 ### Examples
 * **Dress Lettuce**: $\frac{85 - 55}{2} = \mathbf{+15.0\text{ G/d}}$
-* **Cucumble** ($m=4, g=3, n=6$): $\frac{(6 \cdot 200) - 370}{4 + (5 \cdot 3)} = \frac{830}{19} = \mathbf{+43.7\text{ G/d}}$
+* **Cucumble** ($m=4, g=3, n=6$): $\frac{(6 \cdot 200) - 370}{19} = \frac{830}{19} = \mathbf{+43.7\text{ G/d}}$
+
 
 ## 6. Latest Plant Day
 
@@ -93,12 +104,10 @@ For single crops (latest day to reap a harvest before Quietus):
 $$l = 30 - m$$
 
 For repeat crops (latest day to achieve full harvest run of $n$ yields):
-$$l = 30 - [m + (n - 1) \cdot g]$$
+$$l = 30 - d_{\text{prod}}$$
 
 Where:
-* $m$ = mature days
-* $g$ = regrowth days
-* $n$ = harvest count achieved before Quietus
+* $d_{\text{prod}}$ = Production Days ($m$ for single crops, $m + (n - 1) \cdot g$ for repeat crops)
 * $l$ = latest plant day
 
 ### Examples
@@ -113,6 +122,6 @@ $$l = 30 - 2 = \mathbf{\text{Day } 28}$$
 
 #### Repeat Crop: Cucumble ($m = 4$, $g = 3$, $n = 6$)
 
-Cucumble yields its 1st harvest on Day $p + 4$, and each of the remaining 5 harvests every 3 days ($5 \times 3 = 15$ days), requiring $4 + 15 = 19$ growth days total for all 6 harvests:
+Cucumble yields its 1st harvest on Day $p + 4$, and each of the remaining 5 harvests every 3 days ($5 \times 3 = 15$ days), requiring $d_{\text{prod}} = 4 + 15 = 19$ production days total for all 6 harvests:
 
 $$l = 30 - 19 = \mathbf{\text{Day } 11}$$
