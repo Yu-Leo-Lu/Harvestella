@@ -27,6 +27,7 @@ seed_stock:
   # Lethe
   Cucumble: 99            # +43.7 G/d
   Unionion (Lethe): 99    # +21.7 G/d
+  Curry Herbs (Lethe): 50 # +13.3 G/d (Cave)
   Dress Lettuce: 99       # +15.0 G/d
   Carrop (Lethe): 99      # +10.0 G/d
   Stellar Wheat: 99       # +7.5 G/d
@@ -39,10 +40,12 @@ seed_stock:
   Nemean Tomato: 99       # +22.0 G/d
   Carrop (Nemea): 99      # +20.0 G/d
 
-  # Shatolla / Nemea
-  Nectarcane: 99          # +38.0 G/d
+  Nectarcane (Nemea): 10      # +38.0 G/d (Waterside)
+
+  # Shatolla
+  Nectarcane (Shatolla): 99   # +38.0 G/d (Waterside)
 
   # Argene
   Revol Pepper: 99        # +47.8 G/d
   Sudor Pepper: 99        # +38.9 G/d
-  Curry Herbs: 99         # +18.3 G/d
+  Curry Herbs (Argene): 99 # +18.3 G/d

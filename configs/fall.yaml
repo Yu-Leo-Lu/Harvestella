@@ -27,6 +27,7 @@ seed_stock:
   # Lethe
   Royal Eggplant: 99      # +60.0 G/d
   Unionion (Lethe): 99    # +21.7 G/d
+  Curry Herbs (Lethe): 50 # +13.3 G/d (Cave)
   Dress Lettuce: 99       # +15.0 G/d
   Lumpotato (Lethe): 99   # +10.0 G/d
   Stellar Wheat: 99       # +7.5 G/d
@@ -36,14 +37,15 @@ seed_stock:
 
   # Nemea
   Unionion (Nemea): 99    # +30.0 G/d
+  Nectarcane (Nemea): 10  # +38.0 G/d (Waterside)
 
-  # Shatolla / Nemea
-  Nectarcane: 99          # +38.0 G/d (Waterside)
+  # Shatolla
+  Nectarcane (Shatolla): 99 # +38.0 G/d (Waterside)
 
   # Argene
   Revol Pepper: 99        # +47.8 G/d (Cave)
   Sudor Pepper: 99        # +38.9 G/d (Cave)
-  Curry Herbs: 99         # +18.3 G/d (Cave)
+  Curry Herbs (Argene): 99 # +18.3 G/d (Cave)
   Lumpotato (Argene): 99  # +13.3 G/d
 
   # Abandoned Eden
