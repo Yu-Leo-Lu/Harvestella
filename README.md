@@ -135,10 +135,6 @@ season: summer
 current_day: 1
 wallet_gold: 8000
 
-# Planning Horizon:
-# - "quietus"      : Strict Day 30 season-end cutoff (crops must mature by Day 30)
-# - "next_restock" : Mid-season 10-day shop refresh cutoff (Days 11, 21, or 31)
-horizon: quietus
 
 # Optional Variety Limit (Cardinality Constraint):
 # Set to an integer (e.g., 2 or 3) to limit farm management chaos, or null for unconstrained

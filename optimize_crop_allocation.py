@@ -1,9 +1,11 @@
 """Harvestella Crop Allocation Optimizer.
 
-Computes the mathematically optimal seed purchase and planting allocation
-using Mixed-Integer Linear Programming (MILP via scipy.optimize.milp).
+Computes mathematically optimal seed purchases and planting allocations
+using a Day-to-Day Time-Indexed Mixed-Integer Linear Programming (MILP) model
+via scipy.optimize.milp (HiGHS solver).
 Accounts for multi-biome plot capacities (Farm, Waterside, Cave), wallet gold,
-vendor town unlocks, seed shop stock caps, and Quietus / Restock horizons.
+vendor town unlocks, seed shop inventory caps per 10-day restock cycle,
+overnight shipping cash turnaround, and reinvestment across the 30-day season.
 """
 
 from __future__ import annotations
@@ -12,15 +14,11 @@ import argparse
 import csv
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 import yaml
-
-try:
-    from scipy.optimize import Bounds, LinearConstraint, milp
-    import numpy as np
-    HAS_SCIPY = True
-except ImportError:
-    HAS_SCIPY = False
+import numpy as np
+from scipy.optimize import Bounds, LinearConstraint, milp
 
 
 # ==============================================================================
@@ -29,100 +27,100 @@ except ImportError:
 
 @dataclass
 class CropCandidate:
+    """Catalog parameters for a candidate crop variety."""
     name: str
     town: str
     biome: str
     cost: float
-    daily_profit: float
-    prod_days: int
-    stock: int
-    schedule: str
+    nq_sale: float
+    mature: int
+    is_regrowth: bool = False
+    regrowth: int = 0
+    max_harvests: int = 1
+    stock: int = 99
+    daily_profit: float = 0.0
+    prod_days: int = 0
+
+    def __post_init__(self) -> None:
+        if self.prod_days <= 0:
+            if self.is_regrowth and self.regrowth > 0:
+                self.prod_days = self.mature + (self.max_harvests - 1) * self.regrowth
+            else:
+                self.prod_days = self.mature
+        if self.daily_profit <= 0 and self.prod_days > 0:
+            total_rev = (self.max_harvests if self.is_regrowth else 1) * self.nq_sale
+            self.daily_profit = (total_rev - self.cost) / self.prod_days
 
 
 @dataclass
-class AllocationItem:
+class StageCropItem:
+    """Allocation of a crop variety planted on a specific day within a restock stage."""
     crop: CropCandidate
-    quantity: int
+    plant_day: int
+    plots_allocated: int
+    rotations: int
+    harvest_day: int
+    harvest_days: list[int]
+    seeds_consumed: int
     subtotal_cost: float
-    subtotal_daily_profit: float
+    subtotal_revenue: float
+    subtotal_net_profit: float
+
+
+@dataclass
+class StageResult:
+    """Optimization outcome and financial ledger for a single restock stage."""
+    stage_idx: int
+    start_day: int
+    end_day: int
+    window_days: int
+    items: list[StageCropItem] = field(default_factory=list)
+    starting_cash: float = 0.0
+    cash_spent: float = 0.0
+    cash_remaining: float = 0.0
+    revenue_generated: float = 0.0
+    farm_used: int = 0
+    water_used: int = 0
+    cave_used: int = 0
 
 
 @dataclass
 class OptimizationResult:
+    """Overall season optimization result across all restock stages to Quietus."""
     season: str
     config_path: Path
     current_day: int = 1
-    horizon: str = ""
-    max_days: int = 0
+    timeline: str = ""
     wallet_gold: float = 0.0
     total_spent: float = 0.0
     leftover_gold: float = 0.0
-    total_daily_profit: float = 0.0
     farm_used: int = 0
     farm_cap: int = 0
     water_used: int = 0
     water_cap: int = 0
     cave_used: int = 0
     cave_cap: int = 0
-    items: list[AllocationItem] = field(default_factory=list)
     success: bool = True
     status_message: str = "Optimal solution found."
     max_varieties: int | None = None
+    stages: list[StageResult] = field(default_factory=list)
+    total_season_profit: float = 0.0
+    final_wallet_gold: float = 0.0
+
+    @property
+    def items(self) -> list[StageCropItem]:
+        """Immediate Stage 1 planting allocations."""
+        return self.stages[0].items if self.stages else []
 
     @property
     def gold_pct(self) -> float:
+        """Percentage of starting wallet gold spent on Day current_day."""
         return (self.total_spent / self.wallet_gold * 100) if self.wallet_gold > 0 else 0.0
-
-    @property
-    def projected_net(self) -> float:
-        return self.total_daily_profit * self.max_days
-
-    @property
-    def plots_summary(self) -> str:
-        if self.water_cap == 0 and self.cave_cap == 0:
-            return f"{self.farm_used} / {self.farm_cap} Farm"
-        parts: list[str] = []
-        if self.farm_cap > 0:
-            parts.append(f"{self.farm_used} Farm")
-        if self.water_cap > 0:
-            parts.append(f"{self.water_used} Water")
-        if self.cave_cap > 0:
-            parts.append(f"{self.cave_used} Cave")
-        return ", ".join(parts) if parts else "None"
-
-    @property
-    def seeds_summary(self) -> str:
-        if not self.items:
-            return "None"
-        return ", ".join(f"{it.quantity} {it.crop.name} ({it.crop.town})" for it in self.items)
 
 
 # ==============================================================================
 # Helper Functions
 # ==============================================================================
-
-def determine_horizon_days(current_day: int, horizon_mode: str) -> tuple[int, str]:
-    """Calculate the remaining production days based on horizon selection."""
-    mode = str(horizon_mode).strip().lower()
-    if mode in ("restock", "next_restock"):
-        target = 11 if current_day < 11 else (21 if current_day < 21 else 31)
-        days = target - current_day
-        return days, f"Next Vendor Restock (Day {target}, {days}d window)"
-
-    # Default: Quietus harvest deadline
-    days = 30 if current_day == 1 else max(0, 30 - current_day)
-    return days, f"Quietus Deadline (Day 30, {days}d window)"
-
-
-def is_crop_eligible(prod_days: int, current_day: int, max_days: int, horizon_mode: str) -> bool:
-    """Determine if a crop can complete its production cycle within the horizon."""
-    mode = str(horizon_mode).strip().lower()
-    if mode in ("restock", "next_restock"):
-        return prod_days <= max_days
-    if current_day == 1:
-        return prod_days <= 30
-    return current_day <= (30 - prod_days)
-
 
 def is_town_unlocked(vendor_town: str, unlocked_towns: dict[str, bool]) -> bool:
     """Check if the vendor town is currently unlocked (split on '/' for multi-town)."""
@@ -131,11 +129,14 @@ def is_town_unlocked(vendor_town: str, unlocked_towns: dict[str, bool]) -> bool:
 
 
 # ==============================================================================
-# Core Optimization Engine
+# Core Day-to-Day Optimization Engine
 # ==============================================================================
 
-def solve_allocation(config_path: Path, csv_dir: Path = Path("seasons")) -> OptimizationResult:
-    """Solve the bounded integer crop allocation knapsack for a single config."""
+def solve_allocation(
+    config_path: Path,
+    csv_dir: Path = Path("seasons"),
+) -> OptimizationResult:
+    """Solve the day-to-day time-indexed crop allocation MILP for a config profile."""
     config_path = Path(config_path)
     if not config_path.is_file():
         return OptimizationResult(
@@ -160,8 +161,8 @@ def solve_allocation(config_path: Path, csv_dir: Path = Path("seasons")) -> Opti
 
     current_day = int(cfg.get("current_day", 1))
     wallet_gold = float(cfg.get("wallet_gold", 0.0))
-    horizon_mode = str(cfg.get("horizon", "quietus")).strip()
-    max_days, horizon_desc = determine_horizon_days(current_day, horizon_mode)
+    days_window = 30 if current_day == 1 else max(0, 30 - current_day + 1)
+    timeline_desc = f"Day {current_day} -> Day 30 ({days_window}d Quietus window)"
 
     raw_varieties = cfg.get("max_crop_varieties", None)
     max_varieties: int | None = None
@@ -184,33 +185,46 @@ def solve_allocation(config_path: Path, csv_dir: Path = Path("seasons")) -> Opti
     with open(csv_path, encoding="utf-8") as f:
         raw_rows = list(csv.DictReader(f))
 
-    candidates: list[CropCandidate] = []
+    # 1. Parse crop candidates
+    crops: list[CropCandidate] = []
     for r in raw_rows:
         crop_name = r.get("Crop Name", "").strip()
         biome = r.get("Biome", "").strip().lower()
         town = r.get("Vendor Town", "").strip()
-
         cost_str = r.get("Seed Cost (G)", "").strip()
+        nq_str = r.get("NQ Sale (G)", "").strip()
+        mature_str = r.get("Mature (Days)", "").strip()
+        regrowth_str = r.get("Regrowth (Days)", "").strip()
+        max_h_str = r.get("Max Harvests", "").strip()
         profit_str = r.get("Daily NQ Profit (G/d)", "").strip()
         prod_str = r.get("Production (Days)", "").strip()
 
-        if not cost_str or not profit_str or not prod_str:
+        if not cost_str or not nq_str or not mature_str:
             continue
         try:
             cost = float(cost_str)
-            daily_profit = float(profit_str)
-            prod_days = int(prod_str)
+            nq_sale = float(nq_str)
+            mature = int(mature_str)
+            daily_profit = float(profit_str) if profit_str else 0.0
+            prod_days = int(prod_str) if prod_str else 0
         except ValueError:
             continue
 
-        if cost <= 0 or daily_profit <= 0:
+        if cost <= 0 or nq_sale <= 0:
             continue
         if not is_town_unlocked(town, unlocked_towns):
             continue
-        if not is_crop_eligible(prod_days, current_day, max_days, horizon_mode):
+        if biome == "farm" and farm_cap <= 0:
+            continue
+        if biome == "waterside" and water_cap <= 0:
+            continue
+        if biome == "cave" and cave_cap <= 0:
             continue
 
-        # In-stock seed count from YAML configuration (default: 99)
+        is_regrowth = bool(regrowth_str and regrowth_str.isdigit() and int(regrowth_str) > 0)
+        regrowth = int(regrowth_str) if is_regrowth else 0
+        max_harvests = int(max_h_str) if (max_h_str and max_h_str.isdigit()) else 1
+
         stock_key_town = f"{crop_name} ({town})"
         if stock_key_town in seed_stock:
             stock = int(seed_stock[stock_key_town])
@@ -220,181 +234,368 @@ def solve_allocation(config_path: Path, csv_dir: Path = Path("seasons")) -> Opti
             stock = int(seed_stock[crop_name])
         else:
             stock = 99
+
         if stock <= 0:
             continue
-        if biome == "waterside" and water_cap <= 0:
-            continue
-        if biome == "cave" and cave_cap <= 0:
-            continue
-        if biome == "farm" and farm_cap <= 0:
-            continue
 
-        candidates.append(
+        crops.append(
             CropCandidate(
                 name=crop_name,
                 town=town,
                 biome=biome,
                 cost=cost,
+                nq_sale=nq_sale,
+                mature=mature,
+                is_regrowth=is_regrowth,
+                regrowth=regrowth,
+                max_harvests=max_harvests,
+                stock=stock,
                 daily_profit=daily_profit,
                 prod_days=prod_days,
-                stock=stock,
-                schedule=r.get("Planting Schedule", "").strip(),
             )
         )
 
-    if not candidates:
+    if not crops:
         return OptimizationResult(
             season=season,
             config_path=config_path,
             current_day=current_day,
-            horizon=horizon_desc,
-            max_days=max_days,
+            timeline=timeline_desc,
             wallet_gold=wallet_gold,
             leftover_gold=wallet_gold,
             farm_cap=farm_cap,
             water_cap=water_cap,
             cave_cap=cave_cap,
-            status_message="No eligible crops match current filters (towns, capacity, or deadlines).",
+            status_message="No eligible crops match current filters (unlocked towns or plot capacity).",
         )
 
-    if not HAS_SCIPY:
+    # 2. Build time-indexed decision variables: (crop_idx, plant_day)
+    # plant_day in [current_day .. 30]
+    active_days = list(range(current_day, 31))
+    var_map: list[dict[str, Any]] = []
+
+    for c_idx, c in enumerate(crops):
+        for d in active_days:
+            if not c.is_regrowth:
+                harvest_day = d + c.mature
+                if harvest_day <= 30:
+                    harvests = [harvest_day]
+                    occupy_days = list(range(d, harvest_day))
+                    total_rev = c.nq_sale
+                    net_profit = total_rev - c.cost
+                    var_map.append({
+                        "crop_idx": c_idx,
+                        "day": d,
+                        "harvests": harvests,
+                        "occupy_days": occupy_days,
+                        "total_rev": total_rev,
+                        "net_profit": net_profit,
+                    })
+            else:
+                harvests = []
+                for k in range(c.max_harvests):
+                    h_day = d + c.mature + k * c.regrowth
+                    if h_day <= 30:
+                        harvests.append(h_day)
+                    else:
+                        break
+                if harvests:
+                    total_rev = len(harvests) * c.nq_sale
+                    net_profit = total_rev - c.cost
+                    if net_profit > 0:
+                        last_h = max(harvests)
+                        occupy_days = list(range(d, min(31, last_h + 1)))
+                        var_map.append({
+                            "crop_idx": c_idx,
+                            "day": d,
+                            "harvests": harvests,
+                            "occupy_days": occupy_days,
+                            "total_rev": total_rev,
+                            "net_profit": net_profit,
+                        })
+
+    n_vars = len(var_map)
+    if n_vars == 0:
         return OptimizationResult(
             season=season,
             config_path=config_path,
-            success=False,
-            status_message="scipy is not installed. Please run `pip install scipy`.",
+            current_day=current_day,
+            timeline=timeline_desc,
+            wallet_gold=wallet_gold,
+            leftover_gold=wallet_gold,
+            farm_cap=farm_cap,
+            water_cap=water_cap,
+            cave_cap=cave_cap,
+            status_message="No crops can reach harvest before Day 30 (Quietus).",
         )
 
-    n = len(candidates)
-    if max_varieties is not None and max_varieties < n:
-        # MILP with 2n variables: x_0..x_{n-1} (seed counts), y_0..y_{n-1} (binary indicators)
-        c = np.concatenate([
-            np.array([-cand.daily_profit + 1e-6 * cand.cost for cand in candidates]),
-            np.zeros(n),
-        ])
+    # 3. Variety Limit variables (if active)
+    use_variety_limit = max_varieties is not None
+    unique_crop_names: list[str] = []
+    crop_to_idx: dict[str, int] = {}
+    if use_variety_limit:
+        unique_crop_names = sorted(list({crops[v["crop_idx"]].name for v in var_map}))
+        crop_to_idx = {name: idx for idx, name in enumerate(unique_crop_names)}
+        total_vars = n_vars + len(unique_crop_names)
+    else:
+        total_vars = n_vars
 
-        # Resource rows: Budget, Farm, Waterside, Cave (padded with 0s for y variables)
-        row_budget = [cand.cost for cand in candidates] + [0.0] * n
-        row_farm = [1.0 if cand.biome == "farm" else 0.0 for cand in candidates] + [0.0] * n
-        row_water = [1.0 if cand.biome == "waterside" else 0.0 for cand in candidates] + [0.0] * n
-        row_cave = [1.0 if cand.biome == "cave" else 0.0 for cand in candidates] + [0.0] * n
+    # Objective: Maximize total cumulative net profit (minimize negative profit)
+    c_obj = np.zeros(total_vars)
+    for i, v in enumerate(var_map):
+        c = crops[v["crop_idx"]]
+        # Tie-breakers: prefer cheaper seeds and earlier planting
+        c_obj[i] = -(v["net_profit"] - 1e-6 * c.cost - 1e-8 * (v["day"] - current_day))
 
-        A_rows = [row_budget, row_farm, row_water, row_cave]
-        lb_list = [0.0, 0.0, 0.0, 0.0]
-        ub_list = [wallet_gold, float(farm_cap), float(water_cap), float(cave_cap)]
+    A_rows: list[list[float]] = []
+    lb_list: list[float] = []
+    ub_list: list[float] = []
 
-        # Indicator linking constraints: x_i - stock_i * y_i <= 0
-        for i in range(n):
-            link_row = [0.0] * (2 * n)
-            link_row[i] = 1.0
-            link_row[n + i] = -float(candidates[i].stock)
-            A_rows.append(link_row)
-            lb_list.append(-np.inf)
-            ub_list.append(0.0)
+    # 4. Constraint Row Formulation
+    # A) Daily Plot Capacity per Biome for each day t in [current_day .. 30]
+    caps = {"farm": farm_cap, "waterside": water_cap, "cave": cave_cap}
+    for t in active_days:
+        for biome, cap in caps.items():
+            if cap <= 0:
+                continue
+            row = [0.0] * total_vars
+            has_relevant = False
+            for i, v in enumerate(var_map):
+                c = crops[v["crop_idx"]]
+                if c.biome == biome and t in v["occupy_days"]:
+                    row[i] = 1.0
+                    has_relevant = True
+            if has_relevant:
+                A_rows.append(row)
+                lb_list.append(0.0)
+                ub_list.append(float(cap))
 
-        # Cardinality constraint: sum(y_i) <= max_varieties
-        card_row = [0.0] * n + [1.0] * n
+    # B) Daily Cash Liquidity on each day t in [current_day .. 30]
+    # wallet_gold - purchases_up_to(t) + shipping_up_to(t) >= 0
+    # purchases_up_to(t) - shipping_up_to(t) <= wallet_gold
+    for t in active_days:
+        row = [0.0] * total_vars
+        for i, v in enumerate(var_map):
+            c = crops[v["crop_idx"]]
+            if v["day"] <= t:
+                row[i] += c.cost
+            for h in v["harvests"]:
+                # Overnight shipping: proceeds arrive on morning of harvest + 1
+                if h + 1 <= t:
+                    row[i] -= c.nq_sale
+        A_rows.append(row)
+        lb_list.append(-np.inf)
+        ub_list.append(float(wallet_gold))
+
+    # C) Seed stock inventory limits per 10-day vendor restock cycle
+    windows = [(1, 10), (11, 20), (21, 30)]
+    for w_start, w_end in windows:
+        if w_end < current_day:
+            continue
+        for c_idx, c in enumerate(crops):
+            stock = c.stock
+            row = [0.0] * total_vars
+            has_relevant = False
+            for i, v in enumerate(var_map):
+                if v["crop_idx"] == c_idx and w_start <= v["day"] <= w_end:
+                    row[i] = 1.0
+                    has_relevant = True
+            if has_relevant:
+                A_rows.append(row)
+                lb_list.append(0.0)
+                ub_list.append(float(stock))
+
+    # D) Big-M linking for variety cardinality limit (if active)
+    if use_variety_limit and max_varieties is not None:
+        big_m = float(max(farm_cap, water_cap, cave_cap) * 30 + 100)
+        for u_idx, u_name in enumerate(unique_crop_names):
+            link_row = [0.0] * total_vars
+            has_u = False
+            for i, v in enumerate(var_map):
+                if crops[v["crop_idx"]].name == u_name:
+                    link_row[i] = 1.0
+                    has_u = True
+            if has_u:
+                link_row[n_vars + u_idx] = -big_m
+                A_rows.append(link_row)
+                lb_list.append(-np.inf)
+                ub_list.append(0.0)
+
+        card_row = [0.0] * total_vars
+        for u_idx in range(len(unique_crop_names)):
+            card_row[n_vars + u_idx] = 1.0
         A_rows.append(card_row)
         lb_list.append(0.0)
         ub_list.append(float(max_varieties))
 
-        A = np.array(A_rows)
-        lb = np.array(lb_list)
-        ub = np.array(ub_list)
+    A = np.array(A_rows)
+    lb = np.array(lb_list)
+    ub = np.array(ub_list)
 
-        constraints = LinearConstraint(A, lb, ub)
-        bounds = Bounds(
-            lb=np.zeros(2 * n),
-            ub=np.concatenate([np.array([cand.stock for cand in candidates]), np.ones(n)]),
+    var_lb = np.zeros(total_vars)
+    var_ub = np.full(total_vars, np.inf)
+    if use_variety_limit:
+        var_ub[n_vars:] = 1.0
+
+    bounds = Bounds(lb=var_lb, ub=var_ub)
+    constraints = LinearConstraint(A, lb, ub)
+    integrality = np.ones(total_vars)
+
+    # 5. Solve via SciPy HiGHS Branch-and-Cut MILP
+    res = milp(
+        c=c_obj,
+        constraints=constraints,
+        bounds=bounds,
+        integrality=integrality,
+        options={"disp": False, "mip_rel_gap": 0.015, "time_limit": 10},
+    )
+
+    if res.x is None:
+        return OptimizationResult(
+            season=season,
+            config_path=config_path,
+            success=False,
+            status_message=f"MILP solver failed: {res.status} - {res.message}",
         )
-        integrality = np.ones(2 * n)
 
-        res = milp(c=c, constraints=constraints, bounds=bounds, integrality=integrality)
-        if not res.success:
-            return OptimizationResult(
-                season=season,
-                config_path=config_path,
-                success=False,
-                status_message=f"MILP solver failed: {res.status} - {res.message}",
-            )
-        solution = np.round(res.x[:n]).astype(int)
-    else:
-        # Standard MILP with n variables
-        c = np.array([-cand.daily_profit + 1e-6 * cand.cost for cand in candidates])
-        row_budget = [cand.cost for cand in candidates]
-        row_farm = [1.0 if cand.biome == "farm" else 0.0 for cand in candidates]
-        row_water = [1.0 if cand.biome == "waterside" else 0.0 for cand in candidates]
-        row_cave = [1.0 if cand.biome == "cave" else 0.0 for cand in candidates]
+    solution = np.round(res.x[:n_vars]).astype(int)
 
-        A = np.array([row_budget, row_farm, row_water, row_cave])
-        ub = np.array([wallet_gold, farm_cap, water_cap, cave_cap])
-        lb = np.zeros(4)
+    # 6. Partition daily allocations into 10-day restock stages
+    stage_boundaries = [(1, 10), (11, 20), (21, 30)]
+    active_stages = [
+        (max(current_day, w_start), w_end)
+        for w_start, w_end in stage_boundaries
+        if w_end >= current_day
+    ]
 
-        constraints = LinearConstraint(A, lb, ub)
-        bounds = Bounds(lb=np.zeros(n), ub=np.array([cand.stock for cand in candidates]))
-        integrality = np.ones(n)
+    stage_results: list[StageResult] = []
+    total_season_profit = 0.0
 
-        res = milp(c=c, constraints=constraints, bounds=bounds, integrality=integrality)
-        if not res.success:
-            return OptimizationResult(
-                season=season,
-                config_path=config_path,
-                success=False,
-                status_message=f"MILP solver failed: {res.status} - {res.message}",
-            )
-        solution = np.round(res.x).astype(int)
-    items: list[AllocationItem] = []
-    farm_used = water_used = cave_used = 0
-    total_spent = total_daily_profit = 0.0
+    # Compute daily cash timeline
+    daily_purchases = {d: 0.0 for d in active_days}
+    daily_arrivals = {d: 0.0 for d in active_days}
+    daily_arrivals[31] = 0.0  # Quietus morning arrivals from Day 30 harvest
 
-    for i in range(n):
-        qty = int(solution[i])
-        if qty <= 0:
+    for i, count in enumerate(solution):
+        if count <= 0:
             continue
-        cand = candidates[i]
-        subtotal_cost = qty * cand.cost
-        subtotal_profit = qty * cand.daily_profit
-        total_spent += subtotal_cost
-        total_daily_profit += subtotal_profit
+        v = var_map[i]
+        c = crops[v["crop_idx"]]
+        daily_purchases[v["day"]] += count * c.cost
+        for h in v["harvests"]:
+            arr_day = h + 1
+            if arr_day in daily_arrivals:
+                daily_arrivals[arr_day] += count * c.nq_sale
 
-        if cand.biome == "farm":
-            farm_used += qty
-        elif cand.biome == "waterside":
-            water_used += qty
-        elif cand.biome == "cave":
-            cave_used += qty
+    running_cash = wallet_gold
 
-        items.append(
-            AllocationItem(
-                crop=cand,
-                quantity=qty,
-                subtotal_cost=subtotal_cost,
-                subtotal_daily_profit=subtotal_profit,
+    for s_idx, (s_start, s_end) in enumerate(active_stages):
+        st_items: list[StageCropItem] = []
+        stage_spent = 0.0
+        stage_rev = 0.0
+        st_farm = st_water = st_cave = 0
+
+        for i, count in enumerate(solution):
+            if count <= 0:
+                continue
+            v = var_map[i]
+            c = crops[v["crop_idx"]]
+            p_day = v["day"]
+            if not (s_start <= p_day <= s_end):
+                continue
+
+            cost_total = count * c.cost
+            rev_total = count * v["total_rev"]
+            profit_subtotal = count * v["net_profit"]
+
+            stage_spent += cost_total
+            total_season_profit += profit_subtotal
+
+            if c.biome == "farm":
+                st_farm += count
+            elif c.biome == "waterside":
+                st_water += count
+            elif c.biome == "cave":
+                st_cave += count
+
+            item = StageCropItem(
+                crop=c,
+                plant_day=p_day,
+                plots_allocated=count,
+                rotations=len(v["harvests"]),
+                harvest_day=max(v["harvests"]),
+                harvest_days=v["harvests"],
+                seeds_consumed=count,
+                subtotal_cost=cost_total,
+                subtotal_revenue=rev_total,
+                subtotal_net_profit=profit_subtotal,
+            )
+            st_items.append(item)
+
+        # Revenue arriving during this stage
+        for d in range(s_start, s_end + 1):
+            stage_rev += daily_arrivals.get(d, 0.0)
+
+        # Sort items by plant day, then biome
+        biome_order = {"farm": 1, "waterside": 2, "cave": 3}
+        st_items.sort(key=lambda it: (it.plant_day, biome_order.get(it.crop.biome, 99), -it.crop.daily_profit))
+
+        cash_remaining = running_cash - stage_spent
+        stage_results.append(
+            StageResult(
+                stage_idx=s_idx + 1,
+                start_day=s_start,
+                end_day=s_end,
+                window_days=s_end - s_start + 1,
+                items=st_items,
+                starting_cash=running_cash,
+                cash_spent=stage_spent,
+                cash_remaining=cash_remaining,
+                revenue_generated=stage_rev,
+                farm_used=st_farm,
+                water_used=st_water,
+                cave_used=st_cave,
             )
         )
+        running_cash = cash_remaining + stage_rev
 
-    biome_order = {"farm": 1, "waterside": 2, "cave": 3}
-    items.sort(key=lambda it: (biome_order.get(it.crop.biome, 99), -it.crop.daily_profit))
+    # Day current_day initial utilization
+    initial_farm = initial_water = initial_cave = 0
+    day1_spent = 0.0
+    for i, count in enumerate(solution):
+        if count <= 0:
+            continue
+        v = var_map[i]
+        c = crops[v["crop_idx"]]
+        if v["day"] == current_day:
+            day1_spent += count * c.cost
+            if c.biome == "farm":
+                initial_farm += count
+            elif c.biome == "waterside":
+                initial_water += count
+            elif c.biome == "cave":
+                initial_cave += count
 
     return OptimizationResult(
         season=season,
         config_path=config_path,
         current_day=current_day,
-        horizon=horizon_desc,
-        max_days=max_days,
+        timeline=timeline_desc,
         wallet_gold=wallet_gold,
-        total_spent=total_spent,
-        leftover_gold=max(0.0, wallet_gold - total_spent),
-        total_daily_profit=total_daily_profit,
-        farm_used=farm_used,
+        total_spent=day1_spent,
+        leftover_gold=wallet_gold - day1_spent,
+        farm_used=initial_farm,
         farm_cap=farm_cap,
-        water_used=water_used,
+        water_used=initial_water,
         water_cap=water_cap,
-        cave_used=cave_used,
+        cave_used=initial_cave,
         cave_cap=cave_cap,
-        items=items,
         success=True,
+        status_message="Optimal solution found." if res.status == 0 else f"Feasible solution found: {res.message}",
         max_varieties=max_varieties,
+        stages=stage_results,
+        total_season_profit=total_season_profit,
+        final_wallet_gold=wallet_gold + total_season_profit,
     )
 
 
@@ -408,14 +609,14 @@ def print_result_report(result: OptimizationResult) -> None:
     print("=" * 86)
     print(f" HARVESTELLA CROP ALLOCATION OPTIMIZER: {season_title}")
     print("=" * 86)
-    print(f" Config File    : {result.config_path}")
-    print(f" Current Day    : Day {result.current_day}")
-    print(f" Horizon Plan   : {result.horizon}")
+    print(f" Config File     : {result.config_path}")
+    print(f" Current Day     : Day {result.current_day}")
+    print(f" Planning Timeline: {result.timeline}")
     if result.max_varieties is not None:
-        print(f" Variety Limit  : Max {result.max_varieties} distinct crop varieties")
-    print(f" Capital Budget : {result.wallet_gold:,.0f} G")
+        print(f" Variety Limit   : Max {result.max_varieties} distinct crop varieties")
+    print(f" Capital Budget  : {result.wallet_gold:,.0f} G")
     print(
-        f" Plot Capacities: Farm {result.farm_cap} | "
+        f" Plot Capacities : Farm {result.farm_cap} | "
         f"Waterside {result.water_cap} | Cave {result.cave_cap}"
     )
     print("-" * 86)
@@ -424,30 +625,41 @@ def print_result_report(result: OptimizationResult) -> None:
         print(f" [!] ERROR: {result.status_message}\n")
         return
 
-    if not result.items:
+    if not result.stages:
         print(f" [i] {result.status_message}\n")
         return
 
-    print(" OPTIMAL PLANTING ALLOCATION")
+    print(" OPTIMAL PLANTING TIMELINE (Day-to-Day Time-Indexed Compounding Model)")
     print("-" * 86)
-    print(
-        f"{'Biome':<10} {'Crop Name':<22} {'Vendor':<12} "
-        f"{'Cost':>6} {'Qty':>5} {'Subtotal':>9} {'Profit/d':>9} {'Cycle Days':>10}"
-    )
-    print("-" * 86)
-
-    for it in result.items:
-        c = it.crop
+    for st in result.stages:
+        print(f" [Stage {st.stage_idx}: Day {st.start_day} -> Day {st.end_day} ({st.window_days}d window)]")
         print(
-            f"{c.biome.capitalize():<10} "
-            f"{c.name:<22} "
-            f"{c.town:<12} "
-            f"{c.cost:>6,.0f} "
-            f"{it.quantity:>5} "
-            f"{it.subtotal_cost:>8,.0f} G "
-            f"+{it.subtotal_daily_profit:>7,.1f} "
-            f"{c.prod_days:>9}d"
+            f"  Starting Cash : {st.starting_cash:,.0f} G | "
+            f"Stage Spent: {st.cash_spent:,.0f} G | "
+            f"Farm Plots Used: {st.farm_used}/{result.farm_cap}"
         )
+        print(
+            f"  {'Plant':<8} {'Biome':<10} {'Crop Name':<18} {'Vendor':<10} "
+            f"{'Qty':>4} {'Seed Spent':>11} {'Harvest Days':<15} {'Net Profit':>11}"
+        )
+        print("  " + "-" * 82)
+        for it in st.items:
+            c = it.crop
+            h_str = ", ".join(f"D{d}" for d in it.harvest_days)
+            if len(h_str) > 14:
+                h_str = f"D{it.harvest_days[0]}..D{it.harvest_days[-1]}"
+            print(
+                f"  Day {it.plant_day:<4} "
+                f"{c.biome.capitalize():<10} "
+                f"{c.name:<18} "
+                f"{c.town:<10} "
+                f"{it.plots_allocated:>4} "
+                f"{it.subtotal_cost:>10,.0f} G "
+                f"{h_str:<15} "
+                f"+{it.subtotal_net_profit:>10,.0f} G"
+            )
+        net_end = st.cash_remaining + st.revenue_generated
+        print(f"  Stage Harvest Revenue Arrived: +{st.revenue_generated:,.0f} G | Projected Cash at Stage End: {net_end:,.0f} G\n")
 
     print("-" * 86)
     print(" RESOURCE UTILIZATION & FINANCIAL SUMMARY")
@@ -455,147 +667,122 @@ def print_result_report(result: OptimizationResult) -> None:
 
     farm_pct = (result.farm_used / result.farm_cap * 100) if result.farm_cap > 0 else 0
     print(
-        f" Farm Plots Used      : {result.farm_used:>3} / {result.farm_cap:<3} "
+        f" Farm Plots Used (Init): {result.farm_used:>3} / {result.farm_cap:<3} "
         f"({farm_pct:>5.1f}% utilized, {result.farm_cap - result.farm_used} idle)"
     )
     if result.water_cap > 0:
         water_pct = (result.water_used / result.water_cap * 100)
         print(
-            f" Waterside Plots Used : {result.water_used:>3} / {result.water_cap:<3} "
+            f" Waterside Plots (Init): {result.water_used:>3} / {result.water_cap:<3} "
             f"({water_pct:>5.1f}% utilized, {result.water_cap - result.water_used} idle)"
         )
     if result.cave_cap > 0:
         cave_pct = (result.cave_used / result.cave_cap * 100)
         print(
-            f" Cave Plots Used      : {result.cave_used:>3} / {result.cave_cap:<3} "
+            f" Cave Plots Used (Init): {result.cave_used:>3} / {result.cave_cap:<3} "
             f"({cave_pct:>5.1f}% utilized, {result.cave_cap - result.cave_used} idle)"
         )
 
     print(
-        f" Gold Capital Spent   : {result.total_spent:>8,.0f} G / {result.wallet_gold:,.0f} G "
+        f" Initial Capital Spent : {result.total_spent:>8,.0f} G / {result.wallet_gold:,.0f} G "
         f"({result.gold_pct:>5.1f}% spent, {result.leftover_gold:,.0f} G leftover)"
     )
-    print(f" Total Daily Profit   : +{result.total_daily_profit:>7,.1f} G/day")
-    print(
-        f" Projected Net Window : +{result.projected_net:>7,.0f} G net profit "
-        f"over {result.max_days} days"
-    )
+    print(f" Total Season Net Profit: +{result.total_season_profit:>8,.0f} G across all restock stages")
+    print(f" Final Projected Wallet : {result.final_wallet_gold:>8,.0f} G on Day 30 (Quietus)")
     print("=" * 86 + "\n")
-
-
-def print_multi_season_summary(results: list[OptimizationResult]) -> None:
-    """Print an executive comparative summary table across multiple seasons."""
-    valid = [r for r in results if r.success and r.items]
-    if not valid:
-        return
-
-    print("=" * 140)
-    print(" ALL-SEASON CROP ALLOCATION EXECUTIVE SUMMARY")
-    print("=" * 140)
-    print(
-        f"{'Season':<8} {'Budget':>9}  "
-        f"{'Optimal Seed Purchases':<56} "
-        f"{'Plots Used':<26} "
-        f"{'Gold Spent / Leftover':<25} "
-        f"{'Daily Profit':>13}"
-    )
-    print("-" * 140)
-
-    for r in valid:
-        spent_str = f"{r.total_spent:,.0f} G / {r.leftover_gold:,.0f} G ({r.gold_pct:.1f}%)"
-        print(
-            f"{r.season.capitalize():<8} {f'{r.wallet_gold:,.0f} G':>9}  "
-            f"{r.seeds_summary:<56} "
-            f"{r.plots_summary:<26} "
-            f"{spent_str:<25} "
-            f"{f'+{r.total_daily_profit:,.1f} G/d':>13}"
-        )
-
-    print("=" * 140 + "\n")
 
 
 def generate_markdown_report(
     results: list[OptimizationResult],
     output_path: Path = Path("crop_allocation_report.md"),
 ) -> Path:
-    """Generate a structured GitHub-Flavored Markdown report and save to root."""
-    valid = [r for r in results if r.success and r.items]
+    """Generate a structured GitHub-Flavored Markdown report mirroring the terminal report."""
+    valid = [r for r in results if r.success and r.stages]
     if not valid:
         return output_path
 
-    lines = [
+    lines: list[str] = [
         "# Harvestella Crop Allocation & Planting Report\n",
-        "> Mathematically optimal seed purchase and planting allocations generated via Mixed-Integer Linear Programming (MILP).\n",
-        "## Executive Summary\n",
-        "| Season | Budget (G) | Optimal Seed Purchases | Plots Used | Gold Spent / Leftover | Total Daily Profit | Projected Window Net |",
-        "| :--- | :--- | :--- | :--- | :--- | :--- | :--- |",
+        "> Mathematically optimal seed purchase and planting allocations generated via Day-to-Day Time-Indexed Mixed-Integer Linear Programming (MILP).\n",
     ]
 
-    for r in valid:
-        seeds_formatted = "<br>".join(
-            f"• {it.quantity} {it.crop.name} ({it.crop.town})"
-            for it in r.items
-        )
-        spent_str = f"{r.total_spent:,.0f} G / {r.leftover_gold:,.0f} G ({r.gold_pct:.1f}%)"
-        proj_str = f"+{r.projected_net:,.0f} G ({r.max_days}d)"
-        lines.append(
-            f"| **{r.season.capitalize()}** | {r.wallet_gold:,.0f} G | {seeds_formatted} | "
-            f"{r.plots_summary} | {spent_str} | +{r.total_daily_profit:,.1f} G/day | {proj_str} |"
-        )
-
-    lines.append("\n---\n")
-
-    for r in valid:
-        season_title = r.season.capitalize()
-        lines.append(f"## {season_title} Detailed Allocation\n")
+    for idx, r in enumerate(valid):
+        season_title = r.season.upper() if r.season else "UNKNOWN"
+        lines.append(f"## {season_title} Optimization Plan\n")
         lines.append(f"- **Config Profile**: [`{r.config_path.as_posix()}`]({r.config_path.as_posix()})")
-        lines.append(f"- **Planning Horizon**: {r.horizon}")
+        lines.append(f"- **Current Day**: Day {r.current_day}")
+        lines.append(f"- **Planning Timeline**: {r.timeline}")
         if r.max_varieties is not None:
             lines.append(f"- **Variety Limit**: Max {r.max_varieties} distinct crop varieties")
         lines.append(f"- **Capital Budget**: {r.wallet_gold:,.0f} G")
         lines.append(
-            f"- **Plot Capacities**: Farm {r.farm_cap} plots | Waterside {r.water_cap} plots | Cave {r.cave_cap} plots\n"
+            f"- **Plot Capacities**: Farm {r.farm_cap} | Waterside {r.water_cap} | Cave {r.cave_cap}\n"
         )
 
-        lines.append("### Optimal Planting Table\n")
-        lines.append(
-            "| Biome | Crop Name | Vendor Town | Seed Cost (G) | Qty | Subtotal Cost (G) | Daily Profit (G/d) | Total Profit (G/d) | Cycle | Planting Schedule |"
-        )
-        lines.append(
-            "| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |"
-        )
-
-        for it in r.items:
-            c = it.crop
+        lines.append("### Optimal Planting Timeline\n")
+        for st in r.stages:
+            lines.append(f"#### Stage {st.stage_idx}: Day {st.start_day} → Day {st.end_day} ({st.window_days}-day window)\n")
             lines.append(
-                f"| {c.biome.capitalize()} | **{c.name}** | {c.town} | {c.cost:,.0f} G | {it.quantity} | "
-                f"{it.subtotal_cost:,.0f} G | +{c.daily_profit:.1f} | +{it.subtotal_daily_profit:.1f} | "
-                f"{c.prod_days}d | `{c.schedule}` |"
+                f"- **Starting Cash**: {st.starting_cash:,.0f} G | "
+                f"**Stage Spent**: {st.cash_spent:,.0f} G | "
+                f"**Farm Plots Used**: {st.farm_used} / {r.farm_cap}\n"
+            )
+            lines.append(
+                "| Plant Day | Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |"
+            )
+            lines.append(
+                "| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |"
+            )
+            for it in st.items:
+                c = it.crop
+                h_str = ", ".join(f"Day {d}" for d in it.harvest_days)
+                if len(h_str) > 24:
+                    h_str = f"Day {it.harvest_days[0]}..{it.harvest_days[-1]} ({len(it.harvest_days)}x)"
+                lines.append(
+                    f"| Day {it.plant_day} | {c.biome.capitalize()} | **{c.name}** | {c.town} | {it.plots_allocated} | "
+                    f"{it.subtotal_cost:,.0f} G | {h_str} | +{it.subtotal_net_profit:,.0f} G |"
+                )
+            net_end = st.cash_remaining + st.revenue_generated
+            lines.append(
+                f"\n- **Stage Harvest Revenue Arrived**: +{st.revenue_generated:,.0f} G | "
+                f"**Projected Cash at Stage End**: **{net_end:,.0f} G**\n"
             )
 
-        lines.append("\n### Resource Utilization & Financial Summary\n")
+        lines.append("### Resource Utilization & Financial Summary\n")
         farm_pct = (r.farm_used / r.farm_cap * 100) if r.farm_cap > 0 else 0
-        lines.append(f"- **Farm Plots Used**: {r.farm_used} / {r.farm_cap} ({farm_pct:.1f}% utilized, {r.farm_cap - r.farm_used} idle)")
+        lines.append(
+            f"- **Farm Plots Used (Init)**: {r.farm_used} / {r.farm_cap} "
+            f"({farm_pct:.1f}% utilized, {r.farm_cap - r.farm_used} idle)"
+        )
         if r.water_cap > 0:
             water_pct = (r.water_used / r.water_cap * 100)
-            lines.append(f"- **Waterside Plots Used**: {r.water_used} / {r.water_cap} ({water_pct:.1f}% utilized, {r.water_cap - r.water_used} idle)")
+            lines.append(
+                f"- **Waterside Plots (Init)**: {r.water_used} / {r.water_cap} "
+                f"({water_pct:.1f}% utilized, {r.water_cap - r.water_used} idle)"
+            )
         if r.cave_cap > 0:
             cave_pct = (r.cave_used / r.cave_cap * 100)
-            lines.append(f"- **Cave Plots Used**: {r.cave_used} / {r.cave_cap} ({cave_pct:.1f}% utilized, {r.cave_cap - r.cave_used} idle)")
+            lines.append(
+                f"- **Cave Plots Used (Init)**: {r.cave_used} / {r.cave_cap} "
+                f"({cave_pct:.1f}% utilized, {r.cave_cap - r.cave_used} idle)"
+            )
 
-        spent_str = f"{r.total_spent:,.0f} G / {r.leftover_gold:,.0f} G ({r.gold_pct:.1f} spent, {r.leftover_gold:,.0f} G leftover)"
-        lines.append(f"- **Capital Investment**: {spent_str}")
-        lines.append(f"- **Total Daily Profit**: **+{r.total_daily_profit:,.1f} G/day**")
-        lines.append(f"- **Projected Horizon Net Profit**: **+{r.projected_net:,.0f} G** over {r.max_days} active days\n")
+        lines.append(
+            f"- **Initial Capital Spent**: {r.total_spent:,.0f} G / {r.wallet_gold:,.0f} G "
+            f"({r.gold_pct:.1f}% spent, {r.leftover_gold:,.0f} G leftover)"
+        )
+        lines.append(f"- **Total Cumulative Season Net Profit**: **+{r.total_season_profit:,.0f} G** across all restock stages")
+        lines.append(f"- **Final Projected Wallet**: **{r.final_wallet_gold:,.0f} G** on Day 30 (Quietus)\n")
+
         lines.append("---\n")
 
     lines.append("## Key Optimization Principles\n")
     lines.append(
-        "1. **The Capital-Plot Inflection Balance**:\n"
-        "   - When wallet capital is scarce (e.g., 1,000 G in Spring), high-compound crops like **Unionion (Nemea)** multiply money fast, while cheap seeds like **Dress Lettuce** act as plot-filling buffers.\n"
-        "2. **Avoiding Single-Crop Capital Traps**:\n"
-        "   - In Summer with 8,000 G, buying expensive seeds like **Islet Watermelon** (2,500 G) starves remaining plots. The solver allocates **29 Morrocorn** + **40 Dress Lettuce** to generate +2,050 G/day (+27% higher total profit than any Watermelon mix).\n"
-        "3. **Biome Specialization**:\n"
+        "1. **Day-to-Day Rolling Capital Reinvestment**:\n"
+        "   - Rather than waiting for 10-day shop restocks to reinvest cash, the model dynamically redeploys proceeds the very morning after a harvest arrives (accounting for the 1-day overnight shipping turnaround).\n"
+        "2. **Soil Occupancy & Regrowth Dynamics**:\n"
+        "   - Single-harvest crops free up soil immediately on harvest day for replanting, while regrowth crops (such as Tomato, Peppers, and Nectarcane) remain rooted in soil across their full harvesting cycle without incurring additional seed costs.\n"
+        "3. **Biome Specialization & Plot Balancing**:\n"
         "   - High-margin multi-biome crops (**Nectarcane** on Waterside and **Sudor/Revol Pepper** in Cave) run on independent plot constraints, providing pure additive revenue independent of main farm capacity.\n"
     )
 
@@ -610,14 +797,13 @@ def generate_markdown_report(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Harvestella Crop Allocation Optimizer (MILP Knapsack Model)"
+        description="Harvestella Crop Allocation Optimizer (Day-to-Day Time-Indexed MILP Model)"
     )
     parser.add_argument("-sp", "--spring", action="store_true", help="Optimize Spring (configs/spring.yaml)")
     parser.add_argument("-su", "--summer", action="store_true", help="Optimize Summer (configs/summer.yaml)")
     parser.add_argument("-fa", "--fall", action="store_true", help="Optimize Fall (configs/fall.yaml)")
     parser.add_argument("-wi", "--winter", action="store_true", help="Optimize Winter (configs/winter.yaml)")
     parser.add_argument("-a", "--all", action="store_true", help="Run optimization across all 4 seasons (default if no season specified)")
-
     args = parser.parse_args()
     configs_dir = Path("configs")
     csv_dir = Path("seasons")
@@ -648,9 +834,6 @@ def main() -> None:
     if not all_results:
         print("No valid seasonal YAML configurations found.")
         return
-
-    if len(all_results) > 1:
-        print_multi_season_summary(all_results)
 
     report_file = Path("crop_allocation_report.md")
     generate_markdown_report(all_results, output_path=report_file)

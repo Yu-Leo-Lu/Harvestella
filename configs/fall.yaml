@@ -4,7 +4,6 @@
 
 current_day: 1
 wallet_gold: 15000
-horizon: quietus # Options: "quietus" (mature on or before Day 30) or "next_restock" (Days 11, 21, 31)
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # Current available unplanted plots by biome
