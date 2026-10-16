@@ -14,46 +14,46 @@
 
 #### Stage 1: Day 18 → Day 20 (3-day window)
 
-- **Starting Cash**: 51,600 G | **Stage Spent**: 54,015 G | **Farm Plots Used**: 101 / 61
+- **Starting Cash**: 51,600 G | **Stage Spent**: 56,685 G | **Farm Plots Used**: 102 / 61
 
 | Plant Day | Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Day 18 | Farm | **Nemean Tomato** | Nemea | 21 | 3,570 G | Day 23..28 (6x) | +4,620 G |
 | Day 18 | Farm | **Carrop** | Nemea | 21 | 1,995 G | Day 19 | +420 G |
-| Day 18 | Farm | **Carrop** | Lethe | 8 | 840 G | Day 19 | +80 G |
-| Day 18 | Farm | **Stellar Wheat** | Lethe | 11 | 440 G | Day 20 | +165 G |
-| Day 18 | Waterside | **Islet Watermelon** | Shatolla | 5 | 12,500 G | Day 30 | +10,500 G |
-| Day 18 | Waterside | **Nectarcane** | Shatolla | 31 | 11,470 G | Day 22, Day 25, Day 28 | +11,780 G |
-| Day 18 | Cave | **Sudor Pepper** | Argene | 48 | 19,200 G | Day 21, Day 24, Day 27 | +16,800 G |
-| Day 19 | Farm | **Stellar Wheat** | Lethe | 15 | 600 G | Day 21 | +225 G |
-| Day 20 | Farm | **Stellar Wheat** | Lethe | 25 | 1,000 G | Day 22 | +375 G |
-| Day 20 | Cave | **Sudor Pepper** | Argene | 6 | 2,400 G | Day 23, Day 26, Day 29 | +2,100 G |
+| Day 18 | Farm | **Carrop** | Lethe | 30 | 3,150 G | Day 19 | +300 G |
+| Day 18 | Farm | **Stellar Wheat** | Lethe | 10 | 400 G | Day 20 | +150 G |
+| Day 18 | Waterside | **Islet Watermelon** | Shatolla | 10 | 25,000 G | Day 30 | +21,000 G |
+| Day 18 | Waterside | **Nectarcane** | Shatolla | 10 | 3,700 G | Day 22, Day 25, Day 28 | +3,800 G |
+| Day 18 | Cave | **Sudor Pepper** | Argene | 38 | 15,200 G | Day 21, Day 24, Day 27 | +13,300 G |
+| Day 19 | Farm | **Stellar Wheat** | Lethe | 41 | 1,640 G | Day 21 | +615 G |
+| Day 20 | Cave | **Sudor Pepper** | Argene | 14 | 5,600 G | Day 23, Day 26, Day 29 | +4,900 G |
 
-- **Stage Harvest Revenue Arrived**: +3,335 G | **Projected Cash at Stage End**: **920 G**
+- **Stage Harvest Revenue Arrived**: +5,865 G | **Projected Cash at Stage End**: **780 G**
 
 #### Stage 2: Day 21 → Day 30 (10-day window)
 
-- **Starting Cash**: 920 G | **Stage Spent**: 34,370 G | **Farm Plots Used**: 131 / 61
+- **Starting Cash**: 780 G | **Stage Spent**: 31,665 G | **Farm Plots Used**: 123 / 61
 
 | Plant Day | Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Day 21 | Farm | **Stellar Wheat** | Lethe | 15 | 600 G | Day 23 | +225 G |
-| Day 22 | Farm | **Carrop** | Nemea | 21 | 1,995 G | Day 23 | +420 G |
-| Day 22 | Farm | **Carrop** | Lethe | 4 | 420 G | Day 23 | +40 G |
-| Day 23 | Farm | **Seatide Garlic** | Shatolla | 30 | 19,500 G | Day 29 | +10,500 G |
-| Day 24 | Farm | **Seatide Garlic** | Shatolla | 10 | 6,500 G | Day 30 | +3,500 G |
-| Day 29 | Farm | **Carrop** | Lethe | 51 | 5,355 G | Day 30 | +510 G |
+| Day 21 | Farm | **Morrocorn** | Shatolla | 1 | 200 G | Day 25 | +200 G |
+| Day 21 | Cave | **Sudor Pepper** | Argene | 1 | 400 G | Day 24, Day 27, Day 30 | +350 G |
+| Day 22 | Farm | **Morrocorn** | Shatolla | 60 | 12,000 G | Day 26 | +12,000 G |
+| Day 24 | Waterside | **Honey Flower** | Shatolla | 16 | 6,080 G | Day 30 | +4,000 G |
+| Day 25 | Farm | **Morrocorn** | Lethe | 1 | 230 G | Day 29 | +170 G |
+| Day 26 | Farm | **Morrocorn** | Shatolla | 38 | 7,600 G | Day 30 | +7,600 G |
+| Day 26 | Farm | **Morrocorn** | Lethe | 22 | 5,060 G | Day 30 | +3,740 G |
+| Day 29 | Farm | **Carrop** | Nemea | 1 | 95 G | Day 30 | +20 G |
 
-- **Stage Harvest Revenue Arrived**: +108,445 G | **Projected Cash at Stage End**: **74,995 G**
+- **Stage Harvest Revenue Arrived**: +74,605 G | **Projected Cash at Stage End**: **43,720 G**
 
 ### Resource Utilization & Financial Summary
 
 - **Farm Plots Used (Init)**: 61 / 61 (100.0% utilized, 0 idle)
-- **Waterside Plots (Init)**: 36 / 36 (100.0% utilized, 0 idle)
-- **Cave Plots Used (Init)**: 48 / 54 (88.9% utilized, 6 idle)
-- **Initial Capital Spent**: 50,015 G / 51,600 G (96.9% spent, 1,585 G leftover)
-- **Total Cumulative Season Net Profit**: **+62,260 G** across all restock stages
-- **Final Projected Wallet**: **113,860 G** on Day 30 (Quietus)
+- **Waterside Plots (Init)**: 20 / 36 (55.6% utilized, 16 idle)
+- **Cave Plots Used (Init)**: 38 / 54 (70.4% utilized, 16 idle)
+- **Initial Capital Spent**: 49,445 G / 51,600 G (95.8% spent, 2,155 G leftover)
+- **Total Cumulative Season Net Profit**: **+72,565 G** across all restock stages
+- **Final Projected Wallet**: **124,165 G** on Day 30 (Quietus)
 
 ---
 

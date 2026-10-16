@@ -1,23 +1,23 @@
-Crop Name,Vendor Town,Biome,Seed Cost (G),NQ Sale (G),HQ Sale (G),Mature (Days),Regrowth (Days),Max Harvests,Growth Season,Fruit Season,Daily NQ Profit (G/d),Cash Compound Rate (%/d),Production (Days),Planting Schedule
-Royal Eggplant,Lethe,Farm,780,480,960,7,2,3,Fa,Fa,60.0,5.24,11,"19, 8"
-Revol Pepper,Argene,Cave,560,265,330,4,3,5,"Sp, Su, Fa","Sp, Su, Fa",47.8,5.2,16,14
-Sudor Pepper,Argene,Cave,400,250,310,3,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.9,6.49,9,"21, 12, 3"
-Nectarcane,Nemea,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.0,6.63,10,"20, 10"
-Nectarcane,Shatolla,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.0,6.63,10,"20, 10"
-Unionion,Nemea,Farm,105,195,245,3,,1,"Sp, Fa","Sp, Fa",30.0,16.74,3,"27, 24, 21, 18, 15, ... , 3"
-Unionion,Lethe,Farm,130,195,245,3,,1,"Sp, Fa","Sp, Fa",21.7,10.67,3,"27, 24, 21, 18, 15, ... , 3"
-Curry Herbs,Argene,Cave,240,350,435,6,,1,"Sp, Su, Fa","Sp, Su, Fa",18.3,5.54,6,"24, 18, 12, 6"
-Dress Lettuce,Lethe,Farm,55,85,105,2,,1,"Sp, Su, Fa","Sp, Su, Fa",15.0,15.62,2,"28, 26, 24, 22, 20, ... , 2"
-Lumpotato,Argene,Farm,80,120,150,3,,1,"Fa, Wi","Fa, Wi",13.3,10.67,3,"27, 24, 21, 18, 15, ... , 3"
-Curry Herbs,Lethe,Cave,270,350,435,6,,1,"Sp, Su, Fa","Sp, Su, Fa",13.3,3.78,6,"24, 18, 12, 6"
-Lumpotato,Lethe,Farm,90,120,150,3,,1,"Fa, Wi","Fa, Wi",10.0,7.46,3,"27, 24, 21, 18, 15, ... , 3"
-Stellar Wheat,Lethe,Farm,40,55,70,2,,1,"Sp, Su, Fa","Sp, Su, Fa",7.5,11.2,2,"28, 26, 24, 22, 20, ... , 2"
-Eden Rice,Abandoned Eden,Farm,20,35,45,3,,1,"Su, Fa","Su, Fa",5.0,15.02,3,"27, 24, 21, 18, 15, ... , 3"
-Grass,Lethe,Farm,30,35,45,2,,1,"Sp, Su, Fa","Sp, Su, Fa",2.5,5.27,2,"28, 26, 24, 22, 20, ... , 2"
-Rainbow Bean,Lethe,Farm,180,40,50,6,2,5,Fa,Fa,1.4,0.7,14,"16, 2"
-Nitro Pineapple,Astrum Helix,Cave,,5,5,6,,1,"Sp, Su, Fa","Sp, Su, Fa",0.8,,6,"24, 18, 12, 6"
-Lantern Pumpkin,Lethe,Farm,3750,3750,,11,,1,Fa,Fa,0.0,0.0,11,"19, 8"
-Grouply Grape,Lethe,Farm,2000,85,105,6,1,Multi-Season,"Sp, Su, Fa, Wi",Fa,,,,
-Princess Chestnut,Lethe,Farm,2200,60,75,7,2,Multi-Season,"Sp, Su, Fa, Wi",Fa,,,,
-Promised Fruit,Astrum Helix,Farm,,30,35,7,2,Tree,"Sp, Su, Fa, Wi","Sp, Su, Fa, Wi",,,,
-Moonfruit,Stella Cradle,Farm,,100,125,12,3,Tree,"Sp, Su, Fa, Wi","Sp, Su, Fa, Wi",,,,
+Crop Name,Vendor Town,Vendor Stock,Biome,Seed Cost (G),NQ Sale (G),HQ Sale (G),Mature (Days),Regrowth (Days),Max Harvests,Growth Season,Fruit Season,Daily NQ Profit (G/d),Cash Compound Rate (%/d),Production (Days),Planting Schedule
+Royal Eggplant,Lethe,99,Farm,780,480,960,7,2,3,Fa,Fa,60.0,5.24,11,"19, 8"
+Revol Pepper,Argene,99,Cave,560,265,330,4,3,5,"Sp, Su, Fa","Sp, Su, Fa",47.8,5.2,16,14
+Sudor Pepper,Argene,99,Cave,400,250,310,3,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.9,6.49,9,"21, 12, 3"
+Nectarcane,Nemea,10,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.0,6.63,10,"20, 10"
+Nectarcane,Shatolla,99,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.0,6.63,10,"20, 10"
+Unionion,Nemea,99,Farm,105,195,245,3,,1,"Sp, Fa","Sp, Fa",30.0,16.74,3,"27, 24, 21, 18, 15, ... , 3"
+Unionion,Lethe,99,Farm,130,195,245,3,,1,"Sp, Fa","Sp, Fa",21.7,10.67,3,"27, 24, 21, 18, 15, ... , 3"
+Curry Herbs,Argene,99,Cave,240,350,435,6,,1,"Sp, Su, Fa","Sp, Su, Fa",18.3,5.54,6,"24, 18, 12, 6"
+Dress Lettuce,Lethe,99,Farm,55,85,105,2,,1,"Sp, Su, Fa","Sp, Su, Fa",15.0,15.62,2,"28, 26, 24, 22, 20, ... , 2"
+Lumpotato,Argene,99,Farm,80,120,150,3,,1,"Fa, Wi","Fa, Wi",13.3,10.67,3,"27, 24, 21, 18, 15, ... , 3"
+Curry Herbs,Lethe,50,Cave,270,350,435,6,,1,"Sp, Su, Fa","Sp, Su, Fa",13.3,3.78,6,"24, 18, 12, 6"
+Lumpotato,Lethe,99,Farm,90,120,150,3,,1,"Fa, Wi","Fa, Wi",10.0,7.46,3,"27, 24, 21, 18, 15, ... , 3"
+Stellar Wheat,Lethe,99,Farm,40,55,70,2,,1,"Sp, Su, Fa","Sp, Su, Fa",7.5,11.2,2,"28, 26, 24, 22, 20, ... , 2"
+Eden Rice,Abandoned Eden,99,Farm,20,35,45,3,,1,"Su, Fa","Su, Fa",5.0,15.02,3,"27, 24, 21, 18, 15, ... , 3"
+Grass,Lethe,99,Farm,30,35,45,2,,1,"Sp, Su, Fa","Sp, Su, Fa",2.5,5.27,2,"28, 26, 24, 22, 20, ... , 2"
+Rainbow Bean,Lethe,99,Farm,180,40,50,6,2,5,Fa,Fa,1.4,0.7,14,"16, 2"
+Nitro Pineapple,Astrum Helix,,Cave,,5,5,6,,1,"Sp, Su, Fa","Sp, Su, Fa",0.8,,6,"24, 18, 12, 6"
+Lantern Pumpkin,Lethe,99,Farm,3750,3750,,11,,1,Fa,Fa,0.0,0.0,11,"19, 8"
+Grouply Grape,Lethe,99,Farm,2000,85,105,6,1,Multi-Season,"Sp, Su, Fa, Wi",Fa,,,,
+Princess Chestnut,Lethe,99,Farm,2200,60,75,7,2,Multi-Season,"Sp, Su, Fa, Wi",Fa,,,,
+Promised Fruit,Astrum Helix,,Farm,,30,35,7,2,Tree,"Sp, Su, Fa, Wi","Sp, Su, Fa, Wi",,,,
+Moonfruit,Stella Cradle,,Farm,,100,125,12,3,Tree,"Sp, Su, Fa, Wi","Sp, Su, Fa, Wi",,,,

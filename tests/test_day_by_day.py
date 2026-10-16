@@ -2,15 +2,17 @@
 
 import csv
 from pathlib import Path
-import yaml
+import unittest
 import numpy as np
-from scipy.optimize import LinearConstraint, Bounds, milp
+import yaml
+from scipy.optimize import Bounds, LinearConstraint, milp
+
 
 def run_season(config_name="spring"):
     config_path = Path(f"configs/{config_name}.yaml")
     if not config_path.is_file():
         print(f"Skipping {config_name}: not found")
-        return
+        return None
     with open(config_path, encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
 
@@ -59,6 +61,9 @@ def run_season(config_name="spring"):
         regrowth = int(regrowth_str) if is_regrowth else 0
         max_harvests = int(max_h_str) if (max_h_str and max_h_str.isdigit()) else 1
 
+        v_stock_str = r.get("Vendor Stock", "").strip()
+        vendor_stock = int(v_stock_str) if (v_stock_str and v_stock_str.isdigit()) else 99
+
         stock_key_town = f"{crop_name} ({town})"
         if stock_key_town in seed_stock:
             stock = int(seed_stock[stock_key_town])
@@ -67,9 +72,9 @@ def run_season(config_name="spring"):
         elif crop_name in seed_stock:
             stock = int(seed_stock[crop_name])
         else:
-            stock = 99
+            stock = vendor_stock
 
-        if stock <= 0:
+        if stock <= 0 and (current_day > 20 or vendor_stock <= 0):
             continue
 
         crops.append({
@@ -83,87 +88,74 @@ def run_season(config_name="spring"):
             "regrowth": regrowth,
             "max_harvests": max_harvests,
             "stock": stock,
+            "vendor_stock": vendor_stock,
         })
 
-    days = list(range(current_day, 31))
+    active_days = list(range(current_day, 31))
     var_map = []
-
     for c_idx, c in enumerate(crops):
-        for d in days:
+        for d in active_days:
             if not c["is_regrowth"]:
-                harvest_day = d + c["mature"]
-                if harvest_day <= 30:
-                    harvests = [harvest_day]
-                    occupy_days = list(range(d, harvest_day))
-                    total_rev = c["nq_sale"]
-                    net_profit = total_rev - c["cost"]
+                h_day = d + c["mature"]
+                if h_day <= 30:
                     var_map.append({
                         "crop_idx": c_idx,
                         "day": d,
-                        "harvests": harvests,
-                        "occupy_days": occupy_days,
-                        "total_rev": total_rev,
-                        "net_profit": net_profit,
+                        "harvests": [h_day],
+                        "occupy_days": list(range(d, h_day)),
+                        "cost": c["cost"],
+                        "rev": c["nq_sale"],
+                        "profit": c["nq_sale"] - c["cost"],
+                        "biome": c["biome"],
                     })
             else:
                 harvests = []
                 for k in range(c["max_harvests"]):
-                    h_day = d + c["mature"] + k * c["regrowth"]
-                    if h_day <= 30:
-                        harvests.append(h_day)
+                    h = d + c["mature"] + k * c["regrowth"]
+                    if h <= 30:
+                        harvests.append(h)
                     else:
                         break
                 if harvests:
-                    total_rev = len(harvests) * c["nq_sale"]
-                    net_profit = total_rev - c["cost"]
-                    if net_profit > 0:
-                        last_h = max(harvests)
-                        occupy_days = list(range(d, min(31, last_h + 1)))
-                        var_map.append({
-                            "crop_idx": c_idx,
-                            "day": d,
-                            "harvests": harvests,
-                            "occupy_days": occupy_days,
-                            "total_rev": total_rev,
-                            "net_profit": net_profit,
-                        })
+                    last_h = max(harvests)
+                    var_map.append({
+                        "crop_idx": c_idx,
+                        "day": d,
+                        "harvests": harvests,
+                        "occupy_days": list(range(d, last_h)),
+                        "cost": c["cost"],
+                        "rev": len(harvests) * c["nq_sale"],
+                        "profit": len(harvests) * c["nq_sale"] - c["cost"],
+                        "biome": c["biome"],
+                    })
 
     n_vars = len(var_map)
-
-    c_obj = np.zeros(n_vars)
-    for i, v in enumerate(var_map):
-        c = crops[v["crop_idx"]]
-        c_obj[i] = -(v["net_profit"] - 1e-6 * c["cost"] - 1e-8 * (v["day"] - current_day))
+    c_obj = np.array([-v["profit"] for v in var_map])
 
     A_rows = []
     lb_list = []
     ub_list = []
 
-    # Daily Plot Capacity per Biome
-    caps = {"farm": farm_cap, "waterside": water_cap, "cave": cave_cap}
-    for t in days:
-        for biome, cap in caps.items():
-            if cap <= 0:
-                continue
+    # 1. Daily plot capacity
+    for d in active_days:
+        for b_name, b_cap in [("farm", farm_cap), ("waterside", water_cap), ("cave", cave_cap)]:
             row = [0.0] * n_vars
-            has_relevant = False
+            has_b = False
             for i, v in enumerate(var_map):
-                c = crops[v["crop_idx"]]
-                if c["biome"] == biome and t in v["occupy_days"]:
+                if v["biome"] == b_name and d in v["occupy_days"]:
                     row[i] = 1.0
-                    has_relevant = True
-            if has_relevant:
+                    has_b = True
+            if has_b:
                 A_rows.append(row)
                 lb_list.append(0.0)
-                ub_list.append(float(cap))
+                ub_list.append(float(b_cap))
 
-    # Daily Cash Balance
-    for t in days:
+    # 2. Cumulative cash flow constraints
+    for t in active_days:
         row = [0.0] * n_vars
         for i, v in enumerate(var_map):
-            c = crops[v["crop_idx"]]
             if v["day"] <= t:
-                row[i] += c["cost"]
+                row[i] += v["cost"]
             for h in v["harvests"]:
                 if h + 1 <= t:
                     row[i] -= c["nq_sale"]
@@ -171,13 +163,14 @@ def run_season(config_name="spring"):
         lb_list.append(-np.inf)
         ub_list.append(float(wallet_gold))
 
-    # Restock Windows
+    # 3. 10-day restock inventory constraints
     windows = [(1, 10), (11, 20), (21, 30)]
     for w_start, w_end in windows:
         if w_end < current_day:
             continue
+        is_current_window = (w_start <= current_day <= w_end)
         for c_idx, c in enumerate(crops):
-            stock = c["stock"]
+            cap = c["stock"] if is_current_window else c["vendor_stock"]
             row = [0.0] * n_vars
             has_relevant = False
             for i, v in enumerate(var_map):
@@ -187,7 +180,7 @@ def run_season(config_name="spring"):
             if has_relevant:
                 A_rows.append(row)
                 lb_list.append(0.0)
-                ub_list.append(float(stock))
+                ub_list.append(float(cap))
 
     A = np.array(A_rows)
     constraints = LinearConstraint(A, lb_list, ub_list)
@@ -204,7 +197,30 @@ def run_season(config_name="spring"):
 
     profit = -res.fun if res.x is not None else 0
     print(f"[{season.upper()}] Variables: {n_vars} | Status: {res.status} ({res.message}) | Total Profit: +{profit:,.0f} G", flush=True)
+    return res
+
+
+class TestDayByDayOptimization(unittest.TestCase):
+    def test_spring_optimization(self):
+        res = run_season("spring")
+        self.assertIsNotNone(res)
+        self.assertIn(res.status, [0, 1])
+
+    def test_summer_optimization(self):
+        res = run_season("summer")
+        self.assertIsNotNone(res)
+        self.assertIn(res.status, [0, 1])
+
+    def test_fall_optimization(self):
+        res = run_season("fall")
+        self.assertIsNotNone(res)
+        self.assertIn(res.status, [0, 1])
+
+    def test_winter_optimization(self):
+        res = run_season("winter")
+        self.assertIsNotNone(res)
+        self.assertIn(res.status, [0, 1])
+
 
 if __name__ == "__main__":
-    for s in ["spring", "summer", "fall", "winter"]:
-        run_season(s)
+    unittest.main()

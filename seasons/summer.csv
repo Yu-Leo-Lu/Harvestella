@@ -1,27 +1,27 @@
-Crop Name,Vendor Town,Biome,Seed Cost (G),NQ Sale (G),HQ Sale (G),Mature (Days),Regrowth (Days),Max Harvests,Growth Season,Fruit Season,Daily NQ Profit (G/d),Cash Compound Rate (%/d),Production (Days),Planting Schedule
-Islet Watermelon,Shatolla,Waterside,2500,4600,5800,12,,1,Su,Su,175.0,4.8,12,"18, 6"
-Seatide Garlic,Shatolla,Farm,650,1000,1250,6,,1,Su,Su,58.3,6.35,6,"24, 18, 12, 6"
-Morrocorn,Shatolla,Farm,200,400,500,4,,1,Su,Su,50.0,14.87,4,"26, 22, 18, 14, 10, 6, 2"
-Revol Pepper,Argene,Cave,560,265,330,4,3,5,"Sp, Su, Fa","Sp, Su, Fa",47.8,5.2,16,14
-Morrocorn,Lethe,Farm,230,400,500,4,,1,Su,Su,42.5,11.7,4,"26, 22, 18, 14, 10, 6, 2"
-Honey Flower,Shatolla,Waterside,380,630,785,6,,1,Su,Su,41.7,7.49,6,"24, 18, 12, 6"
-Sudor Pepper,Argene,Cave,400,250,310,3,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.9,6.49,9,"21, 12, 3"
-Nectarcane,Nemea,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.0,6.63,10,"20, 10"
-Nectarcane,Shatolla,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.0,6.63,10,"20, 10"
-Shatollan Paprika,Shatolla,Farm,250,110,135,5,2,9,Su,Su,35.2,6.46,21,9
-Nemean Tomato,Nemea,Farm,170,65,95,5,1,6,"Sp, Su","Sp, Su",22.0,7.84,10,"20, 10"
-Carrop,Nemea,Farm,95,115,145,1,,1,"Sp, Su","Sp, Su",20.0,10.02,1,"29, 28, 27, 26, 25, ... , 1"
-Curry Herbs,Argene,Cave,240,350,435,6,,1,"Sp, Su, Fa","Sp, Su, Fa",18.3,5.54,6,"24, 18, 12, 6"
-Bellhop Seeds,Shatolla,Farm,560,45,55,7,1,24,Su,Su,17.3,2.14,30,1
-Dress Lettuce,Lethe,Farm,55,85,105,2,,1,"Sp, Su, Fa","Sp, Su, Fa",15.0,15.62,2,"28, 26, 24, 22, 20, ... , 2"
-Curry Herbs,Lethe,Cave,270,350,435,6,,1,"Sp, Su, Fa","Sp, Su, Fa",13.3,3.78,6,"24, 18, 12, 6"
-Carrop,Lethe,Farm,105,115,145,1,,1,"Sp, Su","Sp, Su",10.0,4.65,1,"29, 28, 27, 26, 25, ... , 1"
-Stellar Wheat,Lethe,Farm,40,55,70,2,,1,"Sp, Su, Fa","Sp, Su, Fa",7.5,11.2,2,"28, 26, 24, 22, 20, ... , 2"
-Eden Rice,Abandoned Eden,Farm,20,35,45,3,,1,"Su, Fa","Su, Fa",5.0,15.02,3,"27, 24, 21, 18, 15, ... , 3"
-Grass,Lethe,Farm,30,35,45,2,,1,"Sp, Su, Fa","Sp, Su, Fa",2.5,5.27,2,"28, 26, 24, 22, 20, ... , 2"
-Nitro Pineapple,Astrum Helix,Cave,,5,5,6,,1,"Sp, Su, Fa","Sp, Su, Fa",0.8,,6,"24, 18, 12, 6"
-Lococonut,Shatolla,Waterside,3200,35,45,7,2,Multi-Season,"Sp, Su, Fa, Wi",Su,,,,
-Numblemon,Shatolla,Farm,2000,95,120,6,1,Multi-Season,"Sp, Su, Fa, Wi",Su,,,,
-Macocoa,Abandoned Eden,Farm,2400,100,125,6,1,Tree,"Sp, Su, Fa, Wi",Su,,,,
-Promised Fruit,Astrum Helix,Farm,,30,35,7,2,Tree,"Sp, Su, Fa, Wi","Sp, Su, Fa, Wi",,,,
-Moonfruit,Stella Cradle,Farm,,100,125,12,3,Tree,"Sp, Su, Fa, Wi","Sp, Su, Fa, Wi",,,,
+Crop Name,Vendor Town,Vendor Stock,Biome,Seed Cost (G),NQ Sale (G),HQ Sale (G),Mature (Days),Regrowth (Days),Max Harvests,Growth Season,Fruit Season,Daily NQ Profit (G/d),Cash Compound Rate (%/d),Production (Days),Planting Schedule
+Islet Watermelon,Shatolla,99,Waterside,2500,4600,5800,12,,1,Su,Su,175.0,4.8,12,"18, 6"
+Seatide Garlic,Shatolla,99,Farm,650,1000,1250,6,,1,Su,Su,58.3,6.35,6,"24, 18, 12, 6"
+Morrocorn,Shatolla,99,Farm,200,400,500,4,,1,Su,Su,50.0,14.87,4,"26, 22, 18, 14, 10, 6, 2"
+Revol Pepper,Argene,99,Cave,560,265,330,4,3,5,"Sp, Su, Fa","Sp, Su, Fa",47.8,5.2,16,14
+Morrocorn,Lethe,50,Farm,230,400,500,4,,1,Su,Su,42.5,11.7,4,"26, 22, 18, 14, 10, 6, 2"
+Honey Flower,Shatolla,99,Waterside,380,630,785,6,,1,Su,Su,41.7,7.49,6,"24, 18, 12, 6"
+Sudor Pepper,Argene,99,Cave,400,250,310,3,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.9,6.49,9,"21, 12, 3"
+Nectarcane,Nemea,10,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.0,6.63,10,"20, 10"
+Nectarcane,Shatolla,99,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.0,6.63,10,"20, 10"
+Shatollan Paprika,Shatolla,99,Farm,250,110,135,5,2,9,Su,Su,35.2,6.46,21,9
+Nemean Tomato,Nemea,99,Farm,170,65,95,5,1,6,"Sp, Su","Sp, Su",22.0,7.84,10,"20, 10"
+Carrop,Nemea,99,Farm,95,115,145,1,,1,"Sp, Su","Sp, Su",20.0,10.02,1,"29, 28, 27, 26, 25, ... , 1"
+Curry Herbs,Argene,99,Cave,240,350,435,6,,1,"Sp, Su, Fa","Sp, Su, Fa",18.3,5.54,6,"24, 18, 12, 6"
+Bellhop Seeds,Shatolla,99,Farm,560,45,55,7,1,24,Su,Su,17.3,2.14,30,1
+Dress Lettuce,Lethe,99,Farm,55,85,105,2,,1,"Sp, Su, Fa","Sp, Su, Fa",15.0,15.62,2,"28, 26, 24, 22, 20, ... , 2"
+Curry Herbs,Lethe,50,Cave,270,350,435,6,,1,"Sp, Su, Fa","Sp, Su, Fa",13.3,3.78,6,"24, 18, 12, 6"
+Carrop,Lethe,99,Farm,105,115,145,1,,1,"Sp, Su","Sp, Su",10.0,4.65,1,"29, 28, 27, 26, 25, ... , 1"
+Stellar Wheat,Lethe,99,Farm,40,55,70,2,,1,"Sp, Su, Fa","Sp, Su, Fa",7.5,11.2,2,"28, 26, 24, 22, 20, ... , 2"
+Eden Rice,Abandoned Eden,99,Farm,20,35,45,3,,1,"Su, Fa","Su, Fa",5.0,15.02,3,"27, 24, 21, 18, 15, ... , 3"
+Grass,Lethe,99,Farm,30,35,45,2,,1,"Sp, Su, Fa","Sp, Su, Fa",2.5,5.27,2,"28, 26, 24, 22, 20, ... , 2"
+Nitro Pineapple,Astrum Helix,,Cave,,5,5,6,,1,"Sp, Su, Fa","Sp, Su, Fa",0.8,,6,"24, 18, 12, 6"
+Lococonut,Shatolla,99,Waterside,3200,35,45,7,2,Multi-Season,"Sp, Su, Fa, Wi",Su,,,,
+Numblemon,Shatolla,99,Farm,2000,95,120,6,1,Multi-Season,"Sp, Su, Fa, Wi",Su,,,,
+Macocoa,Abandoned Eden,99,Farm,2400,100,125,6,1,Tree,"Sp, Su, Fa, Wi",Su,,,,
+Promised Fruit,Astrum Helix,,Farm,,30,35,7,2,Tree,"Sp, Su, Fa, Wi","Sp, Su, Fa, Wi",,,,
+Moonfruit,Stella Cradle,,Farm,,100,125,12,3,Tree,"Sp, Su, Fa, Wi","Sp, Su, Fa, Wi",,,,

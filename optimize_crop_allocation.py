@@ -38,6 +38,7 @@ class CropCandidate:
     regrowth: int = 0
     max_harvests: int = 1
     stock: int = 99
+    vendor_stock: int = 99
     daily_profit: float = 0.0
     prod_days: int = 0
 
@@ -225,6 +226,9 @@ def solve_allocation(
         regrowth = int(regrowth_str) if is_regrowth else 0
         max_harvests = int(max_h_str) if (max_h_str and max_h_str.isdigit()) else 1
 
+        v_stock_str = r.get("Vendor Stock", "").strip()
+        vendor_stock = int(v_stock_str) if (v_stock_str and v_stock_str.isdigit()) else 99
+
         stock_key_town = f"{crop_name} ({town})"
         if stock_key_town in seed_stock:
             stock = int(seed_stock[stock_key_town])
@@ -233,9 +237,10 @@ def solve_allocation(
         elif crop_name in seed_stock:
             stock = int(seed_stock[crop_name])
         else:
-            stock = 99
+            stock = vendor_stock
 
-        if stock <= 0:
+        # If both current stock and future vendor restock are non-positive, skip crop
+        if stock <= 0 and (current_day > 20 or vendor_stock <= 0):
             continue
 
         crops.append(
@@ -250,6 +255,7 @@ def solve_allocation(
                 regrowth=regrowth,
                 max_harvests=max_harvests,
                 stock=stock,
+                vendor_stock=vendor_stock,
                 daily_profit=daily_profit,
                 prod_days=prod_days,
             )
@@ -392,8 +398,9 @@ def solve_allocation(
     for w_start, w_end in windows:
         if w_end < current_day:
             continue
+        is_current_window = (w_start <= current_day <= w_end)
         for c_idx, c in enumerate(crops):
-            stock = c.stock
+            cap = c.stock if is_current_window else c.vendor_stock
             row = [0.0] * total_vars
             has_relevant = False
             for i, v in enumerate(var_map):
@@ -403,7 +410,7 @@ def solve_allocation(
             if has_relevant:
                 A_rows.append(row)
                 lb_list.append(0.0)
-                ub_list.append(float(stock))
+                ub_list.append(float(cap))
 
     # D) Big-M linking for variety cardinality limit (if active)
     if use_variety_limit and max_varieties is not None:
