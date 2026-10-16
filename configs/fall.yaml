@@ -6,11 +6,15 @@ current_day: 1
 wallet_gold: 15000
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
-# Current available unplanted plots by biome
+# Available unplanted plots by biome
+# Format: start: <plots_now> and optional <milestone_day>: <expanded_plots>
 free_plots:
-  farm: 70
-  waterside: 12
-  cave: 12
+  farm:
+    start: 70   # Available farm plots from current_day onwards
+  waterside:
+    start: 12   # Available waterside plots from current_day onwards
+  cave:
+    start: 12   # Available cave plots from current_day onwards
 
 # Town unlock status (set to false if a town vendor is not yet unlocked)
 unlocked_towns:

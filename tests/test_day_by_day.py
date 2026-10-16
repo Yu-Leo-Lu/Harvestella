@@ -8,6 +8,36 @@ import yaml
 from scipy.optimize import Bounds, LinearConstraint, milp
 
 
+def get_plot_capacity(biome_cfg, day: int, current_day: int = 1) -> int:
+    """Resolve daily plot capacity from a scalar or a stepped schedule {start: N, day: N}."""
+    if biome_cfg is None:
+        return 0
+    if isinstance(biome_cfg, (int, float)):
+        return max(0, int(biome_cfg))
+    if isinstance(biome_cfg, dict):
+        milestones: dict[int, int] = {}
+        for k, v in biome_cfg.items():
+            k_str = str(k).strip().lower()
+            try:
+                val = max(0, int(v))
+            except (ValueError, TypeError):
+                continue
+            if k_str in ("start", "now", "init", "current", "base"):
+                milestones[current_day] = val
+            elif k_str.isdigit():
+                milestones[int(k_str)] = val
+
+        if not milestones:
+            return 0
+
+        sorted_days = sorted(milestones.keys())
+        valid = [m for m in sorted_days if m <= day]
+        if valid:
+            return milestones[max(valid)]
+        return milestones[sorted_days[0]]
+    return 0
+
+
 def run_season(config_name="spring"):
     config_path = Path(f"configs/{config_name}.yaml")
     if not config_path.is_file():
@@ -24,9 +54,10 @@ def run_season(config_name="spring"):
     current_day = int(cfg.get("current_day", 1))
     wallet_gold = float(cfg.get("wallet_gold", 0.0))
     free_plots = cfg.get("free_plots", {})
-    farm_cap = int(free_plots.get("farm", 0))
-    water_cap = int(free_plots.get("waterside", 0))
-    cave_cap = int(free_plots.get("cave", 0))
+    active_days = list(range(current_day, 31))
+    farm_cap = max((get_plot_capacity(free_plots.get("farm"), d, current_day) for d in active_days), default=0)
+    water_cap = max((get_plot_capacity(free_plots.get("waterside"), d, current_day) for d in active_days), default=0)
+    cave_cap = max((get_plot_capacity(free_plots.get("cave"), d, current_day) for d in active_days), default=0)
     unlocked_towns = cfg.get("unlocked_towns", {})
     seed_stock = cfg.get("seed_stock", {})
 
@@ -138,7 +169,10 @@ def run_season(config_name="spring"):
 
     # 1. Daily plot capacity
     for d in active_days:
-        for b_name, b_cap in [("farm", farm_cap), ("waterside", water_cap), ("cave", cave_cap)]:
+        for b_name in ["farm", "waterside", "cave"]:
+            b_cap = get_plot_capacity(free_plots.get(b_name), d, current_day)
+            if b_cap <= 0:
+                continue
             row = [0.0] * n_vars
             has_b = False
             for i, v in enumerate(var_map):

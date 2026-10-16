@@ -81,8 +81,14 @@ class StageResult:
     cash_remaining: float = 0.0
     revenue_generated: float = 0.0
     farm_used: int = 0
+    farm_cap: int = 0
+    farm_seeds: int = 0
     water_used: int = 0
+    water_cap: int = 0
+    water_seeds: int = 0
     cave_used: int = 0
+    cave_cap: int = 0
+    cave_seeds: int = 0
 
 
 @dataclass
@@ -96,10 +102,13 @@ class OptimizationResult:
     total_spent: float = 0.0
     leftover_gold: float = 0.0
     farm_used: int = 0
+    farm_init: int = 0
     farm_cap: int = 0
     water_used: int = 0
+    water_init: int = 0
     water_cap: int = 0
     cave_used: int = 0
+    cave_init: int = 0
     cave_cap: int = 0
     success: bool = True
     status_message: str = "Optimal solution found."
@@ -127,6 +136,36 @@ def is_town_unlocked(vendor_town: str, unlocked_towns: dict[str, bool]) -> bool:
     """Check if the vendor town is currently unlocked (split on '/' for multi-town)."""
     towns = [t.strip() for t in vendor_town.split("/")]
     return any(unlocked_towns.get(t, False) for t in towns)
+
+
+def get_plot_capacity(biome_cfg: Any, day: int, current_day: int = 1) -> int:
+    """Resolve daily plot capacity from a scalar or a stepped schedule {start: N, day: N}."""
+    if biome_cfg is None:
+        return 0
+    if isinstance(biome_cfg, (int, float)):
+        return max(0, int(biome_cfg))
+    if isinstance(biome_cfg, dict):
+        milestones: dict[int, int] = {}
+        for k, v in biome_cfg.items():
+            k_str = str(k).strip().lower()
+            try:
+                val = max(0, int(v))
+            except (ValueError, TypeError):
+                continue
+            if k_str in ("start", "now", "init", "current", "base"):
+                milestones[current_day] = val
+            elif k_str.isdigit():
+                milestones[int(k_str)] = val
+
+        if not milestones:
+            return 0
+
+        sorted_days = sorted(milestones.keys())
+        valid = [m for m in sorted_days if m <= day]
+        if valid:
+            return milestones[max(valid)]
+        return milestones[sorted_days[0]]
+    return 0
 
 
 # ==============================================================================
@@ -176,9 +215,15 @@ def solve_allocation(
             max_varieties = None
 
     free_plots = cfg.get("free_plots", {})
-    farm_cap = max(0, int(free_plots.get("farm", 0)))
-    water_cap = max(0, int(free_plots.get("waterside", 0)))
-    cave_cap = max(0, int(free_plots.get("cave", 0)))
+    active_days = list(range(current_day, 31))
+
+    farm_init = get_plot_capacity(free_plots.get("farm"), current_day, current_day)
+    water_init = get_plot_capacity(free_plots.get("waterside"), current_day, current_day)
+    cave_init = get_plot_capacity(free_plots.get("cave"), current_day, current_day)
+
+    farm_cap = max((get_plot_capacity(free_plots.get("farm"), d, current_day) for d in active_days), default=0)
+    water_cap = max((get_plot_capacity(free_plots.get("waterside"), d, current_day) for d in active_days), default=0)
+    cave_cap = max((get_plot_capacity(free_plots.get("cave"), d, current_day) for d in active_days), default=0)
 
     unlocked_towns = cfg.get("unlocked_towns", {})
     seed_stock = cfg.get("seed_stock", {})
@@ -269,15 +314,17 @@ def solve_allocation(
             timeline=timeline_desc,
             wallet_gold=wallet_gold,
             leftover_gold=wallet_gold,
+            farm_init=farm_init,
             farm_cap=farm_cap,
+            water_init=water_init,
             water_cap=water_cap,
+            cave_init=cave_init,
             cave_cap=cave_cap,
             status_message="No eligible crops match current filters (unlocked towns or plot capacity).",
         )
 
     # 2. Build time-indexed decision variables: (crop_idx, plant_day)
     # plant_day in [current_day .. 30]
-    active_days = list(range(current_day, 31))
     var_map: list[dict[str, Any]] = []
 
     for c_idx, c in enumerate(crops):
@@ -359,9 +406,9 @@ def solve_allocation(
 
     # 4. Constraint Row Formulation
     # A) Daily Plot Capacity per Biome for each day t in [current_day .. 30]
-    caps = {"farm": farm_cap, "waterside": water_cap, "cave": cave_cap}
     for t in active_days:
-        for biome, cap in caps.items():
+        for biome in ["farm", "waterside", "cave"]:
+            cap = get_plot_capacity(free_plots.get(biome), t, current_day)
             if cap <= 0:
                 continue
             row = [0.0] * total_vars
@@ -547,6 +594,30 @@ def solve_allocation(
         biome_order = {"farm": 1, "waterside": 2, "cave": 3}
         st_items.sort(key=lambda it: (it.plant_day, biome_order.get(it.crop.biome, 99), -it.crop.daily_profit))
 
+        # Peak plots occupied simultaneously on any day during this stage
+        stage_farm_cap = max((get_plot_capacity(free_plots.get("farm"), d, current_day) for d in range(s_start, s_end + 1)), default=0)
+        stage_water_cap = max((get_plot_capacity(free_plots.get("waterside"), d, current_day) for d in range(s_start, s_end + 1)), default=0)
+        stage_cave_cap = max((get_plot_capacity(free_plots.get("cave"), d, current_day) for d in range(s_start, s_end + 1)), default=0)
+
+        peak_farm = peak_water = peak_cave = 0
+        for d in range(s_start, s_end + 1):
+            occ_f = occ_w = occ_c = 0
+            for i, count in enumerate(solution):
+                if count <= 0:
+                    continue
+                v = var_map[i]
+                if d in v["occupy_days"]:
+                    c = crops[v["crop_idx"]]
+                    if c.biome == "farm":
+                        occ_f += count
+                    elif c.biome == "waterside":
+                        occ_w += count
+                    elif c.biome == "cave":
+                        occ_c += count
+            peak_farm = max(peak_farm, occ_f)
+            peak_water = max(peak_water, occ_w)
+            peak_cave = max(peak_cave, occ_c)
+
         cash_remaining = running_cash - stage_spent
         stage_results.append(
             StageResult(
@@ -559,9 +630,15 @@ def solve_allocation(
                 cash_spent=stage_spent,
                 cash_remaining=cash_remaining,
                 revenue_generated=stage_rev,
-                farm_used=st_farm,
-                water_used=st_water,
-                cave_used=st_cave,
+                farm_used=int(peak_farm),
+                farm_cap=stage_farm_cap,
+                farm_seeds=int(st_farm),
+                water_used=int(peak_water),
+                water_cap=stage_water_cap,
+                water_seeds=int(st_water),
+                cave_used=int(peak_cave),
+                cave_cap=stage_cave_cap,
+                cave_seeds=int(st_cave),
             )
         )
         running_cash = cash_remaining + stage_rev
@@ -592,10 +669,13 @@ def solve_allocation(
         total_spent=day1_spent,
         leftover_gold=wallet_gold - day1_spent,
         farm_used=initial_farm,
+        farm_init=farm_init,
         farm_cap=farm_cap,
         water_used=initial_water,
+        water_init=water_init,
         water_cap=water_cap,
         cave_used=initial_cave,
+        cave_init=cave_init,
         cave_cap=cave_cap,
         success=True,
         status_message="Optimal solution found." if res.status == 0 else f"Feasible solution found: {res.message}",
@@ -622,10 +702,16 @@ def print_result_report(result: OptimizationResult) -> None:
     if result.max_varieties is not None:
         print(f" Variety Limit   : Max {result.max_varieties} distinct crop varieties")
     print(f" Capital Budget  : {result.wallet_gold:,.0f} G")
-    print(
-        f" Plot Capacities : Farm {result.farm_cap} | "
-        f"Waterside {result.water_cap} | Cave {result.cave_cap}"
-    )
+    cap_strs = []
+    for b_name, b_init, b_cap in [("Farm", result.farm_init, result.farm_cap), ("Waterside", result.water_init, result.water_cap), ("Cave", result.cave_init, result.cave_cap)]:
+        if b_cap > 0:
+            if b_init == b_cap:
+                cap_strs.append(f"{b_name} {b_cap}")
+            else:
+                cap_strs.append(f"{b_name} {b_init} -> {b_cap}")
+        else:
+            cap_strs.append(f"{b_name} 0")
+    print(f" Plot Capacities : {' | '.join(cap_strs)}")
     print("-" * 86)
 
     if not result.success:
@@ -640,10 +726,19 @@ def print_result_report(result: OptimizationResult) -> None:
     print("-" * 86)
     for st in result.stages:
         print(f" [Stage {st.stage_idx}: Day {st.start_day} -> Day {st.end_day} ({st.window_days}d window)]")
+        plot_summaries = []
+        if st.farm_cap > 0:
+            plot_summaries.append(f"Farm (Peak): {st.farm_used}/{st.farm_cap} (Seeds: {st.farm_seeds})")
+        if st.water_cap > 0:
+            plot_summaries.append(f"Waterside (Peak): {st.water_used}/{st.water_cap} (Seeds: {st.water_seeds})")
+        if st.cave_cap > 0:
+            plot_summaries.append(f"Cave (Peak): {st.cave_used}/{st.cave_cap} (Seeds: {st.cave_seeds})")
+        plot_line = " | ".join(plot_summaries) if plot_summaries else "No active biomes"
+
         print(
             f"  Starting Cash : {st.starting_cash:,.0f} G | "
             f"Stage Spent: {st.cash_spent:,.0f} G | "
-            f"Farm Plots Used: {st.farm_used}/{result.farm_cap}"
+            f"{plot_line}"
         )
         print(
             f"  {'Plant':<8} {'Biome':<10} {'Crop Name':<18} {'Vendor':<10} "
@@ -672,22 +767,25 @@ def print_result_report(result: OptimizationResult) -> None:
     print(" RESOURCE UTILIZATION & FINANCIAL SUMMARY")
     print("-" * 86)
 
-    farm_pct = (result.farm_used / result.farm_cap * 100) if result.farm_cap > 0 else 0
+    farm_pct = (result.farm_used / result.farm_init * 100) if result.farm_init > 0 else 0
+    cap_farm_note = f"{result.farm_init}" if result.farm_init == result.farm_cap else f"{result.farm_init} (expands to {result.farm_cap})"
     print(
-        f" Farm Plots Used (Init): {result.farm_used:>3} / {result.farm_cap:<3} "
-        f"({farm_pct:>5.1f}% utilized, {result.farm_cap - result.farm_used} idle)"
+        f" Farm Plots Used (Init): {result.farm_used:>3} / {result.farm_init:<3} "
+        f"({farm_pct:>5.1f}% utilized on Day {result.current_day}, capacity: {cap_farm_note})"
     )
     if result.water_cap > 0:
-        water_pct = (result.water_used / result.water_cap * 100)
+        water_pct = (result.water_used / result.water_init * 100) if result.water_init > 0 else 0
+        w_note = f"{result.water_init}" if result.water_init == result.water_cap else f"{result.water_init} (expands to {result.water_cap})"
         print(
-            f" Waterside Plots (Init): {result.water_used:>3} / {result.water_cap:<3} "
-            f"({water_pct:>5.1f}% utilized, {result.water_cap - result.water_used} idle)"
+            f" Waterside Plots (Init): {result.water_used:>3} / {result.water_init:<3} "
+            f"({water_pct:>5.1f}% utilized on Day {result.current_day}, capacity: {w_note})"
         )
     if result.cave_cap > 0:
-        cave_pct = (result.cave_used / result.cave_cap * 100)
+        cave_pct = (result.cave_used / result.cave_init * 100) if result.cave_init > 0 else 0
+        c_note = f"{result.cave_init}" if result.cave_init == result.cave_cap else f"{result.cave_init} (expands to {result.cave_cap})"
         print(
-            f" Cave Plots Used (Init): {result.cave_used:>3} / {result.cave_cap:<3} "
-            f"({cave_pct:>5.1f}% utilized, {result.cave_cap - result.cave_used} idle)"
+            f" Cave Plots Used (Init): {result.cave_used:>3} / {result.cave_init:<3} "
+            f"({cave_pct:>5.1f}% utilized on Day {result.current_day}, capacity: {c_note})"
         )
 
     print(
@@ -722,17 +820,32 @@ def generate_markdown_report(
         if r.max_varieties is not None:
             lines.append(f"- **Variety Limit**: Max {r.max_varieties} distinct crop varieties")
         lines.append(f"- **Capital Budget**: {r.wallet_gold:,.0f} G")
-        lines.append(
-            f"- **Plot Capacities**: Farm {r.farm_cap} | Waterside {r.water_cap} | Cave {r.cave_cap}\n"
-        )
+        cap_strs = []
+        for b_name, b_init, b_cap in [("Farm", r.farm_init, r.farm_cap), ("Waterside", r.water_init, r.water_cap), ("Cave", r.cave_init, r.cave_cap)]:
+            if b_cap > 0:
+                if b_init == b_cap:
+                    cap_strs.append(f"{b_name} {b_cap}")
+                else:
+                    cap_strs.append(f"{b_name} {b_init} -> {b_cap}")
+            else:
+                cap_strs.append(f"{b_name} 0")
+        lines.append(f"- **Plot Capacities**: {' | '.join(cap_strs)}\n")
 
         lines.append("### Optimal Planting Timeline\n")
         for st in r.stages:
             lines.append(f"#### Stage {st.stage_idx}: Day {st.start_day} → Day {st.end_day} ({st.window_days}-day window)\n")
+            plot_summaries = []
+            if st.farm_cap > 0:
+                plot_summaries.append(f"**Farm (Peak)**: {st.farm_used} / {st.farm_cap} (Seeds: {st.farm_seeds})")
+            if st.water_cap > 0:
+                plot_summaries.append(f"**Waterside (Peak)**: {st.water_used} / {st.water_cap}")
+            if st.cave_cap > 0:
+                plot_summaries.append(f"**Cave (Peak)**: {st.cave_used} / {st.cave_cap}")
+            plot_str = " | ".join(plot_summaries) if plot_summaries else "No plots"
             lines.append(
                 f"- **Starting Cash**: {st.starting_cash:,.0f} G | "
                 f"**Stage Spent**: {st.cash_spent:,.0f} G | "
-                f"**Farm Plots Used**: {st.farm_used} / {r.farm_cap}\n"
+                f"{plot_str}\n"
             )
             lines.append(
                 "| Plant Day | Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |"
@@ -756,22 +869,25 @@ def generate_markdown_report(
             )
 
         lines.append("### Resource Utilization & Financial Summary\n")
-        farm_pct = (r.farm_used / r.farm_cap * 100) if r.farm_cap > 0 else 0
+        farm_pct = (r.farm_used / r.farm_init * 100) if r.farm_init > 0 else 0
+        cap_farm_note = f"{r.farm_init}" if r.farm_init == r.farm_cap else f"{r.farm_init} (expands to {r.farm_cap})"
         lines.append(
-            f"- **Farm Plots Used (Init)**: {r.farm_used} / {r.farm_cap} "
-            f"({farm_pct:.1f}% utilized, {r.farm_cap - r.farm_used} idle)"
+            f"- **Farm Plots Used (Init)**: {r.farm_used} / {cap_farm_note} "
+            f"({farm_pct:.1f}% utilized, {r.farm_init - r.farm_used} idle)"
         )
         if r.water_cap > 0:
-            water_pct = (r.water_used / r.water_cap * 100)
+            water_pct = (r.water_used / r.water_init * 100) if r.water_init > 0 else 0
+            w_note = f"{r.water_init}" if r.water_init == r.water_cap else f"{r.water_init} (expands to {r.water_cap})"
             lines.append(
-                f"- **Waterside Plots (Init)**: {r.water_used} / {r.water_cap} "
-                f"({water_pct:.1f}% utilized, {r.water_cap - r.water_used} idle)"
+                f"- **Waterside Plots (Init)**: {r.water_used} / {w_note} "
+                f"({water_pct:.1f}% utilized, {r.water_init - r.water_used} idle)"
             )
         if r.cave_cap > 0:
-            cave_pct = (r.cave_used / r.cave_cap * 100)
+            cave_pct = (r.cave_used / r.cave_init * 100) if r.cave_init > 0 else 0
+            c_note = f"{r.cave_init}" if r.cave_init == r.cave_cap else f"{r.cave_init} (expands to {r.cave_cap})"
             lines.append(
-                f"- **Cave Plots Used (Init)**: {r.cave_used} / {r.cave_cap} "
-                f"({cave_pct:.1f}% utilized, {r.cave_cap - r.cave_used} idle)"
+                f"- **Cave Plots Used (Init)**: {r.cave_used} / {c_note} "
+                f"({cave_pct:.1f}% utilized, {r.cave_init - r.cave_used} idle)"
             )
 
         lines.append(
