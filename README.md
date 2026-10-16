@@ -117,10 +117,10 @@ python optimize_crop_allocation.py -wi   # Winter
 ============================================================================================================================================
 Season      Budget  Optimal Seed Purchases                                   Plots Used                 Gold Spent / Leftover      Daily Profit
 --------------------------------------------------------------------------------------------------------------------------------------------
-Spring     1,000 G  9 Unionion (Nemea), 1 Dress Lettuce                      10 / 70 Farm               1,000 G / 0 G (100.0%)       +285.0 G/d
-Summer     8,000 G  29 Morrocorn (Shatolla), 40 Dress Lettuce                69 / 70 Farm               8,000 G / 0 G (100.0%)     +2,050.0 G/d
-Fall      15,000 G  70 Unionion (Nemea), 12 Nectarcane, 8 Sudor Pepper       70 Farm, 12 Water, 8 Cave  14,990 G / 10 G (99.9%)    +2,867.2 G/d
-Winter    20,000 G  8 Chilly Plant, 61 Argene Cabbage, 1 Lumpotato (Argene)  70 / 70 Farm               19,900 G / 100 G (99.5%)   +2,109.5 G/d
+Spring     1,000 G  9 Unionion (Nemea), 1 Dress Lettuce (Lethe)              10 / 70 Farm               1,000 G / 0 G (100.0%)       +285.0 G/d
+Summer     8,000 G  29 Morrocorn (Shatolla), 40 Dress Lettuce (Lethe)        69 / 70 Farm               8,000 G / 0 G (100.0%)     +2,050.0 G/d
+Fall      15,000 G  70 Unionion (Nemea), 12 Nectarcane (Shatolla), 8 Sudor Pepper (Argene) 70 Farm, 12 Water, 8 Cave  14,990 G / 10 G (99.9%)    +2,867.2 G/d
+Winter    20,000 G  8 Chilly Plant (Argene), 61 Argene Cabbage (Argene), 1 Lumpotato (Argene) 70 / 70 Farm               19,900 G / 100 G (99.5%)   +2,109.5 G/d
 ============================================================================================================================================
 ```
 

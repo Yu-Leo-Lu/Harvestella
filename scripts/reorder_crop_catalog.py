@@ -13,11 +13,10 @@ VENDOR_ORDER = {
     "lethe": 0,
     "nemea": 1,
     "shatolla": 2,
-    "shatolla/nemea": 3,
-    "argene": 4,
-    "abandoned eden": 5,
-    "astrum helix": 6,
-    "stella cradle": 7,
+    "argene": 3,
+    "abandoned eden": 4,
+    "astrum helix": 5,
+    "stella cradle": 6,
 }
 
 

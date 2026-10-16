@@ -94,7 +94,7 @@ class OptimizationResult:
     def seeds_summary(self) -> str:
         if not self.items:
             return "None"
-        return ", ".join(f"{it.quantity} {it.crop.name}" for it in self.items)
+        return ", ".join(f"{it.quantity} {it.crop.name} ({it.crop.town})" for it in self.items)
 
 
 # ==============================================================================
@@ -210,7 +210,16 @@ def solve_allocation(config_path: Path, csv_dir: Path = Path("seasons")) -> Opti
         if not is_crop_eligible(prod_days, current_day, max_days, horizon_mode):
             continue
 
-        stock = int(seed_stock.get(crop_name, 99))
+        # In-stock seed count from YAML configuration (default: 99)
+        stock_key_town = f"{crop_name} ({town})"
+        if stock_key_town in seed_stock:
+            stock = int(seed_stock[stock_key_town])
+        elif town in seed_stock and isinstance(seed_stock[town], dict) and crop_name in seed_stock[town]:
+            stock = int(seed_stock[town][crop_name])
+        elif crop_name in seed_stock:
+            stock = int(seed_stock[crop_name])
+        else:
+            stock = 99
         if stock <= 0:
             continue
         if biome == "waterside" and water_cap <= 0:
@@ -523,7 +532,10 @@ def generate_markdown_report(
     ]
 
     for r in valid:
-        seeds_formatted = "<br>".join(f"• {it.quantity} {it.crop.name}" for it in r.items)
+        seeds_formatted = "<br>".join(
+            f"• {it.quantity} {it.crop.name} ({it.crop.town})"
+            for it in r.items
+        )
         spent_str = f"{r.total_spent:,.0f} G / {r.leftover_gold:,.0f} G ({r.gold_pct:.1f}%)"
         proj_str = f"+{r.projected_net:,.0f} G ({r.max_days}d)"
         lines.append(
