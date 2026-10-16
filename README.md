@@ -27,96 +27,6 @@ This repository models realistic agricultural economics in Harvestella, accounti
 
 ---
 
-## Repository Structure
-
-```text
-Harvestella/
-├── crop_master_catalog.csv    # Master catalog of all crops, costs, cycles, and biomes
-├── crop_metrics_guide.md      # Mathematical derivation and formula guide for metrics
-├── run_all.py                 # Master pipeline runner (reorder -> split -> compute)
-├── compute_crop_metrics.py    # CLI tool to calculate profit, compound rates, and deadlines
-├── split_crops_by_season.py   # Utility to regenerate seasonal CSV files from master catalog
-├── reorder_crop_catalog.py    # Utility to sort master catalog by vendor town and crop name
-├── seasons/                   # Per-season CSV data
-│   ├── spring.csv
-│   ├── summer.csv
-│   ├── fall.csv
-│   └── winter.csv
-└── archive/                   # Reference analysis tables and legacy farming guides
-```
-
----
-
-## Quick Start
-
-### Prerequisites
-- Python 3.10+ (uses standard library only—no external pip packages required).
-
-### 1. Run Complete Pipeline (One-Click)
-
-To reorder the catalog, regenerate seasonal CSVs, and compute/save all metrics in one command:
-```bash
-python run_all.py
-```
-
-### 2. Compute Crop Economics & Schedules
-
-To analyze a specific season (e.g., Spring):
-```bash
-python compute_crop_metrics.py -i spring
-```
-
-To analyze all seasons simultaneously:
-```bash
-python compute_crop_metrics.py --all
-# or using shorthand:
-python compute_crop_metrics.py -a
-```
-
-To compute metrics and write the calculated columns directly into the CSV files in `seasons/`:
-```bash
-python compute_crop_metrics.py -a -s
-# or combined:
-python compute_crop_metrics.py -as
-```
-
-To output the analysis to a custom file:
-```bash
-python compute_crop_metrics.py -i summer -o summer_analyzed.csv
-```
-
-To sort by **Cash Compound Rate** instead of the default **Daily NQ Profit**:
-```bash
-python compute_crop_metrics.py -i spring --sort compound
-```
-
-### 2. Regenerate Seasonal CSVs
-
-If you update `crop_master_catalog.csv`, regenerate the seasonal tables using:
-```bash
-python split_crops_by_season.py
-```
-
-Include all-year crops across every seasonal file:
-```bash
-python split_crops_by_season.py --include-all-year
-```
-
----
-
-## Core Financial Metrics
-
-For full mathematical definitions, derivations, and formulas, see [crop_metrics_guide.md](file:///c:/Users/leona/GitHub/Harvestella/crop_metrics_guide.md).
-
-| Metric | Formula / Concept | When to Prioritize |
-| :--- | :--- | :--- |
-| **Cash Compound Rate (%/day)** | $r = \left(\left(\frac{\text{Sell}}{\text{Seed}}\right)^{\frac{1}{\text{Days} + 1}} - 1\right) \times 100\%$ | **Early Game / Low Gold:** Maximize the speed at which your initial wallet multiplies. |
-| **Daily NQ Profit** | $\delta = \frac{\text{Net Profit}}{\text{Production Days}}$ | **Cycle Efficiency & Plot Profit:** Compares normal quality profit generation velocity per plot across crops of different harvest lengths. |
-| **Production Days** | Single: $m\text{ days}$ <br> Repeat: $m + (n - 1) \cdot g\text{ days}$ | **Turnaround Planning:** Total calendar time the crop occupies the soil before the plot is freed up. |
-| **Latest Plant Day** | $30 - \text{Production Days}$ | **Quietus Management:** Cutoff day to plant without withering at Quietus or losing harvest cycles. |
-
----
-
 ## Strategy Cheat-Sheet
 
 **Goal: maximize the wallet by the end of the 30-day season.** Every season ends at Quietus, which wipes out unharvested annual crops.
@@ -233,6 +143,96 @@ Every season in Harvestella lasts exactly 30 days, ending with the Quietus reset
 | **Summer** | **Shatollan Paprika** (+35.2 G/d, 21d)<br>**Revol Pepper** (+47.8 G/d, 16d)<br>**Islet Watermelon** (+175.0 G/d, 12d)<br>**Morrocorn** (+50.0 G/d, 4d) | **Islet Watermelon** (plant by Day 18)<br>**Seatide Garlic** (+58.3 G/d, 6d)<br>**Morrocorn** (+50.0 G/d, 4d)<br>**Honey Flower** (+41.7 G/d, 6d)<br>**Sudor Pepper** (+38.9 G/d, 9d) | **Morrocorn** (plant by Day 26)<br>**Eden Rice** (+5.0 G/d, 3d)<br>**Dress Lettuce** (+15.0 G/d, 2d)<br>**Stellar Wheat** (+7.5 G/d, 2d)<br>**Carrop** (+20.0 G/d, 1d) | • **Shatollan Paprika** cutoff is **Day 9** (21d).<br>• **Islet Watermelon** cutoff is **Day 18** (12d, 2,500 G seed).<br>• **Morrocorn** is the king of mid/late summer (4d turn, massive compounding + G/d). |
 | **Fall** | **Revol Pepper** (+47.8 G/d, 16d)<br>**Royal Eggplant** (+60.0 G/d, 11d)<br>**Lantern Pumpkin** (11d, by Day 19)<br>**Nectarcane** (+38.0 G/d, 10d) | **Royal Eggplant** (plant by Day 19)<br>**Nectarcane** (+38.0 G/d, 10d)<br>**Sudor Pepper** (+38.9 G/d, 9d)<br>**Curry Herbs** (+18.3 G/d, 6d)<br>**Unionion** (+30.0 G/d, 3d) | **Unionion** (+30.0 G/d, 3d)<br>**Lumpotato** (+13.3 G/d, 3d)<br>**Eden Rice** (+5.0 G/d, 3d)<br>**Dress Lettuce** (+15.0 G/d, 2d)<br>**Carrop** (+20.0 G/d, 1d) | • **Revol Pepper** cutoff is **Day 14** (16d).<br>• **Royal Eggplant** cutoff is **Day 19** (11d).<br>• **Sudor Pepper** cutoff is **Day 21** (9d).<br>• **Lumpotato** and **Unionion** plantable up to **Day 27**. |
 | **Winter** | **Chilly Plant** (+71.4 G/d, 7d)<br>**Argene Cabbage** (+25.0 G/d, 4d)<br>**Lumpotato** (+13.3 G/d, 3d) | **Chilly Plant** (plant by Day 23)<br>**Argene Cabbage** (+25.0 G/d, 4d)<br>**Lumpotato** (+13.3 G/d, 3d)<br>**Curry Herbs** (plant by Day 24) | **Argene Cabbage** (plant by Day 26)<br>**Lumpotato** (plant by Day 27) | • Restricted seed catalog in Argene.<br>• **Chilly Plant** cutoff is **Day 23** (7d, huge 71.4 G/d return).<br>• **Argene Cabbage** cutoff is **Day 26**.<br>• **Lumpotato** cutoff is **Day 27**. |
+
+---
+
+## Core Financial Metrics
+
+For full mathematical definitions, derivations, and formulas, see [crop_metrics_guide.md](crop_metrics_guide.md).
+
+| Metric | Formula / Concept | When to Prioritize |
+| :--- | :--- | :--- |
+| **Cash Compound Rate (%/day)** | $r = \left(\left(\frac{\text{Sell}}{\text{Seed}}\right)^{\frac{1}{\text{Days} + 1}} - 1\right) \times 100\%$ | **Early Game / Low Gold:** Maximize the speed at which your initial wallet multiplies. |
+| **Daily NQ Profit** | $\delta = \frac{\text{Net Profit}}{\text{Production Days}}$ | **Cycle Efficiency & Plot Profit:** Compares normal quality profit generation velocity per plot across crops of different harvest lengths. |
+| **Production Days** | Single: $m\text{ days}$ <br> Repeat: $m + (n - 1) \cdot g\text{ days}$ | **Turnaround Planning:** Total calendar time the crop occupies the soil before the plot is freed up. |
+| **Latest Plant Day** | $30 - \text{Production Days}$ | **Quietus Management:** Cutoff day to plant without withering at Quietus or losing harvest cycles. |
+
+---
+
+## Repository Structure
+
+```text
+Harvestella/
+├── crop_master_catalog.csv    # Master catalog of all crops, costs, cycles, and biomes
+├── crop_metrics_guide.md      # Mathematical derivation and formula guide for metrics
+├── run_all.py                 # Master pipeline runner (reorder -> split -> compute)
+├── compute_crop_metrics.py    # CLI tool to calculate profit, compound rates, and deadlines
+├── split_crops_by_season.py   # Utility to regenerate seasonal CSV files from master catalog
+├── reorder_crop_catalog.py    # Utility to sort master catalog by vendor town and crop name
+├── seasons/                   # Per-season CSV data
+│   ├── spring.csv
+│   ├── summer.csv
+│   ├── fall.csv
+│   └── winter.csv
+└── archive/                   # Reference analysis tables and legacy farming guides
+```
+
+---
+
+## Quick Start
+
+### Prerequisites
+- Python 3.10+ (uses standard library only—no external pip packages required).
+
+### 1. Run Complete Pipeline (One-Click)
+
+To reorder the catalog, regenerate seasonal CSVs, and compute/save all metrics in one command:
+```bash
+python run_all.py
+```
+
+### 2. Compute Crop Economics & Schedules
+
+To analyze a specific season (e.g., Spring):
+```bash
+python compute_crop_metrics.py -i spring
+```
+
+To analyze all seasons simultaneously:
+```bash
+python compute_crop_metrics.py --all
+# or using shorthand:
+python compute_crop_metrics.py -a
+```
+
+To compute metrics and write the calculated columns directly into the CSV files in `seasons/`:
+```bash
+python compute_crop_metrics.py -a -s
+# or combined:
+python compute_crop_metrics.py -as
+```
+
+To output the analysis to a custom file:
+```bash
+python compute_crop_metrics.py -i summer -o summer_analyzed.csv
+```
+
+To sort by **Cash Compound Rate** instead of the default **Daily NQ Profit**:
+```bash
+python compute_crop_metrics.py -i spring --sort compound
+```
+
+### 3. Regenerate Seasonal CSVs
+
+If you update `crop_master_catalog.csv`, regenerate the seasonal tables using:
+```bash
+python split_crops_by_season.py
+```
+
+Include all-year crops across every seasonal file:
+```bash
+python split_crops_by_season.py --include-all-year
+```
 
 ---
 
