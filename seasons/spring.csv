@@ -1,20 +1,20 @@
-Crop Name,Vendor Town,Biome,Seed Cost (G),NQ Sale (G),HQ Sale (G),Mature (Days),Regrowth (Days),Max Harvests,Growth Season,Fruit Season,Daily NQ Profit (G/d),Cash Compound Rate (%/d),Production (Days),Latest Plant Day
+Crop Name,Vendor Town,Biome,Seed Cost (G),NQ Sale (G),HQ Sale (G),Mature (Days),Regrowth (Days),Max Harvests,Growth Season,Fruit Season,Daily NQ Profit (G/d),Cash Compound Rate (%/d),Production (Days),Planting Schedule
 Revol Pepper,Argene,Cave,560,265,330,4,3,5,"Sp, Su, Fa","Sp, Su, Fa",47.8,5.2,16,14
 Cucumble,Lethe,Farm,370,200,250,4,3,6,Sp,Sp,43.7,6.06,19,11
-Sudor Pepper,Argene,Cave,400,250,310,3,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.9,6.49,9,21
-Nectarcane,Shatolla/Nemea,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.0,6.63,10,20
-Strawbuddy,Nemea,Farm,220,130,160,4,2,5,Sp,Sp,35.8,8.69,12,18
-Tingle Radish,Nemea,Farm,390,530,660,4,,1,Sp,Sp,35.0,6.33,4,26
-Unionion (Nemea),Nemea,Farm,105,195,245,3,,1,"Sp, Fa","Sp, Fa",30.0,16.74,3,27
-Nemean Tomato,Nemea,Farm,170,65,95,5,1,6,"Sp, Su","Sp, Su",22.0,7.84,10,20
-Unionion (Lethe),Lethe,Farm,130,195,245,3,,1,"Sp, Fa","Sp, Fa",21.7,10.67,3,27
-Carrop (Nemea),Nemea,Farm,95,115,145,1,,1,"Sp, Su","Sp, Su",20.0,10.02,1,29
-Curry Herbs,Argene,Cave,240,350,435,6,,1,"Sp, Su, Fa","Sp, Su, Fa",18.3,5.54,6,24
-Dress Lettuce,Lethe,Farm,55,85,105,2,,1,"Sp, Su, Fa","Sp, Su, Fa",15.0,15.62,2,28
-Carrop (Lethe),Lethe,Farm,105,115,145,1,,1,"Sp, Su","Sp, Su",10.0,4.65,1,29
-Stellar Wheat,Lethe,Farm,40,55,70,2,,1,"Sp, Su, Fa","Sp, Su, Fa",7.5,11.2,2,28
-Grass,Lethe,Farm,30,35,45,2,,1,"Sp, Su, Fa","Sp, Su, Fa",2.5,5.27,2,28
-Nitro Pineapple,Astrum Helix,Cave,,5,5,6,,1,"Sp, Su, Fa","Sp, Su, Fa",0.8,,6,24
+Sudor Pepper,Argene,Cave,400,250,310,3,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.9,6.49,9,"21, 12, 3"
+Nectarcane,Shatolla/Nemea,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.0,6.63,10,"20, 10"
+Strawbuddy,Nemea,Farm,220,130,160,4,2,5,Sp,Sp,35.8,8.69,12,"18, 6"
+Tingle Radish,Nemea,Farm,390,530,660,4,,1,Sp,Sp,35.0,6.33,4,"26, 22, 18, 14, 10, 6, 2"
+Unionion (Nemea),Nemea,Farm,105,195,245,3,,1,"Sp, Fa","Sp, Fa",30.0,16.74,3,"27, 24, 21, 18, 15, ... , 3"
+Nemean Tomato,Nemea,Farm,170,65,95,5,1,6,"Sp, Su","Sp, Su",22.0,7.84,10,"20, 10"
+Unionion (Lethe),Lethe,Farm,130,195,245,3,,1,"Sp, Fa","Sp, Fa",21.7,10.67,3,"27, 24, 21, 18, 15, ... , 3"
+Carrop (Nemea),Nemea,Farm,95,115,145,1,,1,"Sp, Su","Sp, Su",20.0,10.02,1,"29, 28, 27, 26, 25, ... , 1"
+Curry Herbs,Argene,Cave,240,350,435,6,,1,"Sp, Su, Fa","Sp, Su, Fa",18.3,5.54,6,"24, 18, 12, 6"
+Dress Lettuce,Lethe,Farm,55,85,105,2,,1,"Sp, Su, Fa","Sp, Su, Fa",15.0,15.62,2,"28, 26, 24, 22, 20, ... , 2"
+Carrop (Lethe),Lethe,Farm,105,115,145,1,,1,"Sp, Su","Sp, Su",10.0,4.65,1,"29, 28, 27, 26, 25, ... , 1"
+Stellar Wheat,Lethe,Farm,40,55,70,2,,1,"Sp, Su, Fa","Sp, Su, Fa",7.5,11.2,2,"28, 26, 24, 22, 20, ... , 2"
+Grass,Lethe,Farm,30,35,45,2,,1,"Sp, Su, Fa","Sp, Su, Fa",2.5,5.27,2,"28, 26, 24, 22, 20, ... , 2"
+Nitro Pineapple,Astrum Helix,Cave,,5,5,6,,1,"Sp, Su, Fa","Sp, Su, Fa",0.8,,6,"24, 18, 12, 6"
 Wisty Peach,Nemea,Farm,4200,115,230,10,2,Multi-Season,"Sp, Su, Fa, Wi",Sp,,,,
 Promised Fruit,Astrum Helix,Farm,,30,35,7,2,Tree,"Sp, Su, Fa, Wi","Sp, Su, Fa, Wi",,,,
 Moonfruit,Stella Cradle,Farm,,100,125,12,3,Tree,"Sp, Su, Fa, Wi","Sp, Su, Fa, Wi",,,,

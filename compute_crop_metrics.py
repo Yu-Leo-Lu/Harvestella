@@ -4,9 +4,9 @@ Loads seasonal CSV files from the `seasons/` directory and computes:
 1. Daily NQ Profit (G/d)
 2. Cash Compound Rate (%/d)
 3. Production (Days)
-4. Latest Plant Day
+4. Planting Schedule
 
-All computed columns in the CSV are stored as pure numeric values.
+All computed columns in the CSV are stored as pure numeric values (or comma-separated schedules).
 Outputs are sorted by Daily NQ Profit descending by default.
 """
 
@@ -16,6 +16,10 @@ import math
 import re
 from pathlib import Path
 from typing import Any
+
+# ==============================================================================
+# 1. Constants & Configuration
+# ==============================================================================
 
 SEASON_LENGTH_DAYS = 30
 
@@ -35,7 +39,7 @@ COMPUTED_COLUMNS = [
     "Daily NQ Profit (G/d)",
     "Cash Compound Rate (%/d)",
     "Production (Days)",
-    "Latest Plant Day",
+    "Planting Schedule",
 ]
 
 LEGACY_AND_COMPUTED_COLS = {
@@ -43,10 +47,17 @@ LEGACY_AND_COMPUTED_COLS = {
     "Daily NQ Profit",
     "Cash Compound Rate",
     "Production Days",
+    "Latest Plant Day",
+    "Planting Schedule",
+    "Planting Schedules",
     "Capital Days",
     "Daily Profit",
 }
 
+
+# ==============================================================================
+# 2. Data Parsing Utilities
+# ==============================================================================
 
 def parse_int_metric(val: Any) -> int | None:
     """Parse integer value from CSV cell. Returns None if empty or non-numeric."""
@@ -84,45 +95,78 @@ def parse_growth(row: dict[str, str]) -> tuple[int, int | None, int | None, bool
     return mature_days, regrowth_days, max_harvests, is_repeat
 
 
-def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
-    """Calculate financial and scheduling metrics as pure numeric values for CSV."""
-    crop_name = row.get("Crop Name", "").strip()
-    biome_str = row.get("Biome", "")
-    growth_season = row.get("Growth Season", "")
-    max_harvests_str = row.get("Max Harvests", "")
+def is_tree_crop(row: dict[str, str], crop_name: str) -> bool:
+    """Identify whether a crop is a multi-season orchard tree."""
+    biome_str = row.get("Biome", "").lower()
+    max_harvests_str = row.get("Max Harvests", "").lower()
+    growth_season = row.get("Growth Season", "").lower()
+    growth_tokens = {s.strip() for s in growth_season.split(",")}
 
-    seed_cost = parse_int_metric(row.get("Seed Cost (G)") or row.get("Seed Cost"))
-    basic_sell = parse_int_metric(row.get("NQ Sale (G)") or row.get("NQ Sale"))
-    mature_days, regrowth_days, max_harvests, is_repeat = parse_growth(row)
-
-    growth_tokens = {s.strip().lower() for s in growth_season.split(",")}
     is_all_year = (
         all(c in growth_tokens for c in ["sp", "su", "fa", "wi"])
-        or all(s in growth_season.lower() for s in ["spring", "summer", "fall", "winter"])
-        or "all" in growth_season.lower()
+        or all(s in growth_season for s in ["spring", "summer", "fall", "winter"])
+        or "all" in growth_season
     )
-    is_tree = (
-        "tree" in biome_str.lower()
-        or "tree" in max_harvests_str.lower()
+    return (
+        "tree" in biome_str
+        or "tree" in max_harvests_str
         or is_all_year
         or crop_name in TREE_CROPS
     )
 
+
+# ==============================================================================
+# 3. Financial & Schedule Metric Calculations
+# ==============================================================================
+
+def generate_planting_schedule(season_length: int, cycle_days: int) -> str:
+    """Generate a descending list of Quietus-aligned planting calendar days.
+
+    Starting from (season_length - cycle_days), steps backwards by cycle_days
+    so every harvest cycle finishes cleanly on or before Quietus (Day 30)
+    with zero dead plot days between rotations.
+    If items < 8, returns the full comma-separated list.
+    If items >= 8, truncates to 7 display elements: first 5 items, '...', last item.
+    Example: 6d cycle in 30d season -> "24, 18, 12, 6".
+    Example: 2d cycle in 30d season -> "28, 26, 24, 22, 20, ... , 2".
+    """
+    if cycle_days <= 0 or cycle_days > season_length:
+        return ""
+    days: list[str] = []
+    current = season_length - cycle_days
+    if current == 0:
+        return "1"
+    while current > 0:
+        days.append(str(current))
+        current -= cycle_days
+    if len(days) < 8:
+        return ", ".join(days)
+    return f"{', '.join(days[:5])}, ... , {days[-1]}"
+
+
+def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
+    """Calculate financial and scheduling metrics as pure numeric values for CSV."""
+    crop_name = row.get("Crop Name", "").strip()
+
     # Trees (multi-season investments) do not have single-season annual metrics
-    if is_tree:
+    if is_tree_crop(row, crop_name):
         return {col: "" for col in COMPUTED_COLUMNS}
+
+    seed_cost = parse_int_metric(row.get("Seed Cost (G)") or row.get("Seed Cost"))
+    basic_sell = parse_int_metric(row.get("NQ Sale (G)") or row.get("NQ Sale"))
+    mature_days, regrowth_days, max_harvests, is_repeat = parse_growth(row)
 
     # Foraged / free drops with no purchase cost (e.g. Nitro Pineapple)
     if seed_cost is None or seed_cost <= 0:
         if basic_sell is not None:
             profit_per_cycle = basic_sell
             daily_profit = profit_per_cycle / mature_days if mature_days > 0 else 0.0
-            latest_start_day = max(1, SEASON_LENGTH_DAYS - mature_days)
+            schedule = generate_planting_schedule(SEASON_LENGTH_DAYS, mature_days)
             return {
                 "Daily NQ Profit (G/d)": round(daily_profit, 1),
                 "Cash Compound Rate (%/d)": "",
                 "Production (Days)": mature_days,
-                "Latest Plant Day": latest_start_day,
+                "Planting Schedule": schedule,
             }
         return {col: "" for col in COMPUTED_COLUMNS}
 
@@ -133,27 +177,25 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
             else 0
         )
         harvest_count = min(max_harvests, possible_in_season) if max_harvests else possible_in_season
-        required_growth_days = (
+        active_days = (
             mature_days + (harvest_count - 1) * regrowth_days if harvest_count > 0 else mature_days
         )
         total_revenue = harvest_count * basic_sell
         net_profit = total_revenue - seed_cost
-        daily_profit = net_profit / required_growth_days if required_growth_days > 0 else 0.0
-        latest_start_day = max(1, SEASON_LENGTH_DAYS - required_growth_days)
+        daily_profit = net_profit / active_days if active_days > 0 else 0.0
 
         wealth_ratio = total_revenue / seed_cost
-        realization_days = required_growth_days + 1
+        realization_days = active_days + 1
         daily_rate = (
             (math.pow(wealth_ratio, 1.0 / realization_days) - 1.0) * 100.0
             if wealth_ratio > 0
             else None
         )
-        active_days = required_growth_days
     else:
+        active_days = mature_days
         profit_per_cycle = basic_sell - seed_cost
         daily_profit = profit_per_cycle / mature_days
         turnaround_days = mature_days + 1
-        latest_start_day = max(1, SEASON_LENGTH_DAYS - mature_days)
 
         multiplier = basic_sell / seed_cost
         daily_rate = (
@@ -161,14 +203,24 @@ def compute_crop_row(row: dict[str, str]) -> dict[str, Any]:
             if multiplier > 0
             else 0.0
         )
-        active_days = mature_days
+
+    schedule = generate_planting_schedule(SEASON_LENGTH_DAYS, active_days)
 
     return {
         "Daily NQ Profit (G/d)": round(daily_profit, 1),
         "Cash Compound Rate (%/d)": round(daily_rate, 2) if daily_rate is not None else "",
         "Production (Days)": active_days,
-        "Latest Plant Day": latest_start_day,
+        "Planting Schedule": schedule,
     }
+
+
+# ==============================================================================
+# 4. Presentation & Table Formatting
+# ==============================================================================
+
+def format_schedule_for_display(schedule_str: str) -> str:
+    """Format planting schedule for table display."""
+    return schedule_str if schedule_str else "-"
 
 
 def analyze_csv_file(
@@ -212,10 +264,10 @@ def analyze_csv_file(
     )
 
     # Print summary table to console with formatted units
-    print(f"\n{'='*144}")
+    print(f"\n{'='*159}")
     print(f" Seasonal Analysis: {csv_path.name.upper()} (30-Day Season)")
-    print(f"{'='*144}")
-    header_fmt = "{:<18} | {:<12} | {:<9} | {:<7} | {:<7} | {:<7} | {:<19} | {:<18} | {:<15} | {:<16}"
+    print(f"{'='*159}")
+    header_fmt = "{:<18} | {:<10} | {:<9} | {:<7} | {:<7} | {:<7} | {:<16} | {:<16} | {:<14} | {:<28}"
     print(
         header_fmt.format(
             "Crop Name",
@@ -227,10 +279,10 @@ def analyze_csv_file(
             "Daily NQ Profit",
             "Cash Compound Rate",
             "Production Days",
-            "Latest Plant Day",
+            "Planting Schedule",
         )
     )
-    print("-" * 144)
+    print("-" * 159)
 
     for r in enriched_rows:
         regrow_val = parse_int_metric(r.get("Regrowth (Days)") or r.get("Regrowth"))
@@ -271,24 +323,28 @@ def analyze_csv_file(
         prod_val = r.get("Production (Days)")
         prod_display = f"{prod_val}d" if prod_val != "" and prod_val is not None else "Tree"
 
-        latest_val = r.get("Latest Plant Day")
-        latest_display = f"Day {latest_val}" if latest_val != "" and latest_val is not None else "Day 1 (All)"
+        sched_val = str(r.get("Planting Schedule", "")).strip()
+        sched_display = (
+            format_schedule_for_display(sched_val)
+            if sched_val
+            else ("Tree" if max_h_display == "Tree" else "-")
+        )
 
         print(
             header_fmt.format(
                 r.get("Crop Name", "")[:18],
-                r.get("Vendor Town", "")[:12],
+                r.get("Vendor Town", "")[:10],
                 seed_cost_display[:9],
                 mature_display[:7],
                 regrow_display[:7],
                 max_h_display[:7],
-                profit_display[:19],
-                rate_display[:18],
-                prod_display[:15],
-                latest_display[:16],
+                profit_display[:16],
+                rate_display[:16],
+                prod_display[:14],
+                sched_display[:28],
             )
         )
-    print(f"{'='*144}\n")
+    print(f"{'='*159}\n")
 
     if save_enriched:
         dest_path = output_path or csv_path

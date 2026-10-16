@@ -18,7 +18,7 @@ This repository models realistic agricultural economics in Harvestella, accounti
   - **Daily NQ Profit**: Normal quality daily gold return per farm plot per growth day ($G/\text{day}$).
   - **Cash Compound Rate (%/day)**: Daily exponential growth rate of capital—essential when starting with low gold.
   - **Production Days**: Total active lifecycle days a crop occupies the plot through all harvest cycles.
-  - **Latest Plant Day**: The exact cutoff calendar day to plant seeds without forfeiting a harvest cycle before Quietus ($30 - \text{Production Days}$).
+  - **Planting Schedule**: The full sequence of Quietus-aligned planting calendar days (e.g., `24, 18, 12, 6` for 6-day Seatide Garlic) guaranteeing zero dead plot days ending on Day 30.
 - **Automated CLI Tools**:
   - `run_all.py`: Runs the complete pipeline (reorders catalog, splits seasons, computes & saves metrics).
   - `compute_crop_metrics.py`: Computes financial and scheduling rankings across seasons.
@@ -41,20 +41,20 @@ This repository models realistic agricultural economics in Harvestella, accounti
 
 Three constraints limit any seed purchase: **wallet gold**, **free plots**, and **vendor seed stock**. Your ranking depends on your strategic objective:
 
-| Mode | Trigger / Goal | Metric to Rank By | Why It Wins |
+| Mode | Trigger / Bottleneck | Metric to Rank By | Why It Wins |
 | :--- | :--- | :--- | :--- |
-| **Expansion Mode** | **Saving for a Farm Upgrade** *(Earlier is better!)* | **Cash Compound Rate (%/day)** *(Short 1–3d turnarounds)* | Multiplies wallet gold exponentially and keeps cash liquid, unlocking higher farm tiers days earlier. |
-| **Production Mode** | **Maximize Daily Farm Profit** on current plots | **Daily NQ Profit (G/d)** *(Cascading by budget)* | Maximizes total gold generated across your farm. If an expensive top seed (e.g., 2,500 G Watermelon) would leave most plots empty, cascade to high-yield seeds that fully utilize your capacity (e.g., 200 G Morrocorn). |
+| **Bootstrapping / Expansion** | **Wallet < ~6k–10k G** *(Capital-Constrained)*<br>Cannot afford 99-seed stacks; plots exceed cash. | **Cash Compound Rate (%/day)** *(Short 1–3d turnarounds)* | Multiplies scarce wallet gold exponentially, keeps cash liquid, and rushes early farm upgrades. |
+| **Production Mode** | **Wallet ≥ ~6k–10k G** *(Plot-Constrained)*<br>Easily affords all top compound seeds in shop (99-cap). | **Daily NQ Profit (G/d)** *(Cascading by budget)* | Plots are the hard bottleneck. Maximizes raw daily gold per tile, preventing excess cash from sitting idle at 0% return. |
 
 ### Decision Tree (Run at Each Restock, and Whenever a Plot Frees Up)
 
 ```mermaid
 flowchart TD
-    A["Start of Day: List free plots, gold, and in-stock seeds<br/>(Exclude seeds past their Latest Plant Day)"] --> M{"Strategic Goal?"}
+    A{"Can wallet easily afford all top compound seeds in shop?<br/>(Wallet ≥ ~6,000–10,000 G or easily covers Free Plots × Compound Seed Cost)"}
     
-    M -->|"Saving for Upgrade<br/>(Earlier is Better!)"| C1["Expansion Mode: Max Compounding<br/>Rank by Cash Compound Rate (%/day)<br/>Prioritize fast 1–3 day crops"]
+    A -->|"No (Capital-Constrained)"| C1["Bootstrapping Mode: Max Compounding<br/>Rank by Cash Compound Rate (%/day)<br/>Prioritize fast 1–3 day crops (Lettuce, Carrop)"]
     
-    M -->|"Maximize Farm Profit"| C2["Production Mode: Max Daily Profit<br/>Rank seeds by Daily NQ Profit (G/d)"]
+    A -->|"Yes (Plot-Constrained)"| C2["Production Mode: Max Daily Profit<br/>Rank seeds by Daily NQ Profit (G/d)<br/>(Idle cash earns 0%; maximize G/tile)"]
     
     C2 --> P1{"Can wallet fill all free plots<br/>with top seed?"}
     P1 -->|"Yes"| B1["Fill all plots with top seed"]
@@ -76,6 +76,11 @@ flowchart TD
 
 **Notes on the tree:**
 
+- **The Capital vs. Land Inflection Point (~6k–10k G)**:
+  - When your pocket has under ~6,000 G, farm plots exceed your purchasing power. Maximizing **Cash Compound Rate (%/day)** multiplies your scarce gold fastest.
+  - Once your pocket reaches **~6,000–10,000 G**, you can afford the general store's entire 99-seed stock of top compounders (e.g., $99 \times 55\text{ G} = 5,445\text{ G}$ for Dress Lettuce; $99 \times 80\text{ G} = 7,920\text{ G}$ for Lumpotato).
+  - On a 70-plot farm, planting 70 Dress Lettuce only costs 3,850 G. With 8,000 G in your wallet, staying on Lettuce leaves **4,150 G sitting idle earning 0% return**, while your 70 plots generate only **1,050 G/d**.
+  - Switching to **Daily NQ Profit (G/d)** shifts spending into higher-margin crops (e.g., Morrocorn @ 50 G/d, Revol Pepper @ 47.8 G/d, Cucumble @ 43.7 G/d), doubling or tripling daily revenue on the exact same farm plots.
 - **Why Expansion Mode Prioritizes Speed**: Upgrading earlier is always better than upgrading later. If you plant slow, high-profit crops (e.g., 6–12 days) while saving, your cash remains frozen in the dirt, delaying your upgrade by days. Fast 1–3 day crops return to your wallet with compounding interest every 48–72 hours, letting you buy the expansion at the earliest possible calendar moment.
 - **Budget Cascading in Production Mode (The Watermelon vs. Morrocorn Trap)**:
   - If you have 70 free plots and 10,000 G in Summer, buying 4 Islet Watermelons (@ 2,500 G) spends all 10,000 G but leaves **66 plots empty**, generating only **700 G/d**.
@@ -155,7 +160,7 @@ For full mathematical definitions, derivations, and formulas, see [crop_metrics_
 | **Cash Compound Rate (%/day)** | $r = \left(\left(\frac{\text{Sell}}{\text{Seed}}\right)^{\frac{1}{\text{Days} + 1}} - 1\right) \times 100\%$ | **Early Game / Low Gold:** Maximize the speed at which your initial wallet multiplies. |
 | **Daily NQ Profit** | $\delta = \frac{\text{Net Profit}}{\text{Production Days}}$ | **Cycle Efficiency & Plot Profit:** Compares normal quality profit generation velocity per plot across crops of different harvest lengths. |
 | **Production Days** | Single: $m\text{ days}$ <br> Repeat: $m + (n - 1) \cdot g\text{ days}$ | **Turnaround Planning:** Total calendar time the crop occupies the soil before the plot is freed up. |
-| **Latest Plant Day** | $30 - \text{Production Days}$ | **Quietus Management:** Cutoff day to plant without withering at Quietus or losing harvest cycles. |
+| **Planting Schedule** | $[30 - d_{\text{prod}}, \dots, \text{step by } d_{\text{prod}}]$ | **Quietus Rotation Management:** Full sequence of planting days that align back-to-back with the Day 30 Quietus cutoff (e.g., Seatide Garlic: `24, 18, 12, 6`). |
 
 ---
 

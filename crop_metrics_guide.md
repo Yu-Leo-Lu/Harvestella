@@ -13,10 +13,10 @@ A concise reference guide explaining how to compute the core metrics in `compute
 
 | Metric | What It Measures | The Question It Answers | When to Use |
 | :--- | :--- | :--- | :--- |
-| **Cash Compound Rate (%/day)** | Return on Capital (Gold efficiency) | *"How fast will my wallet multiply if I reinvest every payout?"* | **Low Gold / Early Game** (You have free farm plots, but an empty wallet) |
-| **Daily NQ Profit (G/d)** | Return on Space & Time (Plot efficiency) | *"How much raw gold does each tilled tile produce per day?"* | **High Gold / Mid-to-Late Game** (You have plenty of gold, but limited farm tiles & watering stamina) |
+| **Cash Compound Rate (%/day)** | Return on Capital (Gold efficiency) | *"How fast will my wallet multiply if I reinvest every payout?"* | **Low Gold / Bootstrapping** (Wallet < ~6k–10k G: free plots exceed gold; cannot afford 99-seed stacks) |
+| **Daily NQ Profit (G/d)** | Return on Space & Time (Plot efficiency) | *"How much raw gold does each tilled tile produce per day?"* | **High Gold / Plot-Constrained** (Wallet ≥ ~6k–10k G: can easily buy out 99-cap compound seeds; plots are bottleneck) |
 | **Production Days** | Crop Lifecycle & Soil Commitment | *"How many total calendar days will this crop occupy the plot?"* | **Plot Scheduling & Crop Rotation** (Turnaround planning before replanting) |
-| **Latest Plant Day** | Quietus Harvest Cutoff | *"What is the last calendar day to plant and still get maximum harvests?"* | **Late Season Planning** (Avoiding crops withering on Day 30) |
+| **Planting Schedule** | Quietus Rotation Cadence | *"What are all the planting dates that align with the Day 30 Quietus cutoff?"* | **Season-Long Rotation Planning** (Zero dead plot days before Quietus) |
 
 ## 3. Cash Compound Rate (%/day)
 
@@ -96,32 +96,21 @@ Where:
 * **Cucumble** ($m=4, g=3, n=6$): $\frac{(6 \cdot 200) - 370}{19} = \frac{830}{19} = \mathbf{+43.7\text{ G/d}}$
 
 
-## 6. Latest Plant Day
+## 6. Planting Schedule
 
 ### Formula
 
-For single crops (latest day to reap a harvest before Quietus):
-$$l = 30 - m$$
+Descending calendar days stepping backwards from Day 30 by Production Days ($d_{\text{prod}}$), synchronizing consecutive harvests directly into Quietus with **zero wasted plot days**:
 
-For repeat crops (latest day to achieve full harvest run of $n$ yields):
-$$l = 30 - d_{\text{prod}}$$
+$$S = [30 - d_{\text{prod}}, 30 - 2d_{\text{prod}}, \dots] \quad (\text{for all days } > 0)$$
 
 Where:
 * $d_{\text{prod}}$ = Production Days ($m$ for single crops, $m + (n - 1) \cdot g$ for repeat crops)
-* $l$ = latest plant day
+* *Display truncation*: Schedules with $\ge 8$ dates truncate cleanly to 7 elements: `d1, d2, d3, d4, d5, ... , dn`.
 
 ### Examples
-
-#### Single Crop: Dress Lettuce ($m = 2$)
-
-Dress Lettuce takes 2 days to mature. To harvest on or before Day 30 prior to Quietus:
-
-$$l = 30 - 2 = \mathbf{\text{Day } 28}$$
-
-*(Planting on the morning of Day 28 yields on the morning of Day 30, right before Quietus).*
-
-#### Repeat Crop: Cucumble ($m = 4$, $g = 3$, $n = 6$)
-
-Cucumble yields its 1st harvest on Day $p + 4$, and each of the remaining 5 harvests every 3 days ($5 \times 3 = 15$ days), requiring $d_{\text{prod}} = 4 + 15 = 19$ production days total for all 6 harvests:
-
-$$l = 30 - 19 = \mathbf{\text{Day } 11}$$
+* **Seatide Garlic** ($d_{\text{prod}} = 6\text{d}$): $30 - 6 = \mathbf{24, 18, 12, 6}$
+* **Islet Watermelon** ($d_{\text{prod}} = 12\text{d}$): $30 - 12 = \mathbf{18, 6}$
+* **Morrocorn** ($d_{\text{prod}} = 4\text{d}$): $30 - 4 = \mathbf{26, 22, 18, 14, 10, 6, 2}$
+* **Dress Lettuce** ($d_{\text{prod}} = 2\text{d}$): $30 - 2 = \mathbf{28, 26, 24, 22, 20, \dots, 2}$
+* **Cucumble** ($d_{\text{prod}} = 19\text{d}$): $30 - 19 = \mathbf{11}$
