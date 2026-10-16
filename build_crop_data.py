@@ -9,9 +9,9 @@ Executes all steps in sequence:
 import argparse
 from pathlib import Path
 
-from compute_crop_metrics import analyze_csv_file
-from reorder_crop_catalog import reorder_catalog
-from split_crops_by_season import split_catalog_by_season
+from scripts.compute_crop_metrics import analyze_csv_file
+from scripts.reorder_crop_catalog import reorder_catalog
+from scripts.split_crops_by_season import split_catalog_by_season
 
 
 def run_pipeline(

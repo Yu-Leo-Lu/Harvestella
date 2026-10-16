@@ -1,0 +1,48 @@
+# ==============================================================================
+# Harvestella Planting Optimizer Configuration: Spring
+# ==============================================================================
+
+current_day: 1
+wallet_gold: 1000
+horizon: quietus # Options: "quietus" (mature on or before Day 30) or "next_restock" (Days 11, 21, 31)
+max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
+
+# Current available unplanted plots by biome
+free_plots:
+  farm: 70
+  waterside: 0
+  cave: 0
+
+# Town unlock status (set to false if a town vendor is not yet unlocked)
+unlocked_towns:
+  Lethe: true
+  Nemea: true
+  Shatolla: true
+  Argene: true
+  Abandoned Eden: false
+
+# Current in-stock seed count at general stores (default: 99)
+# Grouped by vendor town, sorted by Daily NQ Profit (G/d) descending:
+seed_stock:
+  # Lethe
+  Cucumble: 99            # +43.7 G/d
+  Unionion (Lethe): 99    # +21.7 G/d
+  Dress Lettuce: 99       # +15.0 G/d
+  Carrop (Lethe): 99      # +10.0 G/d
+  Stellar Wheat: 99       # +7.5 G/d
+  Grass: 99               # +2.5 G/d
+
+  # Nemea
+  Strawbuddy: 99          # +35.8 G/d
+  Tingle Radish: 99       # +35.0 G/d
+  Unionion (Nemea): 99    # +30.0 G/d
+  Nemean Tomato: 99       # +22.0 G/d
+  Carrop (Nemea): 99      # +20.0 G/d
+
+  # Shatolla / Nemea
+  Nectarcane: 99          # +38.0 G/d
+
+  # Argene
+  Revol Pepper: 99        # +47.8 G/d
+  Sudor Pepper: 99        # +38.9 G/d
+  Curry Herbs: 99         # +18.3 G/d

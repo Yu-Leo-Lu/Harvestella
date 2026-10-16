@@ -15,6 +15,10 @@ $RECYCLE.BIN/
 __pycache__/
 *.py[cod]
 
-# Temporary Files
+# Temporary & Environment Files
 *.tmp
 *.bak
+.env
+.env.*
+.venv/
+env/

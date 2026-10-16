@@ -1,0 +1,33 @@
+# ==============================================================================
+# Harvestella Planting Optimizer Configuration: Winter
+# ==============================================================================
+
+current_day: 1
+wallet_gold: 20000
+horizon: quietus # Options: "quietus" (mature on or before Day 30) or "next_restock" (Days 11, 21, 31)
+max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
+
+# Current available unplanted plots by biome
+free_plots:
+  farm: 70
+  waterside: 0
+  cave: 0
+
+# Town unlock status (set to false if a town vendor is not yet unlocked)
+unlocked_towns:
+  Lethe: true
+  Nemea: true
+  Shatolla: true
+  Argene: true
+  Abandoned Eden: false
+
+# Current in-stock seed count at general stores (default: 99)
+# Grouped by vendor town, sorted by Daily NQ Profit (G/d) descending:
+seed_stock:
+  # Lethe
+  Lumpotato (Lethe): 99   # +10.0 G/d
+
+  # Argene
+  Chilly Plant: 99        # +71.4 G/d
+  Argene Cabbage: 99      # +25.0 G/d
+  Lumpotato (Argene): 99  # +13.3 G/d

@@ -1,243 +1,242 @@
 # Harvestella Agricultural Economics & Crop Profit Optimizer
 
-A data-driven toolkit and guide for maximizing farming profits in Square Enix's **Harvestella**.
+A data-driven toolkit and Mixed-Integer Linear Programming (MILP) optimizer for maximizing farming profits in Square Enix's Harvestella.
 
-This repository models realistic agricultural economics in Harvestella, accounting for actual in-game constraints: the **30-day season**, the season-ending **Quietus** disaster, **overnight shipping delays (+1 day payout)**, biome/plot requirements, and initial cash constraints.
-
----
-
-## Features
-
-- **Comprehensive Crop Master Catalog (`crop_master_catalog.csv`)**:
-  - Detailed pricing, growth cycles, repeat harvest intervals, biome/land requirements (Farm, Waterside, Cave), vendor towns, and seasonal availability.
-- **Realistic Game Mechanics Modeling**:
-  - **Shipping Delay (+1d)**: Shipped crops yield gold the following morning, impacting cash turnaround.
-  - **Quietus Deadlines**: Seasons run exactly 30 days. Unharvested annual crops die on Day 30 without payout.
-  - **Single vs. Repeat Harvests**: Distinct mathematical models for one-time plantings versus recurring crops (e.g., Nemean Tomato, Morrocorn, Islet Watermelon) and multi-season orchard trees.
-- **Core Financial & Scheduling Metrics**:
-  - **Daily NQ Profit**: Normal quality daily gold return per farm plot per growth day ($G/\text{day}$).
-  - **Cash Compound Rate (%/day)**: Daily exponential growth rate of capital—essential when starting with low gold.
-  - **Production Days**: Total active lifecycle days a crop occupies the plot through all harvest cycles.
-  - **Planting Schedule**: The full sequence of Quietus-aligned planting calendar days (e.g., `24, 18, 12, 6` for 6-day Seatide Garlic) guaranteeing zero dead plot days ending on Day 30.
-- **Automated CLI Tools**:
-  - `run_all.py`: Runs the complete pipeline (reorders catalog, splits seasons, computes & saves metrics).
-  - `compute_crop_metrics.py`: Computes financial and scheduling rankings across seasons.
-  - `split_crops_by_season.py`: Generates clean, per-season CSV data subsets from the master catalog.
-  - `reorder_crop_catalog.py`: Reorders the master catalog by vendor town and crop name.
+> ⚡ **Quick Navigation**: [The Big Picture](#the-big-picture-why-crop-allocation-is-hard) • [Quick Start & Solver](#quick-start--workflow) • [Farm Expansion Benchmarks](#renovator-plot-expansion-benchmarks-levels-19) • [Data Pipeline](#1-click-data-preparation-pipeline) • [Project Architecture](#project-architecture--documentation)
 
 ---
 
-## Strategy Cheat-Sheet
+## The Big Picture: Why Crop Allocation is Hard
 
-**Goal: maximize the wallet by the end of the 30-day season.** Every season ends at Quietus, which wipes out unharvested annual crops.
+In *Harvestella*, deciding what seeds to buy is not a simple matter of looking up a "best crop" tier list. A player faces four rigid, simultaneous in-game bottlenecks that interact non-linearly:
 
-### Planning Assumptions
+### The 4 In-Game Bottlenecks
 
-- **Seed stock is capped, and the shop restocks every 10 days** (Day 1, Day 11, Day 21). Each restock is a fixed pool of seeds, so you cannot keep replanting one cheap crop forever.
-- **Plot upgrades are expensive and come in large batches** (many plots at once, up to an eventual cap). Leftover gold from daily buying will almost never cover one, so an upgrade has to be **saved for on purpose**.
-- **Plant-time is the real currency.** A seed occupies a plot for its **Production Days**, and a plot supplies 10 plot-days per restock window.
-
-### Which Metric Wins? It Depends on Your Strategic Mode
-
-Three constraints limit any seed purchase: **wallet gold**, **free plots**, and **vendor seed stock**. Your ranking depends on your strategic objective:
-
-| Mode | Trigger / Bottleneck | Metric to Rank By | Why It Wins |
-| :--- | :--- | :--- | :--- |
-| **Bootstrapping / Expansion** | **Wallet < ~6k–10k G** *(Capital-Constrained)*<br>Cannot afford 99-seed stacks; plots exceed cash. | **Cash Compound Rate (%/day)** *(Short 1–3d turnarounds)* | Multiplies scarce wallet gold exponentially, keeps cash liquid, and rushes early farm upgrades. |
-| **Production Mode** | **Wallet ≥ ~6k–10k G** *(Plot-Constrained)*<br>Easily affords all top compound seeds in shop (99-cap). | **Daily NQ Profit (G/d)** *(Cascading by budget)* | Plots are the hard bottleneck. Maximizes raw daily gold per tile, preventing excess cash from sitting idle at 0% return. |
-
-### Decision Tree (Run at Each Restock, and Whenever a Plot Frees Up)
-
-```mermaid
-flowchart TD
-    A{"Can wallet easily afford all top compound seeds in shop?<br/>(Wallet ≥ ~6,000–10,000 G or easily covers Free Plots × Compound Seed Cost)"}
-    
-    A -->|"No (Capital-Constrained)"| C1["Bootstrapping Mode: Max Compounding<br/>Rank by Cash Compound Rate (%/day)<br/>Prioritize fast 1–3 day crops (Lettuce, Carrop)"]
-    
-    A -->|"Yes (Plot-Constrained)"| C2["Production Mode: Max Daily Profit<br/>Rank seeds by Daily NQ Profit (G/d)<br/>(Idle cash earns 0%; maximize G/tile)"]
-    
-    C2 --> P1{"Can wallet fill all free plots<br/>with top seed?"}
-    P1 -->|"Yes"| B1["Fill all plots with top seed"]
-    
-    P1 -->|"No / Sold Out"| P2{"Does candidate crop finish<br/>on or before next restock morning?<br/>(Production Days ≤ Days to Restock)"}
-    
-    P2 -->|"Yes"| B2["Plant candidate crop<br/>(Frees plots on or before restock)"]
-    P2 -->|"No"| P3["Step to next seed with shorter cycle<br/>that fits before next restock"]
-    P3 --> P2
-    
-    C1 --> F{"Top seed sold out<br/>with plots still free?"}
-    B1 --> F
-    B2 --> F
-    
-    F -->|"Yes"| G["Take next seed in ranking"]
-    G --> F
-    F -->|"No"| Z["Done until next harvest or restock"]
-```
-
-**Notes on the tree:**
-
-- **The Capital vs. Land Inflection Point (~6k–10k G)**:
-  - When your pocket has under ~6,000 G, farm plots exceed your purchasing power. Maximizing **Cash Compound Rate (%/day)** multiplies your scarce gold fastest.
-  - Once your pocket reaches **~6,000–10,000 G**, you can afford the general store's entire 99-seed stock of top compounders (e.g., $99 \times 55\text{ G} = 5,445\text{ G}$ for Dress Lettuce; $99 \times 80\text{ G} = 7,920\text{ G}$ for Lumpotato).
-  - On a 70-plot farm, planting 70 Dress Lettuce only costs 3,850 G. With 8,000 G in your wallet, staying on Lettuce leaves **4,150 G sitting idle earning 0% return**, while your 70 plots generate only **1,050 G/d**.
-  - Switching to **Daily NQ Profit (G/d)** shifts spending into higher-margin crops (e.g., Morrocorn @ 50 G/d, Revol Pepper @ 47.8 G/d, Cucumble @ 43.7 G/d), doubling or tripling daily revenue on the exact same farm plots.
-- **Why Expansion Mode Prioritizes Speed**: Upgrading earlier is always better than upgrading later. If you plant slow, high-profit crops (e.g., 6–12 days) while saving, your cash remains frozen in the dirt, delaying your upgrade by days. Fast 1–3 day crops return to your wallet with compounding interest every 48–72 hours, letting you buy the expansion at the earliest possible calendar moment.
-- **Budget Cascading in Production Mode (The Watermelon vs. Morrocorn Trap)**:
-  - If you have 70 free plots and 10,000 G in Summer, buying 4 Islet Watermelons (@ 2,500 G) spends all 10,000 G but leaves **66 plots empty**, generating only **700 G/d**.
-  - Jumping straight to pure cheap compounders (Dress Lettuce @ 55 G) fills all 70 plots for 3,850 G, but generates only **1,050 G/d** while leaving **6,150 G idle**.
-  - **The Solution**: Cascade down the Daily Profit ranking to **Morrocorn** (@ 200 G seed). Buying 50 Morrocorn fills 50 plots and generates **2,500 G/d** ($>3.5\times$ Watermelon and $>2\times$ Lettuce).
-- **Restock Horizon Alignment ($\text{Production Days} \le \text{Days to Restock}$)**:
-  - Vendors restock inventory every 10 days on **Day 1, Day 11, and Day 21** ($R \in \{11, 21, 31\}$).
-  - If your top seed is sold out or unaffordable, **never plant a slow crop that overhangs the restock day**.
-  - **Example on Day 16** ($R = 21$, remaining window $= 5$ days):
-    - Planting **Nemean Tomato** (10 days) locks plots until Day 26, completely missing the Day 21 restock.
-    - Instead, pick crops where $\text{Production Days} \le 5$ (e.g., **Morrocorn** 4d, **Dress Lettuce** 2d, or **Carrop** 1d). They finish before Day 21 morning, keeping your plots open and your wallet flush to purchase the restocked seeds.
-- **Re-check constraints every time a plot frees up**: A 2-day crop frees its plot every 2 days, while a 12-day crop locks it for 12.
-- **Never replace a growing crop**: The seed is a sunk cost; re-ranking only applies to newly empty plots.
-
-### Plot Upgrade Plan (Separate From the Daily Loop)
-
-Farm expansions are permanent (they carry over into all future seasons and years) but come in large, expensive batches from the Renovator in Lethe. Leftover daily cash will not cover them—they must be saved for deliberately.
-
-#### Farm Upgrade Costs & Payback Benchmarks
-
-$$\text{Payback Days} = \frac{\text{Upgrade Cost } (C)}{\text{Tiles Added } (k) \times \text{Daily NQ Profit } (g^*)}$$
-
-| Farm Level | Upgrade Cost | Plot Increment ($k$) | Total Tiles | Cost / Tile | Payback @ 20 G/d (Early) | Payback @ 45 G/d (Mid-Game) | Strategic Assessment |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
-| **Level 1** | Free | Starting (10×7) | **70 tiles** | — | — | — | Starting plot. Wallet-limited early on. |
-| **Level 2** | **3,000 G** | **+56 tiles** (8×7) | **126 tiles** | **53.6 G** | **2.7 days** | **1.2 days** | **Highest ROI in the game.** Rush this immediately in Spring/Summer. |
-| **Level 3** | **8,000 G** | **+21 tiles** (3×7) | **147 tiles** | 381.0 G | 19.0 days | 8.5 days | Stepping stone needed to reach Level 4. |
-| **Level 4** | **15,000 G** | **+70 tiles** (10×7) | **217 tiles** | **214.3 G** | **10.7 days** | **4.8 days** | **Huge expansion leap.** Pays back in under 1 week of good crops. |
-| **Level 5** | **25,000 G** | **+56 tiles** (8×7) | **273 tiles** | 446.4 G | 22.3 days | 9.9 days | Solid mid-game goal. *Requires Sprinklers to manage stamina.* |
-| **Level 6** | **40,000 G** | **+21 tiles** (3×7) | **294 tiles** | 1,904.8 G | 95.2 days | 42.3 days | Expensive bridge tier to Level 7. |
-| **Level 7** | **80,000 G** | **+70 tiles** (10×7) | **364 tiles** | 1,142.9 G | 57.1 days | 25.4 days | Late-game industrial farming. |
-| **Level 8** | **120,000 G** | **+56 tiles** (8×7) | **420 tiles** | 2,142.9 G | 107.1 days | 47.6 days | End-game orchard / passive empire. |
-| **Level 9 (Max)** | **200,000 G** | **+21 tiles** (3×7) | **441 tiles** | 9,523.8 G | 476.2 days | 211.6 days | Pure completionist flex tier. |
-
-> [!TIP]
-> **Stamina & Automation Warning**: Do not expand beyond Level 2 (126 tiles) without crafting **Sprinklers** (Level 1 / Level 2). Manually tilling and watering 200+ tiles will deplete your entire stamina bar before noon!
-
-#### How to Execute the Upgrade Saving Plan
-1. **Target the High-ROI Tiers Early**: Prioritize **Level 2 (3,000 G)** and **Level 4 (15,000 G)** as soon as possible. Because expansions are permanent, their payback periods are trivial (under a week).
-2. **Switch to Expansion Mode**: When saving for an upgrade, **never plant slow crops** (e.g. 6–12+ days). Slow crops freeze your cash in the soil, delaying the day you can purchase the upgrade.
-3. **Compound with Short-Cycle Seeds**: Fill your free plots with 1–3 day high-compound crops (e.g., Dress Lettuce, Unionion, Carrop). Your money returns with compounding interest every 48–72 hours.
-4. **Trigger the Upgrade Instantly**: The exact morning your wallet crosses the upgrade threshold, buy the expansion. Your plot capacity jumps by $+56$ or $+70$ tiles, and you can immediately transition to Production Mode to maximize daily profits on your expanded farm.
-
-### The 30-Day Flow in Restock Windows
-
-Every season in Harvestella lasts exactly 30 days, ending with the Quietus reset on Day 31. Because general store seed stocks refresh every 10 days (Days 1, 11, and 21), planning your farm around these **three 10-day Restock Windows** prevents wasted gold and crops dying to Quietus:
-
-1. **Window 1 (Days 1–10: Long-Cycle & Repeat Harvest Window)**:
-   - **Time Remaining**: 20–30 calendar days left.
-   - **Strategic Focus**: This is the **only window** where long multi-harvest repeat crops (e.g., Cucumble, Shatollan Paprika, Revol Pepper) can reach full lifecycle yields. Alternatively, if capital is limited or you are rushing farm expansions (Level 2 or Level 4), sprint 1–3 day compounding crops (Unionion, Dress Lettuce, Carrop) to rapidly compound your wallet.
-2. **Window 2 (Days 11–20: Mid-Cycle Cash Crop Window)**:
-   - **Time Remaining**: 10–19 calendar days left.
-   - **Strategic Focus**: Multi-harvest crops are now locked out by their Quietus deadlines ($30 - \text{Production Days}$). Replant empty plots with high-margin **medium-cycle crops (4–11 days)** like Royal Eggplant, Seatide Garlic, Sudor Pepper, Morrocorn, Nectarcane, or Chilly Plant.
-3. **Window 3 (Days 21–30: Short-Cycle Sprint Window)**:
-   - **Time Remaining**: 1–9 calendar days left.
-   - **Strategic Focus**: Strict Quietus shutdown. All slow-growing crops will die unharvested. Switch all plots to fast 1–4 day sprints (Dress Lettuce, Unionion, Lumpotato, Argene Cabbage, Stellar Wheat, Carrop) to liquidate all plot capacity into cash before Quietus strikes.
+1. **Capital Budget Limit (`wallet_gold`)**: You can only spend the liquid cash currently in your pocket.
+2. **Biome Soil Partitioning (`free_plots`)**: Farm land is strictly partitioned into three incompatible soil types:
+   - Farm Plots: Standard soil.
+   - Waterside Plots: Specialized water soil (e.g., Islet Watermelon, Nectarcane).
+   - Cave Plots: Specialized cave soil (e.g., Revol Pepper, Sudor Pepper).
+   - *Plots of one biome cannot grow crops from another.*
+3. **Vendor Shop Inventory Caps & Town Story Unlocks**: General stores carry a finite stock per 10-day cycle (`seed_stock`, default 99). Furthermore, seeds from Nemea, Shatolla, Argene, or Abandoned Eden are unavailable until those towns are unlocked in the story.
+4. **Planning Deadlines (Quietus vs. Restocks)**:
+   - Quietus (Day 30): Every season lasts exactly 30 days and terminates with Quietus. All annual crops die on Day 30 without payout.
+   - Vendor Restocks (Days 1, 11, 21): Shops refresh stock every 10 days. Slow crops that overhang a restock day lock up your plot capacity and freeze your capital.
 
 ---
 
-### Season-by-Season Playbook
+### The Dual Economic Engines: Capital Compounding vs. Land Efficiency
 
-| Season | Window 1 (Days 1–10)<br>*Long Multi-Harvest / Repeat* | Window 2 (Days 11–20)<br>*Medium Cash Crops (4–11d)* | Window 3 (Days 21–30)<br>*Short Sprints (1–4d)* | Critical Deadlines & Traps |
-| :--- | :--- | :--- | :--- | :--- |
-| **Spring** | **Cucumble** (+43.7 G/d, 19d)<br>**Revol Pepper** (+47.8 G/d, 16d)<br>**Strawbuddy** (+35.8 G/d, 12d)<br>*(Or sprint Unionion for Level 2 Farm)* | **Nectarcane** (+38.0 G/d, 10d)<br>**Sudor Pepper** (+38.9 G/d, 9d)<br>**Tingle Radish** (+35.0 G/d, 4d)<br>**Unionion** (+30.0 G/d, 3d) | **Unionion** (+30.0 G/d, 3d)<br>**Dress Lettuce** (+15.0 G/d, 2d)<br>**Stellar Wheat** (+7.5 G/d, 2d)<br>**Carrop** (+20.0 G/d, 1d) | • **Cucumble** cutoff is **Day 11** (19d).<br>• **Revol Pepper** cutoff is **Day 14** (16d).<br>• **Strawbuddy** cutoff is **Day 18** (12d).<br>• Plant **Unionion** up to **Day 27**, **Dress Lettuce** up to **Day 28**. |
-| **Summer** | **Shatollan Paprika** (+35.2 G/d, 21d)<br>**Revol Pepper** (+47.8 G/d, 16d)<br>**Islet Watermelon** (+175.0 G/d, 12d)<br>**Morrocorn** (+50.0 G/d, 4d) | **Islet Watermelon** (plant by Day 18)<br>**Seatide Garlic** (+58.3 G/d, 6d)<br>**Morrocorn** (+50.0 G/d, 4d)<br>**Honey Flower** (+41.7 G/d, 6d)<br>**Sudor Pepper** (+38.9 G/d, 9d) | **Morrocorn** (plant by Day 26)<br>**Eden Rice** (+5.0 G/d, 3d)<br>**Dress Lettuce** (+15.0 G/d, 2d)<br>**Stellar Wheat** (+7.5 G/d, 2d)<br>**Carrop** (+20.0 G/d, 1d) | • **Shatollan Paprika** cutoff is **Day 9** (21d).<br>• **Islet Watermelon** cutoff is **Day 18** (12d, 2,500 G seed).<br>• **Morrocorn** is the king of mid/late summer (4d turn, massive compounding + G/d). |
-| **Fall** | **Revol Pepper** (+47.8 G/d, 16d)<br>**Royal Eggplant** (+60.0 G/d, 11d)<br>**Lantern Pumpkin** (11d, by Day 19)<br>**Nectarcane** (+38.0 G/d, 10d) | **Royal Eggplant** (plant by Day 19)<br>**Nectarcane** (+38.0 G/d, 10d)<br>**Sudor Pepper** (+38.9 G/d, 9d)<br>**Curry Herbs** (+18.3 G/d, 6d)<br>**Unionion** (+30.0 G/d, 3d) | **Unionion** (+30.0 G/d, 3d)<br>**Lumpotato** (+13.3 G/d, 3d)<br>**Eden Rice** (+5.0 G/d, 3d)<br>**Dress Lettuce** (+15.0 G/d, 2d)<br>**Carrop** (+20.0 G/d, 1d) | • **Revol Pepper** cutoff is **Day 14** (16d).<br>• **Royal Eggplant** cutoff is **Day 19** (11d).<br>• **Sudor Pepper** cutoff is **Day 21** (9d).<br>• **Lumpotato** and **Unionion** plantable up to **Day 27**. |
-| **Winter** | **Chilly Plant** (+71.4 G/d, 7d)<br>**Argene Cabbage** (+25.0 G/d, 4d)<br>**Lumpotato** (+13.3 G/d, 3d) | **Chilly Plant** (plant by Day 23)<br>**Argene Cabbage** (+25.0 G/d, 4d)<br>**Lumpotato** (+13.3 G/d, 3d)<br>**Curry Herbs** (plant by Day 24) | **Argene Cabbage** (plant by Day 26)<br>**Lumpotato** (plant by Day 27) | • Restricted seed catalog in Argene.<br>• **Chilly Plant** cutoff is **Day 23** (7d, huge 71.4 G/d return).<br>• **Argene Cabbage** cutoff is **Day 26**.<br>• **Lumpotato** cutoff is **Day 27**. |
+When evaluating crops, players encounter two fundamentally different economic metrics:
 
----
-
-## Core Financial Metrics
-
-For full mathematical definitions, derivations, and formulas, see [crop_metrics_guide.md](crop_metrics_guide.md).
-
-| Metric | Formula / Concept | When to Prioritize |
-| :--- | :--- | :--- |
-| **Cash Compound Rate (%/day)** | $r = \left(\left(\frac{\text{Sell}}{\text{Seed}}\right)^{\frac{1}{\text{Days} + 1}} - 1\right) \times 100\%$ | **Early Game / Low Gold:** Maximize the speed at which your initial wallet multiplies. |
-| **Daily NQ Profit** | $\delta = \frac{\text{Net Profit}}{\text{Production Days}}$ | **Cycle Efficiency & Plot Profit:** Compares normal quality profit generation velocity per plot across crops of different harvest lengths. |
-| **Production Days** | Single: $m\text{ days}$ <br> Repeat: $m + (n - 1) \cdot g\text{ days}$ | **Turnaround Planning:** Total calendar time the crop occupies the soil before the plot is freed up. |
-| **Planting Schedule** | $[30 - d_{\text{prod}}, \dots, \text{step by } d_{\text{prod}}]$ | **Quietus Rotation Management:** Full sequence of planting days that align back-to-back with the Day 30 Quietus cutoff (e.g., Seatide Garlic: `24, 18, 12, 6`). |
+| Economic Engine | Metric | What It Measures | In-Game Role |
+| :--- | :---: | :--- | :--- |
+| Capital Compounding | Cash Compound Rate (%/day) | Return on Gold ($\text{Gold earned per Gold spent}$) | The Growth Engine: When starting out with low gold (Day 1, 1,000 G), you cannot afford expensive seeds. High-compound crops (e.g. Dress Lettuce at $+15.6\%/\text{d}$) multiply your wallet exponentially ($W_t = W_0 (1+r)^t$) over short 1–2 day sprints, rapidly building capital for farm expansions. |
+| Land Efficiency | Daily NQ Profit (G/d) | Return on Land ($\text{Gold earned per Plot occupied}$) | The Revenue Engine: Once your wallet has enough cash to fill all available plots, idle gold in your pocket earns 0% return. You want every square foot of dirt generating maximum raw gold per day. |
 
 ---
 
-## Repository Structure
+### The Single-Seed Traps: Why Intuition Fails
 
-```text
-Harvestella/
-├── crop_master_catalog.csv    # Master catalog of all crops, costs, cycles, and biomes
-├── crop_metrics_guide.md      # Mathematical derivation and formula guide for metrics
-├── run_all.py                 # Master pipeline runner (reorder -> split -> compute)
-├── compute_crop_metrics.py    # CLI tool to calculate profit, compound rates, and deadlines
-├── split_crops_by_season.py   # Utility to regenerate seasonal CSV files from master catalog
-├── reorder_crop_catalog.py    # Utility to sort master catalog by vendor town and crop name
-├── seasons/                   # Per-season CSV data
-│   ├── spring.csv
-│   ├── summer.csv
-│   ├── fall.csv
-│   └── winter.csv
-└── archive/                   # Reference analysis tables and legacy farming guides
-```
+To see why simple rules of thumb fail, consider a standard benchmark scenario entering Summer (Season 2, with 8,000 G saved from Spring):
+- Season & Timing: Summer, Day 1 (Full 30-day Quietus planning horizon)
+- Starting Budget: 8,000 G (accumulated from Spring harvests)
+- Available Land: 70 standard Farm plots (Level 1 farm)
+- Town Unlocks: Lethe and Shatolla unlocked
+
+Most players follow simple greedy heuristics and fall into one of two traps:
+
+#### Trap A: Greedy by Raw Daily Profit (The Capital Starvation Trap)
+- *"Seatide Garlic yields +58.3 G/d, the highest profit of any Summer farm crop. I should spend all my money on Garlic."*
+- At 650 G per seed, an 8,000 G budget buys only 12 seeds (spending 7,800 G).
+- Result: You occupy only 12 plots while 58 farm plots sit empty, earning only +700.0 G/d.
+
+#### Trap B: Greedy by Compound Velocity (The Land Bottleneck Trap)
+- *"Dress Lettuce doubles money fastest (+15.62%/d). I should buy only Lettuce."*
+- At 55 G per seed, filling all 70 plots costs only $70 \times 55 = 3,850\text{ G}$.
+- Result: All plots are occupied, but 4,150 G sits idle in your wallet earning 0% return. Total daily profit is only +1,050.0 G/d.
 
 ---
 
-## Quick Start
+### The Solution: How the Optimizer Harmonizes Both Engines
+
+The true optimal solution is an **inflection point** that balances both forces:
+
+1. **Plot-Filling**: Uses cheap, high-compounding crops (like Dress Lettuce) to ensure no farm tile sits idle.
+2. **Marginal Upgrading**: Systematically upgrades individual plots to higher-margin crops (like Morrocorn @ 200 G seed, +50 G/d) until both land and gold are exhausted.
+
+> [!IMPORTANT]
+> ### 🌾 The Power of Balanced Allocation (Summer 8,000 G Benchmark)
+> 
+> Look at what happens to your plots and cash across all three strategies on the same 70 Farm plots:
+> 
+> | Strategy | Farm Plots Occupied | Gold Capital Spent | Daily Profit | What Went Wrong? |
+> | :--- | :---: | :---: | :---: | :--- |
+> | Pure Garlic | 12 / 70 (17.1%) | 7,800 G / 8,000 G | +700.0 G/d | Capital Starvation: 650 G seeds deplete cash; 58 plots sit empty! |
+> | Pure Lettuce | 70 / 70 (100%) | 3,850 G / 8,000 G | +1,050.0 G/d | Land Bottleneck: Farm is full, but 4,150 G sits idle in your pocket. |
+> | **MILP Optimizer** | **69 / 70 (98.6%)** | **8,000 G / 8,000 G (100%)** | **+2,050.0 G/d** | **Optimal Sweet Spot**: Nearly full farm, 100% working capital! |
+> 
+> The optimizer proposes **29 Morrocorn** + **40 Dress Lettuce**:
+> - Spending exactly 8,000 G (0 G left idle).
+> - Planting 69 of 70 plots (only 1 tile left open).
+> - Delivering **+2,050.0 G/day** — nearly 3× the profit of Garlic (+192.9%) and double the profit of Lettuce (+95.2%)!
+
+---
+
+## Quick Start & Workflow
 
 ### Prerequisites
-- Python 3.10+ (uses standard library only—no external pip packages required).
+- Python 3.10+
+- Install required packages:
+  ```bash
+  pip install pyyaml scipy numpy
+  ```
 
-### 1. Run Complete Pipeline (One-Click)
+---
 
-To reorder the catalog, regenerate seasonal CSVs, and compute/save all metrics in one command:
+### 1-Click Allocation Optimization
+
+Run the optimizer across all four seasons. This prints formatted terminal summary tables and automatically updates [`crop_allocation_report.md`](crop_allocation_report.md) in the project root:
+
 ```bash
-python run_all.py
+python optimize_crop_allocation.py -a
 ```
 
-### 2. Compute Crop Economics & Schedules
-
-To analyze a specific season (e.g., Spring):
+To optimize a single season profile:
 ```bash
-python compute_crop_metrics.py -i spring
+python optimize_crop_allocation.py -sp   # Spring
+python optimize_crop_allocation.py -su   # Summer
+python optimize_crop_allocation.py -fa   # Fall
+python optimize_crop_allocation.py -wi   # Winter
 ```
 
-To analyze all seasons simultaneously:
-```bash
-python compute_crop_metrics.py --all
-# or using shorthand:
-python compute_crop_metrics.py -a
+#### Sample Optimizer Output Table:
+```
+============================================================================================================================================
+ ALL-SEASON CROP ALLOCATION EXECUTIVE SUMMARY
+============================================================================================================================================
+Season      Budget  Optimal Seed Purchases                                   Plots Used                 Gold Spent / Leftover      Daily Profit
+--------------------------------------------------------------------------------------------------------------------------------------------
+Spring     1,000 G  9 Unionion (Nemea), 1 Dress Lettuce                      10 / 70 Farm               1,000 G / 0 G (100.0%)       +285.0 G/d
+Summer     8,000 G  29 Morrocorn (Shatolla), 40 Dress Lettuce                69 / 70 Farm               8,000 G / 0 G (100.0%)     +2,050.0 G/d
+Fall      15,000 G  70 Unionion (Nemea), 12 Nectarcane, 8 Sudor Pepper       70 Farm, 12 Water, 8 Cave  14,990 G / 10 G (99.9%)    +2,867.2 G/d
+Winter    20,000 G  8 Chilly Plant, 61 Argene Cabbage, 1 Lumpotato (Argene)  70 / 70 Farm               19,900 G / 100 G (99.5%)   +2,109.5 G/d
+============================================================================================================================================
 ```
 
-To compute metrics and write the calculated columns directly into the CSV files in `seasons/`:
-```bash
-python compute_crop_metrics.py -a -s
-# or combined:
-python compute_crop_metrics.py -as
+---
+
+### Configuring Your Farm Profile
+
+Customize your farm parameters in `configs/<season>.yaml`:
+
+```yaml
+season: summer
+current_day: 1
+wallet_gold: 8000
+
+# Planning Horizon:
+# - "quietus"      : Strict Day 30 season-end cutoff (crops must mature by Day 30)
+# - "next_restock" : Mid-season 10-day shop refresh cutoff (Days 11, 21, or 31)
+horizon: quietus
+
+# Optional Variety Limit (Cardinality Constraint):
+# Set to an integer (e.g., 2 or 3) to limit farm management chaos, or null for unconstrained
+max_crop_varieties: null
+
+# Physical Available Plot Capacities
+free_plots:
+  farm: 70
+  waterside: 12
+  cave: 12
+
+# Story Unlock Gates
+unlocked_towns:
+  Lethe: true
+  Nemea: true
+  Shatolla: true
+  Argene: true
+  Abandoned Eden: false
 ```
 
-To output the analysis to a custom file:
+---
+
+### Renovator Plot Expansion Benchmarks (Levels 1–9)
+
+Farm expansions are permanent (they carry over into all future seasons) and are purchased in batches from the Renovator in Lethe. Use this table as a reference for the `farm` capacity values to configure in your YAML files:
+
+| Farm Level | Upgrade Cost | Plot Increment | Total Farm Tiles | Cost / Tile | Payback @ 35 G/d | Strategic Assessment |
+| :---: | :---: | :---: | :---: | :---: | :---: | :--- |
+| Level 1 | Free | Starting (10×7) | 70 tiles | — | — | Starting plot. Capital-constrained early on. |
+| **Level 2** | **3,000 G** | **+56 tiles** (8×7) | **126 tiles** | 53.6 G | 1.5 days | **Highest ROI in the game.** Rush in Spring Year 1. |
+| Level 3 | 8,000 G | +21 tiles (3×7) | 147 tiles | 381.0 G | 10.9 days | Stepping stone to Level 4. |
+| **Level 4** | **15,000 G** | **+70 tiles** (10×7) | **217 tiles** | 214.3 G | 6.1 days | **Major expansion leap.** Pays back in under a week. |
+| Level 5 | 25,000 G | +56 tiles (8×7) | 273 tiles | 446.4 G | 12.8 days | Solid mid-game goal. |
+| Level 6 | 40,000 G | +21 tiles (3×7) | 294 tiles | 1,904.8 G | 54.4 days | Expensive bridge tier to Level 7. |
+| Level 7 | 80,000 G | +70 tiles (10×7) | 364 tiles | 1,142.9 G | 32.7 days | Late-game industrial farming. |
+| Level 8 | 120,000 G | +56 tiles (8×7) | 420 tiles | 2,142.9 G | 61.2 days | End-game passive orchard empire. |
+| Level 9 (Max) | 200,000 G | +21 tiles (3×7) | 441 tiles | 9,523.8 G | 272.1 days | Completionist flex tier. |
+
+> [!TIP]
+> **The Level 4 Working Capital Rule**: Upgrading to Level 4 costs 15,000 G, but buying seeds to plant across all 217 plots requires an additional 7,000–15,000 G. Never spend down to 0 G to buy the expansion—wait until your wallet reaches **~22,000–25,000 G** so your newly acquired plots don't sit empty.
+
+---
+
+### 1-Click Data Preparation Pipeline
+
+To rebuild the catalog, regenerate seasonal CSV files, and compute/enrich all profit and scheduling metrics:
+
 ```bash
-python compute_crop_metrics.py -i summer -o summer_analyzed.csv
+python build_crop_data.py
 ```
 
-To sort by **Cash Compound Rate** instead of the default **Daily NQ Profit**:
-```bash
-python compute_crop_metrics.py -i spring --sort compound
+This automated pipeline:
+1. Reorders [`crop_master_catalog.csv`](crop_master_catalog.csv) by story vendor progression.
+2. Splits crops into clean seasonal CSV tables in `seasons/` (`spring.csv`, `summer.csv`, etc.).
+3. Computes Daily NQ Profit, Cash Compound Rate, Production Days, and Quietus-aligned Planting Schedules for every crop.
+
+---
+
+## Project Architecture & Documentation
+
+### Directory Structure
+
+```
+Harvestella/
+├── README.md                           # Main Project Overview & Strategy Guide
+├── crop_allocation_report.md           # Generated Markdown Report from Optimizer
+├── optimize_crop_allocation.py         # Mixed-Integer Linear Programming Optimizer CLI
+├── build_crop_data.py                  # Master Data Pipeline (reorders, splits, computes metrics)
+├── crop_master_catalog.csv             # Complete Master Agricultural Data
+│
+├── docs/                               # 📁 Detailed Mathematical & Economic Guides
+│   ├── crop_allocation_solver_guide.md # MILP formulation, Big-M method, and Solver Walkthrough
+│   └── crop_metrics_guide.md           # ROI & Daily Profit Formulas
+│
+├── configs/                            # 📁 User Season Configurations (Gold, Plots, Horizons)
+│   ├── spring.yaml, summer.yaml, fall.yaml, winter.yaml
+│
+├── seasons/                            # 📁 Per-Season Analyzed Data CSVs
+│   ├── spring.csv, summer.csv, fall.csv, winter.csv
+│
+└── scripts/                            # 📁 Pipeline Engine Modules
+    ├── compute_crop_metrics.py
+    ├── split_crops_by_season.py
+    └── reorder_crop_catalog.py
 ```
 
-### 3. Regenerate Seasonal CSVs
+---
 
-If you update `crop_master_catalog.csv`, regenerate the seasonal tables using:
-```bash
-python split_crops_by_season.py
-```
+### Deep-Dive Reference Guides
 
-Include all-year crops across every seasonal file:
-```bash
-python split_crops_by_season.py --include-all-year
-```
+- **[Crop Allocation Solver Guide](docs/crop_allocation_solver_guide.md)**:
+  Detailed mathematical documentation of `solve_allocation()`:
+  - Multi-Dimensional Bounded Integer Knapsack classification.
+  - Mixed-Integer Linear Programming (MILP) canonical formulation.
+  - Big-M method for `max_crop_varieties` cardinality constraints ($x_i - M_i y_i \le 0$).
+  - Full variable reference table and Summer 8k G numerical calculation walkthrough.
+- **[Crop Metrics & Economics Guide](docs/crop_metrics_guide.md)**:
+  Formulas and definitions for Cash Compound Rate (%/day), Daily NQ Profit (G/d), Production Days, and Quietus Planting Schedules.
 
 ---
 

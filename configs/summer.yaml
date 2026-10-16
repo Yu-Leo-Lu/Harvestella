@@ -1,0 +1,55 @@
+# ==============================================================================
+# Harvestella Planting Optimizer Configuration: Summer
+# ==============================================================================
+
+current_day: 18
+wallet_gold: 51000
+horizon: next_restock # Options: "quietus" (mature on or before Day 30) or "next_restock" (Days 11, 21, 31)
+max_crop_varieties: 3 # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
+
+# Current available unplanted plots by biome
+free_plots:
+  farm: 98
+  waterside: 18
+  cave: 18
+
+# Town unlock status (set to false if a town vendor is not yet unlocked)
+unlocked_towns:
+  Lethe: true
+  Nemea: true
+  Shatolla: true
+  Argene: true
+  Abandoned Eden: false
+
+# Current in-stock seed count at general stores (default: 99)
+# Grouped by vendor town, sorted by Daily NQ Profit (G/d) descending:
+seed_stock:
+  # Lethe
+  Morrocorn (Lethe): 0   # +42.5 G/d
+  Dress Lettuce: 0       # +15.0 G/d
+  Carrop (Lethe): 99      # +10.0 G/d
+  Stellar Wheat: 0       # +7.5 G/d
+  Grass: 99               # +2.5 G/d
+
+  # Nemea
+  Nemean Tomato: 99       # +22.0 G/d
+  Carrop (Nemea): 0      # +20.0 G/d
+
+  # Shatolla
+  Islet Watermelon: 99    # +175.0 G/d (Waterside)
+  Seatide Garlic: 0      # +58.3 G/d
+  Morrocorn (Shatolla): 0 # +50.0 G/d
+  Honey Flower: 99        # +41.7 G/d (Waterside)
+  Shatollan Paprika: 99   # +35.2 G/d
+  Bellhop Seeds: 99       # +17.3 G/d
+
+  # Shatolla / Nemea
+  Nectarcane: 99          # +38.0 G/d (Waterside)
+
+  # Argene
+  Revol Pepper: 99        # +47.8 G/d (Cave)
+  Sudor Pepper: 99        # +38.9 G/d (Cave)
+  Curry Herbs: 99         # +18.3 G/d (Cave)
+
+  # Abandoned Eden
+  Eden Rice: 99           # +5.0 G/d

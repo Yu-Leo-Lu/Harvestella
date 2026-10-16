@@ -1,0 +1,50 @@
+# ==============================================================================
+# Harvestella Planting Optimizer Configuration: Fall
+# ==============================================================================
+
+current_day: 1
+wallet_gold: 15000
+horizon: quietus # Options: "quietus" (mature on or before Day 30) or "next_restock" (Days 11, 21, 31)
+max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
+
+# Current available unplanted plots by biome
+free_plots:
+  farm: 70
+  waterside: 12
+  cave: 12
+
+# Town unlock status (set to false if a town vendor is not yet unlocked)
+unlocked_towns:
+  Lethe: true
+  Nemea: true
+  Shatolla: true
+  Argene: true
+  Abandoned Eden: false
+
+# Current in-stock seed count at general stores (default: 99)
+# Grouped by vendor town, sorted by Daily NQ Profit (G/d) descending:
+seed_stock:
+  # Lethe
+  Royal Eggplant: 99      # +60.0 G/d
+  Unionion (Lethe): 99    # +21.7 G/d
+  Dress Lettuce: 99       # +15.0 G/d
+  Lumpotato (Lethe): 99   # +10.0 G/d
+  Stellar Wheat: 99       # +7.5 G/d
+  Grass: 99               # +2.5 G/d
+  Rainbow Bean: 99        # +1.4 G/d
+  Lantern Pumpkin: 99     # +0.0 G/d
+
+  # Nemea
+  Unionion (Nemea): 99    # +30.0 G/d
+
+  # Shatolla / Nemea
+  Nectarcane: 99          # +38.0 G/d (Waterside)
+
+  # Argene
+  Revol Pepper: 99        # +47.8 G/d (Cave)
+  Sudor Pepper: 99        # +38.9 G/d (Cave)
+  Curry Herbs: 99         # +18.3 G/d (Cave)
+  Lumpotato (Argene): 99  # +13.3 G/d
+
+  # Abandoned Eden
+  Eden Rice: 99           # +5.0 G/d

@@ -111,8 +111,8 @@ def main() -> None:
     input_path = args.input.resolve()
     output_directory = args.output_dir.resolve()
 
-    print(f"Reading from: {input_path}")
-    print(f"Output directory: {output_directory}")
+    print(f"Reading from: {args.input}")
+    print(f"Output directory: {args.output_dir}")
 
     counts = split_catalog_by_season(
         input_file=input_path,
