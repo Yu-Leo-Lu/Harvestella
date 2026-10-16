@@ -22,3 +22,7 @@ __pycache__/
 .env.*
 .venv/
 env/
+
+# User Configurations & Generated Reports
+configs/
+crop_allocation_report.md
