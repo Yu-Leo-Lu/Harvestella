@@ -3,7 +3,7 @@
 # ==============================================================================
 
 current_day: 19
-wallet_gold: 5380
+wallet_gold: 24415
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ cave_plots: 81        # Biome capacity (default: 81)
 
 # Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
 reserve_plots:
-  farm: 26
+  farm: 20
   waterside: 0
   cave: 6
 
@@ -30,6 +30,7 @@ planted:
   - { crop: Carrop, day: 19, count: 37 }
   - { crop: Stellar Wheat, day: 19, count: 47 }
   - { crop: Nemean Tomato, day: 18, count: 26 }
+  - { crop: Nemean Tomato, day: 10, count: 6 }
   - { crop: Shatollan Paprika, day: 9, count: 15 }
 
   - { crop: Nectarcane, day: 18, count: 33 }
