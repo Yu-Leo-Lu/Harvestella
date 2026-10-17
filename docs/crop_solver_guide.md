@@ -111,8 +111,8 @@ The function `solve_allocation()` in [`scripts/crop_solver.py`](../scripts/crop_
 | :---: | :--- | :---: | :---: | :--- |
 | **$n$** | `len(crops)` | Integer Scalar | $n \ge 0$ | Number of eligible catalog crop varieties after town and biome filters. |
 | **$c$** | Loop index `0..n-1` | Index | $0 \le c < n$ | Zero-based index referencing a specific crop candidate catalog entry. |
-| **$d$** | `plant_day` | Integer Day | $d \in [\text{current\_day}, 30]$ | **Planting Day**: Calendar day on which seeds are purchased and planted. |
-| **$t$** | `eval_day` | Integer Day | $t \in [\text{current\_day}, 30]$ | **Evaluation Day**: Calendar day on which plot occupancy and cash liquidity are checked. |
+| **$d$** | `plant_day` | Integer Day | $`d \in [\text{current\_day}, 30]`$ | **Planting Day**: Calendar day on which seeds are purchased and planted. |
+| **$t$** | `eval_day` | Integer Day | $`t \in [\text{current\_day}, 30]`$ | **Evaluation Day**: Calendar day on which plot occupancy and cash liquidity are checked. |
 | **$x_{c, d}$** | `solution[var_idx]` | Integer Variable | $\{0, 1, 2, \dots\}$ | **Primary Decision Variable**: Number of seeds of crop $c$ planted on day $d$. |
 | **$N$** | `len(var_map)` | Integer Scalar | $N \ge 0$ | Total active $(c, d)$ decision variables that mature on or before Day 30. |
 | **$y_k$** | Binary block | Binary Variable | $\{0, 1\}$ | **Auxiliary Indicator**: Flags whether unique crop variety $k$ is planted anywhere in season. |
@@ -142,14 +142,14 @@ Before building matrices, `solve_allocation()` filters the seasonal CSV down to 
 1. **Town Gate**: Checks `unlocked_towns[town] == True`. Multi-town vendors (e.g. `Shatolla/Nemea`) unlock if *either* town is unlocked.
 2. **Biome Plot Check**: Crops requiring Waterside or Cave plots are discarded if the player has 0 plots in that biome.
 3. **Economic Viability**: Drops without purchase cost (e.g. Nitro Pineapple) or negative profits are excluded.
-4. **Time-Indexed Feasibility**: For each eligible crop $c$ and each calendar day $d \in [\text{current\_day}, 30]$, the candidate pair $(c, d)$ is accepted only if its first harvest completes on or before Day 30 ($d + m_c \le 30$).
+4. **Time-Indexed Feasibility**: For each eligible crop $c$ and each calendar day $`d \in [\text{current\_day}, 30]`$, the candidate pair $(c, d)$ is accepted only if its first harvest completes on or before Day 30 ($d + m_c \le 30$).
 
 ---
 
 ### Step 2: Time Horizon, Growth Dynamics & Decision Variables
 
 #### 1. Time Horizon & Day Indexing
-Given `current_day`, the planning horizon spans every active calendar day $d \in [\text{current\_day}, 30]$:
+Given `current_day`, the planning horizon spans every active calendar day $`d \in [\text{current\_day}, 30]`$:
 - Day 30 is the final playable day of the season.
 - Quietus occurs on the night between Day 30 and Day 31, destroying all unharvested crops. All harvests must complete on or before Day 30.
 
@@ -178,14 +178,14 @@ Depending on whether `max_crop_varieties` ($K$) is configured:
 
 ### Step 3: Objective Function Construction
 
-The solver maximizes **Total Cumulative Season Net Profit** across all planting days $d \in [\text{current\_day}, 30]$ leading to Quietus:
+The solver maximizes **Total Cumulative Season Net Profit** across all planting days $`d \in [\text{current\_day}, 30]`$ leading to Quietus:
 
 $$\max_{\mathbf{x}} \sum_{c} \sum_{d} \left( (R_{c, d} - p_c) - 10^{-6} \cdot p_c - 10^{-8} \cdot (d - \text{current\_day}) \right) \cdot x_{c, d}$$
 
 #### Dual Tie-Breakers for Optimal Cash & Land Efficiency
 When two planting options yield identical net profit, the solver applies two deterministic microscopic tie-breaker penalties:
 1. **Cost Tie-Breaker ($\epsilon_1 = 10^{-6} \cdot p_c$)**: Strictly prefers cheaper seed varieties to conserve wallet liquidity.
-2. **Timing Tie-Breaker ($\epsilon_2 = 10^{-8} \cdot (d - \text{current\_day})$)**: Strictly prefers earlier planting calendar days to accelerate capital compounding and free soil sooner.
+2. **Timing Tie-Breaker** ($`\epsilon_2 = 10^{-8} \cdot (d - \text{current\_day})`$): Strictly prefers earlier planting calendar days to accelerate capital compounding and free soil sooner.
 
 In standard SciPy minimization format ($\min \mathbf{c}^T \mathbf{z}$):
 
@@ -203,8 +203,8 @@ $$\mathbf{lb} \le \mathbf{A} \mathbf{z} \le \mathbf{ub}$$
 
 | Constraint Family | Scope / Indexing | Equation / Coefficients | Lower Bound ($\mathbf{lb}$) | Upper Bound ($\mathbf{ub}$) |
 | :--- | :--- | :--- | :---: | :---: |
-| **Daily Plot Capacity** | Each day $t \in [\text{current\_day}, 30]$, each biome $b$ | $\sum_{(c, d) \text{ occupying } b \text{ on } t} 1.0 \cdot x_{c, d}$ | $0.0$ | $B_b$ |
-| **Daily Cash Liquidity** | Each morning $t \in [\text{current\_day}, 30]$ | $\sum_{d \le t} p_c \cdot x_{c, d} - \sum_{h + 1 \le t} v_c \cdot x_{c, d}$ | $-\infty$ | $W$ |
+| **Daily Plot Capacity** | Each day $`t \in [\text{current\_day}, 30]`$, each biome $b$ | $\sum_{(c, d) \text{ occupying } b \text{ on } t} 1.0 \cdot x_{c, d}$ | $0.0$ | $B_b$ |
+| **Daily Cash Liquidity** | Each morning $`t \in [\text{current\_day}, 30]`$ | $\sum_{d \le t} p_c \cdot x_{c, d} - \sum_{h + 1 \le t} v_c \cdot x_{c, d}$ | $-\infty$ | $W$ |
 | **10-Day Restock Caps** | Each window $W_w$, each crop $c$ | $\sum_{d \in W_w} 1.0 \cdot x_{c, d}$ | $0.0$ | $S_c$ |
 | **Big-M Variety Linking** | Each unique variety $k$ *(if $K$ set)* | $\sum_{d} 1.0 \cdot x_{c, d} - M \cdot y_k$ | $-\infty$ | $0.0$ |
 | **Variety Cardinality Cap** | Entire season *(if $K$ set)* | $\sum_{k=0}^{U-1} 1.0 \cdot y_k$ | $0.0$ | $K$ |
@@ -281,7 +281,7 @@ Solving the MILP gives the exact seed allocation vector $\mathbf{x}^*$. [`script
 - Produce harvested on calendar day $h$ is placed into the shipping bin on that evening.
 - In *Harvestella*, the shipping payout arrives in the player's wallet on the morning of Day $h + 1$.
 - For each day $d$, the engine looks up all crops shipped on Day $d - 1$ and calculates:
-  $$\text{morning\_wallet} = \text{carryover\_cash} + \text{payout\_revenue}$$
+  $`\text{morning\_wallet} = \text{carryover\_cash} + \text{payout\_revenue}`$
 
 ### 2. Daily Harvest & Soil Management
 - For each crop maturing on day $d$, the engine checks whether it is a single-harvest or regrowth crop:
@@ -290,17 +290,17 @@ Solving the MILP gives the exact seed allocation vector $\mathbf{x}^*$. [`script
 
 ### 3. Seed Purchases & Planting Today
 - Displays all seed purchases scheduled for day $d$, grouped by **Vendor Town** (Lethe, Nemea, Shatolla, Argene) to provide an efficient travel route.
-- Shows total daily seed expenditures $\text{daily\_spent}$.
+- Shows total daily seed expenditures $`\text{daily\_spent}`$.
 
 ### 4. Bedtime Wallet (`end_wallet`)
 - Calculates remaining cash before going to sleep:
-  $$\text{end\_wallet} = \text{morning\_wallet} - \text{daily\_spent}$$
+  $`\text{end\_wallet} = \text{morning\_wallet} - \text{daily\_spent}`$
 - This balance carries over directly into the next morning's `carryover_cash`.
 
 ### 5. Quietus Morning Finale (Day 31 Payout)
 - All crops harvested on the final day of the season (Day 30) are placed in the shipping bin.
 - On the morning of Quietus (Day 31), the final shipping payout arrives:
-  $$\text{final\_wallet} = \text{end\_wallet}_{\text{Day 30}} + \text{payout}_{\text{Day 31}} = \text{wallet\_gold} + \text{total\_season\_profit}$$
+  $`\text{final\_wallet} = \text{end\_wallet}_{\text{Day 30}} + \text{payout}_{\text{Day 31}} = \text{wallet\_gold} + \text{total\_season\_profit}`$
 - This guarantees 100% financial conservation: every gold coin spent and earned is accounted for down to the single G.
 
 ---
