@@ -561,9 +561,7 @@ def solve_allocation(
     # A) Daily Plot Capacity per Biome for each day t in [current_day .. 30]
     for t in active_days:
         for biome in ["farm", "waterside", "cave"]:
-            cap = daily_biome_cap[biome][t]
-            if cap <= 0:
-                continue
+            cap = max(0, daily_biome_cap[biome][t])
             row = [0.0] * total_vars
             has_relevant = False
             for i, v in enumerate(var_map):

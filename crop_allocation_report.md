@@ -5,279 +5,260 @@
 ## SUMMER Optimization Plan
 
 - **Config Profile**: [`configs/summer.yaml`](configs/summer.yaml)
-- **Current Day**: Day 18
-- **Planning Timeline**: Day 18 -> Day 30 (13d Quietus window)
-- **Capital Budget**: 51,600 G
-- **Plot Capacities**: Farm 119 -> 170 | Waterside 78 -> 81 | Cave 81
+- **Current Day**: Day 19
+- **Planning Timeline**: Day 19 -> Day 30 (12d Quietus window)
+- **Capital Budget**: 5,380 G
+- **Plot Capacities**: Farm 0 -> 129 | Waterside 19 -> 48 | Cave 13
 
 ### 🌾 Pre-Planted Crop Field Status
 
 | Biome | Crop Name | Quantity | Planted | Expected Harvests | Soil Status | Est. Revenue |
 | :--- | :--- | :---: | :---: | :--- | :--- | :---: |
-| Waterside | **Islet Watermelon** | 1 | Day 8 | D20 | Freed D20 | +4,600 G |
-| Waterside | **Islet Watermelon** | 2 | Day 12 | D24 | Freed D24 | +9,200 G |
-| Farm | **Nemean Tomato** | 20 | Day 10 | D18, D19, D20 | Stays Planted *(Regrowth)* | +3,900 G |
-| Farm | **Morrocorn** | 51 | Day 15 | D19 | Freed D19 | +20,400 G |
+| Farm | **Seatide Garlic** | 45 | Day 16 | D22 | Freed D22 | +45,000 G |
+| Farm | **Carrop** | 37 | Day 19 | D20 | Freed D20 | +4,255 G |
+| Farm | **Stellar Wheat** | 47 | Day 19 | D21 | Freed D21 | +2,585 G |
+| Farm | **Nemean Tomato** | 26 | Day 18 | D23, D24, D25, D26, D27, D28 | Stays Planted *(Regrowth)* | +10,140 G |
+| Farm | **Shatollan Paprika** | 15 | Day 9 | D20, D22, D24, D26, D28, D30 | Stays Planted *(Regrowth)* | +9,900 G |
+| Waterside | **Nectarcane** | 33 | Day 18 | D22, D25, D28 | Stays Planted *(Regrowth)* | +24,750 G |
+| Waterside | **Honey Flower** | 18 | Day 17 | D23 | Freed D23 | +11,340 G |
+| Waterside | **Islet Watermelon** | 6 | Day 18 | D30 | Freed D30 | +27,600 G |
+| Waterside | **Islet Watermelon** | 4 | Day 16 | D28 | Freed D28 | +18,400 G |
+| Waterside | **Islet Watermelon** | 1 | Day 12 | D24 | Freed D24 | +4,600 G |
+| Cave | **Sudor Pepper** | 44 | Day 18 | D21, D24, D27 | Stays Planted *(Regrowth)* | +33,000 G |
+| Cave | **Revol Pepper** | 9 | Day 14 | D21, D24, D27, D30 | Stays Planted *(Regrowth)* | +9,540 G |
+| Cave | **Sudor Pepper** | 9 | Day 15 | D21, D24 | Stays Planted *(Regrowth)* | +4,500 G |
 
 ### Optimal Daily Action Plan (Day-by-Day Timeline)
 
-#### **Day 18**
-
-- **Morning Wallet**: **51,600 G**
-- 🌾 **Harvest & Ship**: 20x Nemean Tomato *(Farm)* — regrowth 1/3 (stays planted) → +1,300 G *(arrives morning D19)*
-
-##### 🌱 Seed Purchases & Planting
-
-| Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Cave | **Sudor Pepper** | Argene | 13 | 5,200 G | D21, D24, D27 | +4,550 G |
-| Farm | **Carrop** | Lethe | 47 | 4,935 G | D19 | +470 G |
-| Farm | **Stellar Wheat** | Lethe | 50 | 2,000 G | D20 | +750 G |
-| Farm | **Carrop** | Nemea | 21 | 1,995 G | D19 | +420 G |
-| Waterside | **Islet Watermelon** | Shatolla | 4 | 10,000 G | D30 | +8,400 G |
-| Waterside | **Nectarcane** | Shatolla | 73 | 27,010 G | D22, D25, D28 | +27,740 G |
-
-- **Daily Seed Spent**: 51,140 G | **End-of-Day Wallet**: **460 G**
-
----
-
 #### **Day 19**
 
-- 📬 **Payout**: **+1,300 G** *(from 20x Nemean Tomato (pre-planted) on Day 18)*
-- **Morning Wallet**: **1,760 G** *(460 G carryover + 1,300 G)*
-- 🌾 **Harvest & Ship**:
-  - 68x Carrop *(Farm)* — single harvest (soil freed) → +7,820 G *(arrives morning D20)*
-  - 51x Morrocorn *(Farm)* — single harvest (soil freed) → +20,400 G *(arrives morning D20)*
-  - 20x Nemean Tomato *(Farm)* — regrowth 2/3 (stays planted) → +1,300 G *(arrives morning D20)*
+- **Morning Wallet**: **5,380 G**
 
-##### 🌱 Seed Purchases & Planting
-
-| Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Farm | **Grass** | Lethe | 43 | 1,290 G | D21 | +215 G |
-
-- **Daily Seed Spent**: 1,290 G | **End-of-Day Wallet**: **470 G**
+- *No seed purchases or planting scheduled today.*
+- **End-of-Day Wallet**: **5,380 G**
 
 ---
 
 #### **Day 20**
 
-- 📬 **Payout**: **+29,520 G** *(from 20x Nemean Tomato (pre-planted) on Day 19, 51x Morrocorn (pre-planted) on Day 19, 68x Carrop on Day 19)*
-- **Morning Wallet**: **29,990 G** *(470 G carryover + 29,520 G)*
+- **Morning Wallet**: **5,380 G**
 - 🌾 **Harvest & Ship**:
-  - 20x Nemean Tomato *(Farm)* — regrowth 3/3 (stays planted) → +1,300 G *(arrives morning D21)*
-  - 50x Stellar Wheat *(Farm)* — single harvest (soil freed) → +2,750 G *(arrives morning D21)*
-  - 1x Islet Watermelon *(Waterside)* — single harvest (soil freed) → +4,600 G *(arrives morning D21)*
+  - 37x Carrop *(Farm)* — single harvest (soil freed) → +4,255 G *(arrives morning D21)*
+  - 15x Shatollan Paprika *(Farm)* — regrowth 1/6 (stays planted) → +1,650 G *(arrives morning D21)*
 
 ##### 🌱 Seed Purchases & Planting
 
 | Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Cave | **Sudor Pepper** | Argene | 67 | 26,800 G | D23, D26, D29 | +23,450 G |
-| Farm | **Carrop** | Lethe | 20 | 2,100 G | D21 | +200 G |
-| Waterside | **Nectarcane** | Nemea | 1 | 370 G | D24, D27, D30 | +380 G |
+| Farm | **Stellar Wheat** | Lethe | 32 | 1,280 G | D22 | +480 G |
+| Waterside | **Nectarcane** | Nemea | 10 | 3,700 G | D24, D27, D30 | +3,800 G |
+| Waterside | **Nectarcane** | Shatolla | 1 | 370 G | D24, D27, D30 | +380 G |
 
-- **Daily Seed Spent**: 29,270 G | **End-of-Day Wallet**: **720 G**
+- **Daily Seed Spent**: 5,350 G | **End-of-Day Wallet**: **30 G**
 
 ---
 
 #### **Day 21**
 
-- 📬 **Payout**: **+8,650 G** *(from 1x Islet Watermelon (pre-planted) on Day 20, 20x Nemean Tomato (pre-planted) on Day 20, 50x Stellar Wheat on Day 20)*
-- **Morning Wallet**: **9,370 G** *(720 G carryover + 8,650 G)*
+- 📬 **Payout**: **+5,905 G** *(from 37x Carrop (pre-planted) on Day 20, 15x Shatollan Paprika (pre-planted) on Day 20)*
+- **Morning Wallet**: **5,935 G** *(30 G carryover + 5,905 G)*
 - 🌾 **Harvest & Ship**:
-  - 13x Sudor Pepper *(Cave)* — regrowth 1/3 (stays planted) → +3,250 G *(arrives morning D22)*
-  - 20x Carrop *(Farm)* — single harvest (soil freed) → +2,300 G *(arrives morning D22)*
-  - 43x Grass *(Farm)* — single harvest (soil freed) → +1,505 G *(arrives morning D22)*
+  - 9x Revol Pepper *(Cave)* — regrowth 1/4 (stays planted) → +2,385 G *(arrives morning D22)*
+  - 53x Sudor Pepper *(Cave)* — regrowth 1/3 (stays planted) → +13,250 G *(arrives morning D22)*
+  - 47x Stellar Wheat *(Farm)* — single harvest (soil freed) → +2,585 G *(arrives morning D22)*
 
 ##### 🌱 Seed Purchases & Planting
 
 | Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Farm | **Dress Lettuce** | Lethe | 98 | 5,390 G | D23 | +2,940 G |
-| Farm | **Stellar Wheat** | Lethe | 26 | 1,040 G | D23 | +390 G |
-| Farm | **Carrop** | Nemea | 5 | 475 G | D22 | +100 G |
-| Farm | **Morrocorn** | Shatolla | 9 | 1,800 G | D25 | +1,800 G |
+| Cave | **Sudor Pepper** | Argene | 13 | 5,200 G | D24, D27, D30 | +4,550 G |
+| Farm | **Dress Lettuce** | Lethe | 13 | 715 G | D23 | +390 G |
 
-- **Daily Seed Spent**: 8,705 G | **End-of-Day Wallet**: **665 G**
+- **Daily Seed Spent**: 5,915 G | **End-of-Day Wallet**: **20 G**
 
 ---
 
 #### **Day 22**
 
-- 📬 **Payout**: **+7,055 G** *(from 13x Sudor Pepper on Day 21, 20x Carrop on Day 21, 43x Grass on Day 21)*
-- **Morning Wallet**: **7,720 G** *(665 G carryover + 7,055 G)*
+- 📬 **Payout**: **+18,220 G** *(from 47x Stellar Wheat (pre-planted) on Day 21, 53x Sudor Pepper (pre-planted) on Day 21, 9x Revol Pepper (pre-planted) on Day 21)*
+- **Morning Wallet**: **18,240 G** *(20 G carryover + 18,220 G)*
 - 🌾 **Harvest & Ship**:
-  - 5x Carrop *(Farm)* — single harvest (soil freed) → +575 G *(arrives morning D23)*
-  - 73x Nectarcane *(Waterside)* — regrowth 1/3 (stays planted) → +18,250 G *(arrives morning D23)*
+  - 45x Seatide Garlic *(Farm)* — single harvest (soil freed) → +45,000 G *(arrives morning D23)*
+  - 15x Shatollan Paprika *(Farm)* — regrowth 2/6 (stays planted) → +1,650 G *(arrives morning D23)*
+  - 32x Stellar Wheat *(Farm)* — single harvest (soil freed) → +1,760 G *(arrives morning D23)*
+  - 33x Nectarcane *(Waterside)* — regrowth 1/3 (stays planted) → +8,250 G *(arrives morning D23)*
 
 ##### 🌱 Seed Purchases & Planting
 
 | Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Farm | **Morrocorn** | Shatolla | 36 | 7,200 G | D26 | +7,200 G |
+| Farm | **Dress Lettuce** | Lethe | 23 | 1,265 G | D24 | +690 G |
+| Farm | **Carrop** | Nemea | 43 | 4,085 G | D23 | +860 G |
+| Farm | **Morrocorn** | Shatolla | 49 | 9,800 G | D26 | +9,800 G |
 
-- **Daily Seed Spent**: 7,200 G | **End-of-Day Wallet**: **520 G**
+- **Daily Seed Spent**: 15,150 G | **End-of-Day Wallet**: **3,090 G**
 
 ---
 
 #### **Day 23**
 
-- 📬 **Payout**: **+18,825 G** *(from 73x Nectarcane on Day 22, 5x Carrop on Day 22)*
-- **Morning Wallet**: **19,345 G** *(520 G carryover + 18,825 G)*
+- 📬 **Payout**: **+56,660 G** *(from 45x Seatide Garlic (pre-planted) on Day 22, 15x Shatollan Paprika (pre-planted) on Day 22, 33x Nectarcane (pre-planted) on Day 22, 32x Stellar Wheat on Day 22)*
+- **Morning Wallet**: **59,750 G** *(3,090 G carryover + 56,660 G)*
 - 🌾 **Harvest & Ship**:
-  - 67x Sudor Pepper *(Cave)* — regrowth 1/3 (stays planted) → +16,750 G *(arrives morning D24)*
-  - 98x Dress Lettuce *(Farm)* — single harvest (soil freed) → +8,330 G *(arrives morning D24)*
-  - 26x Stellar Wheat *(Farm)* — single harvest (soil freed) → +1,430 G *(arrives morning D24)*
+  - 43x Carrop *(Farm)* — single harvest (soil freed) → +4,945 G *(arrives morning D24)*
+  - 13x Dress Lettuce *(Farm)* — single harvest (soil freed) → +1,105 G *(arrives morning D24)*
+  - 26x Nemean Tomato *(Farm)* — regrowth 1/6 (stays planted) → +1,690 G *(arrives morning D24)*
+  - 18x Honey Flower *(Waterside)* — single harvest (soil freed) → +11,340 G *(arrives morning D24)*
 
 ##### 🌱 Seed Purchases & Planting
 
 | Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Farm | **Stellar Wheat** | Lethe | 59 | 2,360 G | D25 | +885 G |
-| Farm | **Seatide Garlic** | Shatolla | 25 | 16,250 G | D29 | +8,750 G |
+| Farm | **Seatide Garlic** | Shatolla | 56 | 36,400 G | D29 | +19,600 G |
 
-- **Daily Seed Spent**: 18,610 G | **End-of-Day Wallet**: **735 G**
+- **Daily Seed Spent**: 36,400 G | **End-of-Day Wallet**: **23,350 G**
 
 ---
 
 #### **Day 24**
 
-- 📬 **Payout**: **+26,510 G** *(from 67x Sudor Pepper on Day 23, 98x Dress Lettuce on Day 23, 26x Stellar Wheat on Day 23)*
-- **Morning Wallet**: **27,245 G** *(735 G carryover + 26,510 G)*
+- 📬 **Payout**: **+19,080 G** *(from 26x Nemean Tomato (pre-planted) on Day 23, 18x Honey Flower (pre-planted) on Day 23, 43x Carrop on Day 23, 13x Dress Lettuce on Day 23)*
+- **Morning Wallet**: **42,430 G** *(23,350 G carryover + 19,080 G)*
 - 🌾 **Harvest & Ship**:
-  - 13x Sudor Pepper *(Cave)* — regrowth 2/3 (stays planted) → +3,250 G *(arrives morning D25)*
-  - 2x Islet Watermelon *(Waterside)* — single harvest (soil freed) → +9,200 G *(arrives morning D25)*
-  - 1x Nectarcane *(Waterside)* — regrowth 1/3 (stays planted) → +250 G *(arrives morning D25)*
+  - 9x Revol Pepper *(Cave)* — regrowth 2/4 (stays planted) → +2,385 G *(arrives morning D25)*
+  - 66x Sudor Pepper *(Cave)* — regrowth 2/3 (stays planted) → +16,500 G *(arrives morning D25)*
+  - 23x Dress Lettuce *(Farm)* — single harvest (soil freed) → +1,955 G *(arrives morning D25)*
+  - 26x Nemean Tomato *(Farm)* — regrowth 2/6 (stays planted) → +1,690 G *(arrives morning D25)*
+  - 15x Shatollan Paprika *(Farm)* — regrowth 3/6 (stays planted) → +1,650 G *(arrives morning D25)*
+  - 1x Islet Watermelon *(Waterside)* — single harvest (soil freed) → +4,600 G *(arrives morning D25)*
+  - 11x Nectarcane *(Waterside)* — regrowth 1/3 (stays planted) → +2,750 G *(arrives morning D25)*
 
 ##### 🌱 Seed Purchases & Planting
 
 | Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Farm | **Seatide Garlic** | Shatolla | 40 | 26,000 G | D30 | +14,000 G |
-| Waterside | **Honey Flower** | Shatolla | 2 | 760 G | D30 | +500 G |
+| Farm | **Seatide Garlic** | Shatolla | 23 | 14,950 G | D30 | +8,050 G |
+| Waterside | **Honey Flower** | Shatolla | 27 | 10,260 G | D30 | +6,750 G |
 
-- **Daily Seed Spent**: 26,760 G | **End-of-Day Wallet**: **485 G**
+- **Daily Seed Spent**: 25,210 G | **End-of-Day Wallet**: **17,220 G**
 
 ---
 
 #### **Day 25**
 
-- 📬 **Payout**: **+12,700 G** *(from 2x Islet Watermelon (pre-planted) on Day 24, 13x Sudor Pepper on Day 24, 1x Nectarcane on Day 24)*
-- **Morning Wallet**: **13,185 G** *(485 G carryover + 12,700 G)*
+- 📬 **Payout**: **+31,530 G** *(from 26x Nemean Tomato (pre-planted) on Day 24, 15x Shatollan Paprika (pre-planted) on Day 24, 1x Islet Watermelon (pre-planted) on Day 24, 66x Sudor Pepper (pre-planted) on Day 24, 9x Revol Pepper (pre-planted) on Day 24, 11x Nectarcane on Day 24, 23x Dress Lettuce on Day 24)*
+- **Morning Wallet**: **48,750 G** *(17,220 G carryover + 31,530 G)*
 - 🌾 **Harvest & Ship**:
-  - 9x Morrocorn *(Farm)* — single harvest (soil freed) → +3,600 G *(arrives morning D26)*
-  - 59x Stellar Wheat *(Farm)* — single harvest (soil freed) → +3,245 G *(arrives morning D26)*
-  - 73x Nectarcane *(Waterside)* — regrowth 2/3 (stays planted) → +18,250 G *(arrives morning D26)*
+  - 26x Nemean Tomato *(Farm)* — regrowth 3/6 (stays planted) → +1,690 G *(arrives morning D26)*
+  - 33x Nectarcane *(Waterside)* — regrowth 2/3 (stays planted) → +8,250 G *(arrives morning D26)*
 
-##### 🌱 Seed Purchases & Planting
-
-| Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Farm | **Morrocorn** | Lethe | 46 | 10,580 G | D29 | +7,820 G |
-| Farm | **Carrop** | Nemea | 21 | 1,995 G | D26 | +420 G |
-
-- **Daily Seed Spent**: 12,575 G | **End-of-Day Wallet**: **610 G**
+- *No seed purchases or planting scheduled today.*
+- **End-of-Day Wallet**: **48,750 G**
 
 ---
 
 #### **Day 26**
 
-- 📬 **Payout**: **+25,095 G** *(from 9x Morrocorn on Day 25, 73x Nectarcane on Day 25, 59x Stellar Wheat on Day 25)*
-- **Morning Wallet**: **25,705 G** *(610 G carryover + 25,095 G)*
+- 📬 **Payout**: **+9,940 G** *(from 26x Nemean Tomato (pre-planted) on Day 25, 33x Nectarcane (pre-planted) on Day 25)*
+- **Morning Wallet**: **58,690 G** *(48,750 G carryover + 9,940 G)*
 - 🌾 **Harvest & Ship**:
-  - 67x Sudor Pepper *(Cave)* — regrowth 2/3 (stays planted) → +16,750 G *(arrives morning D27)*
-  - 21x Carrop *(Farm)* — single harvest (soil freed) → +2,415 G *(arrives morning D27)*
-  - 36x Morrocorn *(Farm)* — single harvest (soil freed) → +14,400 G *(arrives morning D27)*
+  - 49x Morrocorn *(Farm)* — single harvest (soil freed) → +19,600 G *(arrives morning D27)*
+  - 26x Nemean Tomato *(Farm)* — regrowth 4/6 (stays planted) → +1,690 G *(arrives morning D27)*
+  - 15x Shatollan Paprika *(Farm)* — regrowth 4/6 (stays planted) → +1,650 G *(arrives morning D27)*
 
 ##### 🌱 Seed Purchases & Planting
 
 | Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Farm | **Morrocorn** | Lethe | 3 | 690 G | D30 | +510 G |
-| Farm | **Morrocorn** | Shatolla | 54 | 10,800 G | D30 | +10,800 G |
+| Farm | **Morrocorn** | Shatolla | 50 | 10,000 G | D30 | +10,000 G |
 
-- **Daily Seed Spent**: 11,490 G | **End-of-Day Wallet**: **14,215 G**
+- **Daily Seed Spent**: 10,000 G | **End-of-Day Wallet**: **48,690 G**
 
 ---
 
 #### **Day 27**
 
-- 📬 **Payout**: **+33,565 G** *(from 36x Morrocorn on Day 26, 67x Sudor Pepper on Day 26, 21x Carrop on Day 26)*
-- **Morning Wallet**: **47,780 G** *(14,215 G carryover + 33,565 G)*
+- 📬 **Payout**: **+22,940 G** *(from 26x Nemean Tomato (pre-planted) on Day 26, 15x Shatollan Paprika (pre-planted) on Day 26, 49x Morrocorn on Day 26)*
+- **Morning Wallet**: **71,630 G** *(48,690 G carryover + 22,940 G)*
 - 🌾 **Harvest & Ship**:
-  - 13x Sudor Pepper *(Cave)* — regrowth 3/3 (stays planted) → +3,250 G *(arrives morning D28)*
-  - 1x Nectarcane *(Waterside)* — regrowth 2/3 (stays planted) → +250 G *(arrives morning D28)*
+  - 9x Revol Pepper *(Cave)* — regrowth 3/4 (stays planted) → +2,385 G *(arrives morning D28)*
+  - 57x Sudor Pepper *(Cave)* — regrowth 3/3 (stays planted) → +14,250 G *(arrives morning D28)*
+  - 26x Nemean Tomato *(Farm)* — regrowth 5/6 (stays planted) → +1,690 G *(arrives morning D28)*
+  - 11x Nectarcane *(Waterside)* — regrowth 2/3 (stays planted) → +2,750 G *(arrives morning D28)*
 
 - *No seed purchases or planting scheduled today.*
-- **End-of-Day Wallet**: **47,780 G**
+- **End-of-Day Wallet**: **71,630 G**
 
 ---
 
 #### **Day 28**
 
-- 📬 **Payout**: **+3,500 G** *(from 13x Sudor Pepper on Day 27, 1x Nectarcane on Day 27)*
-- **Morning Wallet**: **51,280 G** *(47,780 G carryover + 3,500 G)*
-- 🌾 **Harvest & Ship**: 73x Nectarcane *(Waterside)* — regrowth 3/3 (stays planted) → +18,250 G *(arrives morning D29)*
+- 📬 **Payout**: **+21,075 G** *(from 26x Nemean Tomato (pre-planted) on Day 27, 57x Sudor Pepper (pre-planted) on Day 27, 9x Revol Pepper (pre-planted) on Day 27, 11x Nectarcane on Day 27)*
+- **Morning Wallet**: **92,705 G** *(71,630 G carryover + 21,075 G)*
+- 🌾 **Harvest & Ship**:
+  - 26x Nemean Tomato *(Farm)* — regrowth 6/6 (stays planted) → +1,690 G *(arrives morning D29)*
+  - 15x Shatollan Paprika *(Farm)* — regrowth 5/6 (stays planted) → +1,650 G *(arrives morning D29)*
+  - 4x Islet Watermelon *(Waterside)* — single harvest (soil freed) → +18,400 G *(arrives morning D29)*
+  - 33x Nectarcane *(Waterside)* — regrowth 3/3 (stays planted) → +8,250 G *(arrives morning D29)*
 
 - *No seed purchases or planting scheduled today.*
-- **End-of-Day Wallet**: **51,280 G**
+- **End-of-Day Wallet**: **92,705 G**
 
 ---
 
 #### **Day 29**
 
-- 📬 **Payout**: **+18,250 G** *(from 73x Nectarcane on Day 28)*
-- **Morning Wallet**: **69,530 G** *(51,280 G carryover + 18,250 G)*
-- 🌾 **Harvest & Ship**:
-  - 67x Sudor Pepper *(Cave)* — regrowth 3/3 (stays planted) → +16,750 G *(arrives morning D30)*
-  - 46x Morrocorn *(Farm)* — single harvest (soil freed) → +18,400 G *(arrives morning D30)*
-  - 25x Seatide Garlic *(Farm)* — single harvest (soil freed) → +25,000 G *(arrives morning D30)*
+- 📬 **Payout**: **+29,990 G** *(from 26x Nemean Tomato (pre-planted) on Day 28, 15x Shatollan Paprika (pre-planted) on Day 28, 33x Nectarcane (pre-planted) on Day 28, 4x Islet Watermelon (pre-planted) on Day 28)*
+- **Morning Wallet**: **122,695 G** *(92,705 G carryover + 29,990 G)*
+- 🌾 **Harvest & Ship**: 56x Seatide Garlic *(Farm)* — single harvest (soil freed) → +56,000 G *(arrives morning D30)*
 
 ##### 🌱 Seed Purchases & Planting
 
 | Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Farm | **Carrop** | Nemea | 72 | 6,840 G | D30 | +1,440 G |
+| Farm | **Carrop** | Nemea | 56 | 5,320 G | D30 | +1,120 G |
 
-- **Daily Seed Spent**: 6,840 G | **End-of-Day Wallet**: **62,690 G**
+- **Daily Seed Spent**: 5,320 G | **End-of-Day Wallet**: **117,375 G**
 
 ---
 
 #### **Day 30**
 
-- 📬 **Payout**: **+60,150 G** *(from 25x Seatide Garlic on Day 29, 46x Morrocorn on Day 29, 67x Sudor Pepper on Day 29)*
-- **Morning Wallet**: **122,840 G** *(62,690 G carryover + 60,150 G)*
+- 📬 **Payout**: **+56,000 G** *(from 56x Seatide Garlic on Day 29)*
+- **Morning Wallet**: **173,375 G** *(117,375 G carryover + 56,000 G)*
 - 🌾 **Harvest & Ship**:
-  - 72x Carrop *(Farm)* — single harvest (soil freed) → +8,280 G *(arrives morning D31)*
-  - 57x Morrocorn *(Farm)* — single harvest (soil freed) → +22,800 G *(arrives morning D31)*
-  - 40x Seatide Garlic *(Farm)* — single harvest (soil freed) → +40,000 G *(arrives morning D31)*
-  - 2x Honey Flower *(Waterside)* — single harvest (soil freed) → +1,260 G *(arrives morning D31)*
-  - 4x Islet Watermelon *(Waterside)* — single harvest (soil freed) → +18,400 G *(arrives morning D31)*
-  - 1x Nectarcane *(Waterside)* — regrowth 3/3 (stays planted) → +250 G *(arrives morning D31)*
+  - 9x Revol Pepper *(Cave)* — regrowth 4/4 (stays planted) → +2,385 G *(arrives morning D31)*
+  - 13x Sudor Pepper *(Cave)* — regrowth 3/3 (stays planted) → +3,250 G *(arrives morning D31)*
+  - 56x Carrop *(Farm)* — single harvest (soil freed) → +6,440 G *(arrives morning D31)*
+  - 50x Morrocorn *(Farm)* — single harvest (soil freed) → +20,000 G *(arrives morning D31)*
+  - 23x Seatide Garlic *(Farm)* — single harvest (soil freed) → +23,000 G *(arrives morning D31)*
+  - 15x Shatollan Paprika *(Farm)* — regrowth 6/6 (stays planted) → +1,650 G *(arrives morning D31)*
+  - 27x Honey Flower *(Waterside)* — single harvest (soil freed) → +17,010 G *(arrives morning D31)*
+  - 6x Islet Watermelon *(Waterside)* — single harvest (soil freed) → +27,600 G *(arrives morning D31)*
+  - 11x Nectarcane *(Waterside)* — regrowth 3/3 (stays planted) → +2,750 G *(arrives morning D31)*
 
 - *No seed purchases or planting scheduled today.*
-- **End-of-Day Wallet**: **122,840 G**
+- **End-of-Day Wallet**: **173,375 G**
 
 ---
 
 ### ❄️ Quietus Morning (Day 31 Finale & Summary)
 
-- 📬 **Final Shipping Payout**: **+90,990 G** *(from Day 30 final harvest: 4x Islet Watermelon, 40x Seatide Garlic, 57x Morrocorn, 2x Honey Flower, 1x Nectarcane, 72x Carrop)*
-- **Starting Budget**: 51,600 G
-- **Total Season Net Profit**: **+162,230 G**
-- 🏆 **Final Quietus Wallet**: **213,830 G**
+- 📬 **Final Shipping Payout**: **+104,085 G** *(from Day 30 final harvest: 15x Shatollan Paprika, 6x Islet Watermelon, 9x Revol Pepper, 23x Seatide Garlic, 50x Morrocorn, 27x Honey Flower, 13x Sudor Pepper, 11x Nectarcane, 56x Carrop)*
+- **Starting Budget**: 5,380 G
+- **Total Season Net Profit**: **+272,080 G**
+- 🏆 **Final Quietus Wallet**: **277,460 G**
 
 ### Resource Utilization & Financial Summary
 
-- **Farm Plots Used (Init)**: 118 / 119 (expands to 170) (99.2% utilized, 1 idle)
-- **Waterside Plots (Init)**: 77 / 78 (expands to 81) (98.7% utilized, 1 idle)
-- **Cave Plots Used (Init)**: 13 / 81 (16.0% utilized, 68 idle)
-- **Initial Capital Spent**: 51,140 G / 51,600 G (99.1% spent, 460 G leftover)
-- **Pre-planted Crop Sales**: **+38,100 G**
-- **New Planting Net Profit**: **+124,130 G**
-- **Total Cumulative Season Net Profit**: **+162,230 G** across all restock stages
-- **Final Projected Wallet**: **213,830 G** on Day 30 (Quietus)
+- **Farm Plots Used (Init)**: 0 / 0 (expands to 129) (0.0% utilized, 0 idle)
+- **Waterside Plots (Init)**: 0 / 19 (expands to 48) (0.0% utilized, 19 idle)
+- **Cave Plots Used (Init)**: 0 / 13 (0.0% utilized, 13 idle)
+- **Initial Capital Spent**: 0 G / 5,380 G (0.0% spent, 5,380 G leftover)
+- **Pre-planted Crop Sales**: **+205,610 G**
+- **New Planting Net Profit**: **+66,470 G**
+- **Total Cumulative Season Net Profit**: **+272,080 G** across all restock stages
+- **Final Projected Wallet**: **277,460 G** on Day 30 (Quietus)
 
 ---
 

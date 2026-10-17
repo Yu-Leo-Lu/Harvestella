@@ -2,8 +2,8 @@
 # Harvestella Planting Optimizer Configuration: Summer
 # ==============================================================================
 
-current_day: 18
-wallet_gold: 51600
+current_day: 19
+wallet_gold: 5380
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -16,19 +16,32 @@ cave_plots: 81        # Biome capacity (default: 81)
 
 # Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
 reserve_plots:
-  farm: 6
+  farm: 26
   waterside: 0
-  cave: 0
+  cave: 6
 
 # ------------------------------------------------------------------------------
 # 2. Currently Planted on Farm (Active Batches)
 # ------------------------------------------------------------------------------
 planted:
-  - { crop: Islet Watermelon, day: 8, count: 1 }
-  - { crop: Islet Watermelon, day: 12, count: 2 }
-  - { crop: Nemean Tomato, day: 10, count: 20 }
-  - { crop: Morrocorn, day: 15, count: 51 }
   # - { crop: Morrocorn, day: 1, count: 10 }
+
+  - { crop: Seatide Garlic, day: 16, count: 45 }
+  - { crop: Carrop, day: 19, count: 37 }
+  - { crop: Stellar Wheat, day: 19, count: 47 }
+  - { crop: Nemean Tomato, day: 18, count: 26 }
+  - { crop: Shatollan Paprika, day: 9, count: 15 }
+
+  - { crop: Nectarcane, day: 18, count: 33 }
+  - { crop: Honey Flower, day: 17, count: 18 }
+  - { crop: Islet Watermelon, day: 18, count: 6 }
+  - { crop: Islet Watermelon, day: 16, count: 4 }
+  - { crop: Islet Watermelon, day: 12, count: 1 }
+
+  - { crop: Sudor Pepper, day: 18, count: 44 }
+  - { crop: Revol Pepper, day: 14, count: 9 }
+  - { crop: Sudor Pepper, day: 15, count: 9 }
+
 
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
