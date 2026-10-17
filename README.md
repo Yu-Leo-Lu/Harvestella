@@ -110,18 +110,46 @@ python optimize_crop_allocation.py -fa   # Fall
 python optimize_crop_allocation.py -wi   # Winter
 ```
 
-#### Sample Optimizer Output Table:
+#### Sample Optimizer Output (Daily Action Plan):
 ```
-============================================================================================================================================
- ALL-SEASON CROP ALLOCATION EXECUTIVE SUMMARY
-============================================================================================================================================
-Season      Budget  Optimal Seed Purchases                                   Plots Used                 Gold Spent / Leftover      Daily Profit
---------------------------------------------------------------------------------------------------------------------------------------------
-Spring     1,000 G  9 Unionion (Nemea), 1 Dress Lettuce (Lethe)              10 / 70 Farm               1,000 G / 0 G (100.0%)       +285.0 G/d
-Summer     8,000 G  29 Morrocorn (Shatolla), 40 Dress Lettuce (Lethe)        69 / 70 Farm               8,000 G / 0 G (100.0%)     +2,050.0 G/d
-Fall      15,000 G  70 Unionion (Nemea), 12 Nectarcane (Shatolla), 8 Sudor Pepper (Argene) 70 Farm, 12 Water, 8 Cave  14,990 G / 10 G (99.9%)    +2,867.2 G/d
-Winter    20,000 G  8 Chilly Plant (Argene), 61 Argene Cabbage (Argene), 1 Lumpotato (Argene) 70 / 70 Farm               19,900 G / 100 G (99.5%)   +2,109.5 G/d
-============================================================================================================================================
+======================================================================================
+ HARVESTELLA CROP ALLOCATION OPTIMIZER: SUMMER
+======================================================================================
+ Config File     : configs/summer.yaml
+ Current Day     : Day 18
+ Planning Timeline: Day 18 -> Day 30 (13d Quietus window)
+ Capital Budget  : 51,600 G
+ Plot Capacities : Farm 60 -> 196 | Waterside 36 -> 81 | Cave 54 -> 81
+--------------------------------------------------------------------------------------
+ OPTIMAL DAILY ACTION PLAN (Day-to-Day Time-Indexed Compounding Model)
+--------------------------------------------------------------------------------------
+ [Day 18] Morning Wallet: 51,600 G
+   Biome      Crop Name          Vendor      Qty  Seed Spent Harvest Days     Net Profit
+   ----------------------------------------------------------------------------------
+   Farm       Carrop             Lethe        34      3,570 G D19             +       340 G
+   Farm       Nemean Tomato      Nemea        26      4,420 G D23..D28 (6x)   +     5,720 G
+   Waterside  Islet Watermelon   Shatolla      3      7,500 G D30             +     6,300 G
+   Waterside  Nectarcane         Shatolla     33     12,210 G D22, D25, D28   +    12,540 G
+   Spent Today: 45,300 G | End-of-Day Wallet: 6,300 G
+
+ [Day 19] Morning Wallet: 6,300 G
+   Harvest & Ship: 34x Carrop (Farm) (Single harvest, soil freed) -> +3,910 G
+   Biome      Crop Name          Vendor      Qty  Seed Spent Harvest Days     Net Profit
+   ----------------------------------------------------------------------------------
+   Farm       Carrop             Lethe        19      1,995 G D20             +       190 G
+   Farm       Stellar Wheat      Lethe        48      1,920 G D21             +       720 G
+   Spent Today: 5,910 G | End-of-Day Wallet: 390 G
+
+ [Day 20] Morning Wallet: 4,300 G | Payout Arrived: +3,910 G
+   Harvest & Ship: 40x Carrop (Farm) (Single harvest, soil freed) -> +4,600 G
+   ...
+ [Day 31 - Quietus Morning] Final Payout Arrived: +73,515 G | Final Wallet: 145,240 G
+--------------------------------------------------------------------------------------
+ RESOURCE UTILIZATION & FINANCIAL SUMMARY
+--------------------------------------------------------------------------------------
+ Total Season Net Profit: +  93,640 G across all restock stages
+ Final Projected Wallet :  145,240 G on Day 30 (Quietus)
+======================================================================================
 ```
 
 ---
@@ -131,28 +159,39 @@ Winter    20,000 G  8 Chilly Plant (Argene), 61 Argene Cabbage (Argene), 1 Lumpo
 Customize your farm parameters in `configs/<season>.yaml`:
 
 ```yaml
-season: summer
-current_day: 1
-wallet_gold: 8000
-
+# Current Game Calendar & Budget
+current_day: 18           # Optimize starting from today through Day 30 (Quietus)
+wallet_gold: 51600        # Current gold in pocket
 
 # Optional Variety Limit (Cardinality Constraint):
 # Set to an integer (e.g., 2 or 3) to limit farm management chaos, or null for unconstrained
 max_crop_varieties: null
 
 # Physical Available Plot Capacities
+# Supports static numbers OR dynamic stepped milestone schedules as you expand land
 free_plots:
-  farm: 49
-  waterside: 12
-  cave: 12
+  farm:
+    start: 60             # Plots free right now on current_day
+    19: 114               # Expands to 114 on Day 19
+    22: 156               # Expands to 156 on Day 22
+    30: 196               # Final farm capacity on Day 30
+  waterside: 36           # Static 36 water plots
+  cave: 54                # Static 54 cave plots
 
-# Story Unlock Gates
+# Story Unlock Gates (set to false if a town vendor is not yet reached in the story)
 unlocked_towns:
   Lethe: true
   Nemea: true
   Shatolla: true
   Argene: true
   Abandoned Eden: false
+
+# Store Inventory Overrides (default: 99 per 10-day restock cycle)
+# Useful if you already bought seeds earlier in the current 10-day window
+seed_stock:
+  Morrocorn (Lethe): 0    # Sold out
+  Carrop (Nemea): 21      # 21 remaining in stock
+  Islet Watermelon: 99
 ```
 
 ---
@@ -198,12 +237,12 @@ This automated pipeline:
 Harvestella/
 ├── README.md                           # Main Project Overview & Strategy Guide
 ├── crop_allocation_report.md           # Generated Markdown Report from Optimizer
-├── optimize_crop_allocation.py         # Mixed-Integer Linear Programming Optimizer CLI
+├── optimize_crop_allocation.py         # Day-to-Day Planting Schedule & Report Generator CLI
 ├── build_crop_data.py                  # Master Data Pipeline (reorders, splits, computes metrics)
 ├── crop_master_catalog.csv             # Complete Master Agricultural Data
 │
 ├── docs/                               # 📁 Detailed Mathematical & Economic Guides
-│   ├── crop_allocation_solver_guide.md # MILP formulation, Big-M method, and Solver Walkthrough
+│   ├── crop_solver_guide.md            # MILP formulation, Big-M method, and Solver Walkthrough
 │   └── crop_metrics_guide.md           # ROI & Daily Profit Formulas
 │
 ├── configs/                            # 📁 User Season Configurations (Gold, Plots, Horizons)
@@ -212,7 +251,8 @@ Harvestella/
 ├── seasons/                            # 📁 Per-Season Analyzed Data CSVs
 │   ├── spring.csv, summer.csv, fall.csv, winter.csv
 │
-└── scripts/                            # 📁 Pipeline Engine Modules
+└── scripts/                            # 📁 Pipeline Engine & Solver Modules
+    ├── crop_solver.py                  # Time-Indexed MILP Engine & Daily Ledger Simulation
     ├── compute_crop_metrics.py
     ├── split_crops_by_season.py
     └── reorder_crop_catalog.py
@@ -222,12 +262,12 @@ Harvestella/
 
 ### Deep-Dive Reference Guides
 
-- **[Crop Allocation Solver Guide](docs/crop_allocation_solver_guide.md)**:
-  Detailed mathematical documentation of `solve_allocation()`:
+- **[Crop Allocation Solver Guide](docs/crop_solver_guide.md)**:
+  Detailed mathematical documentation of `solve_allocation()` in `scripts/crop_solver.py`:
+  - Day-to-Day Time-Indexed MILP model with overnight cash compounding.
   - Multi-Dimensional Bounded Integer Knapsack classification.
-  - Mixed-Integer Linear Programming (MILP) canonical formulation.
-  - Big-M method for `max_crop_varieties` cardinality constraints ($x_i - M_i y_i \le 0$).
-  - Full variable reference table and Summer 8k G numerical calculation walkthrough.
+  - Big-M method for `max_crop_varieties` cardinality constraints.
+  - Full variable reference table, Summer numerical walkthrough, and `DailyRecord` simulation ledger.
 - **[Crop Metrics & Economics Guide](docs/crop_metrics_guide.md)**:
   Formulas and definitions for Cash Compound Rate (%/day), Daily NQ Profit (G/d), Production Days, and Quietus Planting Schedules.
 
