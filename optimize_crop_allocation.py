@@ -15,8 +15,6 @@ from scripts.crop_solver import (
     DailyPlantEvent,
     DailyRecord,
     OptimizationResult,
-    get_plot_capacity,
-    is_town_unlocked,
     solve_allocation,
 )
 
@@ -27,8 +25,6 @@ __all__ = [
     "DailyRecord",
     "OptimizationResult",
     "generate_markdown_report",
-    "get_plot_capacity",
-    "is_town_unlocked",
     "main",
     "print_result_report",
     "solve_allocation",
@@ -61,6 +57,14 @@ def print_result_report(result: OptimizationResult) -> None:
         else:
             cap_strs.append(f"{b_name} 0")
     print(f" Plot Capacities : {' | '.join(cap_strs)}")
+    if result.occupied_crops:
+        print(" Pre-planted Crops in Field:")
+        for occ in result.occupied_crops:
+            h_str = ", ".join(f"D{h}" for h in occ.harvest_days) if occ.harvest_days else "No harvest before Quietus"
+            rev = occ.count * len(occ.harvest_days) * occ.crop.nq_sale
+            reg_info = "regrowth" if occ.crop.is_regrowth else "soil freed"
+            h_label = f"Harvests: {h_str}" if len(occ.harvest_days) > 1 else f"Harvest {h_str}"
+            print(f"   * {occ.count}x {occ.crop.name} ({occ.crop.biome.capitalize()}) -- Planted D{occ.plant_day} -> {h_label} (+{rev:,.0f} G, {reg_info})")
     print("-" * 86)
 
     if not result.success:
@@ -141,6 +145,9 @@ def print_result_report(result: OptimizationResult) -> None:
         f" Initial Capital Spent : {result.total_spent:>8,.0f} G / {result.wallet_gold:,.0f} G "
         f"({result.gold_pct:>5.1f}% spent, {result.leftover_gold:,.0f} G leftover)"
     )
+    if result.preexisting_revenue > 0:
+        print(f" Pre-planted Crop Sales: +{result.preexisting_revenue:>8,.0f} G")
+        print(f" New Planting Net Profit: +{result.new_planting_profit:>8,.0f} G")
     print(f" Total Season Net Profit: +{result.total_season_profit:>8,.0f} G across all restock stages")
     print(f" Final Projected Wallet : {result.final_wallet_gold:>8,.0f} G on Day 30 (Quietus)")
     print("=" * 86 + "\n")
@@ -179,6 +186,22 @@ def generate_markdown_report(
             else:
                 cap_strs.append(f"{b_name} 0")
         lines.append(f"- **Plot Capacities**: {' | '.join(cap_strs)}\n")
+        if r.occupied_crops:
+            lines.append("### 🌾 Pre-Planted Crop Field Status\n")
+            lines.append("| Biome | Crop Name | Quantity | Planted | Expected Harvests | Soil Status | Est. Revenue |")
+            lines.append("| :--- | :--- | :---: | :---: | :--- | :--- | :---: |")
+            for occ in r.occupied_crops:
+                h_str = ", ".join(f"D{h}" for h in occ.harvest_days) if occ.harvest_days else "None"
+                rev = occ.count * len(occ.harvest_days) * occ.crop.nq_sale
+                if occ.crop.is_regrowth:
+                    soil_status = "Stays Planted *(Regrowth)*"
+                else:
+                    soil_status = f"Freed D{occ.harvest_days[0]}" if occ.harvest_days else "Freed before Quietus"
+                lines.append(
+                    f"| {occ.crop.biome.capitalize()} | **{occ.crop.name}** | {occ.count} | "
+                    f"Day {occ.plant_day} | {h_str} | {soil_status} | +{rev:,.0f} G |"
+                )
+            lines.append("")
 
         lines.append("### Optimal Daily Action Plan (Day-by-Day Timeline)\n")
         for rec in r.daily_records:
@@ -282,6 +305,9 @@ def generate_markdown_report(
             f"- **Initial Capital Spent**: {r.total_spent:,.0f} G / {r.wallet_gold:,.0f} G "
             f"({r.gold_pct:.1f}% spent, {r.leftover_gold:,.0f} G leftover)"
         )
+        if r.preexisting_revenue > 0:
+            lines.append(f"- **Pre-planted Crop Sales**: **+{r.preexisting_revenue:,.0f} G**")
+            lines.append(f"- **New Planting Net Profit**: **+{r.new_planting_profit:,.0f} G**")
         lines.append(f"- **Total Cumulative Season Net Profit**: **+{r.total_season_profit:,.0f} G** across all restock stages")
         lines.append(f"- **Final Projected Wallet**: **{r.final_wallet_gold:,.0f} G** on Day 30 (Quietus)\n")
 

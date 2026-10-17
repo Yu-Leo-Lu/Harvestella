@@ -167,16 +167,30 @@ wallet_gold: 51600        # Current gold in pocket
 # Set to an integer (e.g., 2 or 3) to limit farm management chaos, or null for unconstrained
 max_crop_varieties: null
 
-# Physical Available Plot Capacities
-# Supports static numbers OR dynamic stepped milestone schedules as you expand land
-free_plots:
-  farm:
-    start: 60             # Plots free right now on current_day
-    19: 114               # Expands to 114 on Day 19
-    22: 156               # Expands to 156 on Day 22
-    30: 196               # Final farm capacity on Day 30
-  waterside: 36           # Static 36 water plots
-  cave: 54                # Static 54 cave plots
+# 1. Farm & Biome Plot Capacities
+# Usable plots = Physical plots (farm_level * 49) - Reserved plots
+farm_level: 4             # Renovator level (each level adds 49 plots)
+waterside_plots: 81       # Biome capacity (default: 81)
+cave_plots: 81            # Biome capacity (default: 81)
+
+# Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
+reserve_plots:
+  farm: 6
+  waterside: 0
+  cave: 0
+
+# 2. Currently Planted on Farm (Active Batches)
+planted:
+  - { crop: Islet Watermelon, day: 8, count: 10 }
+  - { crop: Nemean Tomato, day: 10, count: 20 }
+  - { crop: Dress Lettuce, day: 15, count: 51 }
+  # - { crop: Crop Name, day: 1, count: 10 }
+
+# Store Seed Inventory (Remaining Vendor Stock)
+seed_stock:
+  Dress Lettuce: 0                # Sold out in store
+  Morrocorn (Lethe): 0            # Sold out in store
+  Seatide Garlic: 99              # 99 in store stock
 
 # Story Unlock Gates (set to false if a town vendor is not yet reached in the story)
 unlocked_towns:
@@ -185,13 +199,6 @@ unlocked_towns:
   Shatolla: true
   Argene: true
   Abandoned Eden: false
-
-# Store Inventory Overrides (default: 99 per 10-day restock cycle)
-# Useful if you already bought seeds earlier in the current 10-day window
-seed_stock:
-  Morrocorn (Lethe): 0    # Sold out
-  Carrop (Nemea): 21      # 21 remaining in stock
-  Islet Watermelon: 99
 ```
 
 ---

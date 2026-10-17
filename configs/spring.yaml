@@ -6,26 +6,29 @@ current_day: 1
 wallet_gold: 1000
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
-# Available unplanted plots by biome
-# Format: start: <plots_now> and optional <milestone_day>: <expanded_plots>
-free_plots:
-  farm:
-    start: 70   # Available farm plots from current_day onwards
-  waterside:
-    start: 0    # Biome locked
-  cave:
-    start: 0    # Biome locked
+# ------------------------------------------------------------------------------
+# 1. Farm & Biome Plot Capacities
+# Usable plots = Physical plots (farm_level * 49) - Reserved plots
+# ------------------------------------------------------------------------------
+farm_level: 2         # Renovator level (each level adds 49 plots)
+waterside_plots: 0    # Biome locked in early Spring
+cave_plots: 0         # Biome locked in early Spring
 
-# Town unlock status (set to false if a town vendor is not yet unlocked)
-unlocked_towns:
-  Lethe: true
-  Nemea: true
-  Shatolla: true
-  Argene: true
-  Abandoned Eden: false
+# Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
+reserve_plots:
+  farm: 0
+  waterside: 0
+  cave: 0
 
-# Current in-stock seed count at general stores (default: 99)
-# Grouped by vendor town, sorted by Daily NQ Profit (G/d) descending:
+# ------------------------------------------------------------------------------
+# 2. Currently Planted on Farm (Active Batches)
+# ------------------------------------------------------------------------------
+planted:
+  # - { crop: Unionion, day: 1, count: 10 }
+
+# ------------------------------------------------------------------------------
+# 3. Store Seed Inventory (Remaining Vendor Stock)
+# ------------------------------------------------------------------------------
 seed_stock:
   # Lethe
   Cucumble: 99            # +43.7 G/d
@@ -42,13 +45,22 @@ seed_stock:
   Unionion (Nemea): 99    # +30.0 G/d
   Nemean Tomato: 99       # +22.0 G/d
   Carrop (Nemea): 99      # +20.0 G/d
-
-  Nectarcane (Nemea): 10      # +38.0 G/d (Waterside)
+  Nectarcane (Nemea): 10  # +38.0 G/d (Waterside)
 
   # Shatolla
-  Nectarcane (Shatolla): 99   # +38.0 G/d (Waterside)
+  Nectarcane (Shatolla): 99 # +38.0 G/d (Waterside)
 
   # Argene
   Revol Pepper: 99        # +47.8 G/d
   Sudor Pepper: 99        # +38.9 G/d
   Curry Herbs (Argene): 99 # +18.3 G/d
+
+# ------------------------------------------------------------------------------
+# 4. Town Story Progression (set to false if vendor is not yet unlocked)
+# ------------------------------------------------------------------------------
+unlocked_towns:
+  Lethe: true
+  Nemea: true
+  Shatolla: true
+  Argene: true
+  Abandoned Eden: false

@@ -38,19 +38,16 @@ class CropCandidate:
     max_harvests: int = 1
     stock: int = 99
     vendor_stock: int = 99
-    daily_profit: float = 0.0
-    prod_days: int = 0
 
-    def __post_init__(self) -> None:
-        if self.prod_days <= 0:
-            if self.is_regrowth and self.regrowth > 0:
-                self.prod_days = self.mature + (self.max_harvests - 1) * self.regrowth
-            else:
-                self.prod_days = self.mature
-        if self.daily_profit <= 0 and self.prod_days > 0:
-            total_rev = (self.max_harvests if self.is_regrowth else 1) * self.nq_sale
-            self.daily_profit = (total_rev - self.cost) / self.prod_days
 
+@dataclass
+class OccupiedCrop:
+    """Pre-existing crop currently occupying plots in the ground."""
+    crop: CropCandidate
+    plant_day: int
+    count: int
+    harvest_days: list[int]
+    occupy_days: list[int]
 
 
 @dataclass
@@ -63,6 +60,7 @@ class DailyHarvestEvent:
     harvest_num: int
     total_harvests: int
     plant_day: int
+    is_preexisting: bool = False
 
 
 @dataclass
@@ -114,8 +112,12 @@ class OptimizationResult:
     daily_records: list[DailyRecord] = field(default_factory=list)
     quietus_payout: float = 0.0
     quietus_sources: list[str] = field(default_factory=list)
+    new_planting_profit: float = 0.0
+    preexisting_revenue: float = 0.0
     total_season_profit: float = 0.0
     final_wallet_gold: float = 0.0
+    occupied_summary: list[str] = field(default_factory=list)
+    occupied_crops: list[OccupiedCrop] = field(default_factory=list)
 
     @property
     def gold_pct(self) -> float:
@@ -123,45 +125,96 @@ class OptimizationResult:
         return (self.total_spent / self.wallet_gold * 100) if self.wallet_gold > 0 else 0.0
 
 
-
 # ==============================================================================
 # Helper Functions
 # ==============================================================================
 
-def is_town_unlocked(vendor_town: str, unlocked_towns: dict[str, bool]) -> bool:
+def is_town_unlocked(vendor_town: str, unlocked_towns: Any) -> bool:
     """Check if the vendor town is currently unlocked (split on '/' for multi-town)."""
     towns = [t.strip() for t in vendor_town.split("/")]
-    return any(unlocked_towns.get(t, False) for t in towns)
+    if isinstance(unlocked_towns, (list, set, tuple)):
+        return any(t in unlocked_towns for t in towns)
+    if isinstance(unlocked_towns, dict):
+        return any(unlocked_towns.get(t, False) for t in towns)
+    return True
 
 
-def get_plot_capacity(biome_cfg: Any, day: int, current_day: int = 1) -> int:
-    """Resolve daily plot capacity from a scalar or a stepped schedule {start: N, day: N}."""
-    if biome_cfg is None:
-        return 0
-    if isinstance(biome_cfg, (int, float)):
-        return max(0, int(biome_cfg))
-    if isinstance(biome_cfg, dict):
-        milestones: dict[int, int] = {}
-        for k, v in biome_cfg.items():
-            k_str = str(k).strip().lower()
+def parse_crop_entry(val: Any) -> tuple[int, int, int]:
+    """Parse crop status into (plant_day, planted_count, store_stock).
+
+    Supports:
+      - 99               -> (0, 0, 99)
+      - "(15, 51, 0)"   -> (15, 51, 0)
+      - [15, 51, 0]      -> (15, 51, 0)
+      - (15, 51, 0)      -> (15, 51, 0)
+    """
+    if val is None:
+        return (0, 0, 99)
+    if isinstance(val, (int, float)):
+        return (0, 0, int(val))
+    if isinstance(val, str):
+        cleaned = val.strip("()[] \t\r\n")
+        parts = [p.strip() for p in cleaned.split(",") if p.strip()]
+        if len(parts) == 1:
             try:
-                val = max(0, int(v))
-            except (ValueError, TypeError):
-                continue
-            if k_str in ("start", "now", "init", "current", "base"):
-                milestones[current_day] = val
-            elif k_str.isdigit():
-                milestones[int(k_str)] = val
+                return (0, 0, int(parts[0]))
+            except ValueError:
+                return (0, 0, 99)
+        if len(parts) == 2:
+            try:
+                return (int(parts[0]), int(parts[1]), 99)
+            except ValueError:
+                return (0, 0, 99)
+        if len(parts) >= 3:
+            try:
+                return (int(parts[0]), int(parts[1]), int(parts[2]))
+            except ValueError:
+                return (0, 0, 99)
+    if isinstance(val, (list, tuple)):
+        if len(val) == 1:
+            return (0, 0, int(val[0]))
+        if len(val) == 2:
+            return (int(val[0]), int(val[1]), 99)
+        if len(val) >= 3:
+            return (int(val[0]), int(val[1]), int(val[2]))
+    return (0, 0, 99)
 
-        if not milestones:
-            return 0
 
-        sorted_days = sorted(milestones.keys())
-        valid = [m for m in sorted_days if m <= day]
-        if valid:
-            return milestones[max(valid)]
-        return milestones[sorted_days[0]]
-    return 0
+def build_occupied_crop(
+    crop: CropCandidate,
+    plant_day: int,
+    count: int,
+    current_day: int,
+) -> OccupiedCrop | None:
+    """Construct an OccupiedCrop instance with calculated harvest days and soil occupancy."""
+    if count <= 0 or plant_day <= 0:
+        return None
+
+    if not crop.is_regrowth:
+        mat_day = plant_day + crop.mature
+        if mat_day < current_day:
+            return None
+        h_days = [mat_day] if mat_day <= 30 else []
+        occ_days = list(range(current_day, mat_day))
+        return OccupiedCrop(
+            crop=crop,
+            plant_day=plant_day,
+            count=count,
+            harvest_days=h_days,
+            occupy_days=occ_days,
+        )
+    else:
+        first_h = plant_day + crop.mature
+        all_h = [first_h + k * crop.regrowth for k in range(crop.max_harvests)]
+        h_days = [h for h in all_h if current_day <= h <= 30]
+        occ_days = list(range(current_day, 31))
+        return OccupiedCrop(
+            crop=crop,
+            plant_day=plant_day,
+            count=count,
+            harvest_days=h_days,
+            occupy_days=occ_days,
+        )
 
 
 # ==============================================================================
@@ -210,25 +263,20 @@ def solve_allocation(
         except (ValueError, TypeError):
             max_varieties = None
 
-    free_plots = cfg.get("free_plots", {})
     active_days = list(range(current_day, 31))
-
-    farm_init = get_plot_capacity(free_plots.get("farm"), current_day, current_day)
-    water_init = get_plot_capacity(free_plots.get("waterside"), current_day, current_day)
-    cave_init = get_plot_capacity(free_plots.get("cave"), current_day, current_day)
-
-    farm_cap = max((get_plot_capacity(free_plots.get("farm"), d, current_day) for d in active_days), default=0)
-    water_cap = max((get_plot_capacity(free_plots.get("waterside"), d, current_day) for d in active_days), default=0)
-    cave_cap = max((get_plot_capacity(free_plots.get("cave"), d, current_day) for d in active_days), default=0)
-
+    crops_cfg = cfg.get("crops", {})
+    seed_stock_cfg = cfg.get("seed_stock") if cfg.get("seed_stock") is not None else crops_cfg
+    planted_cfg = cfg.get("planted", []) or []
     unlocked_towns = cfg.get("unlocked_towns", {})
-    seed_stock = cfg.get("seed_stock", {})
 
     with open(csv_path, encoding="utf-8") as f:
         raw_rows = list(csv.DictReader(f))
 
-    # 1. Parse crop candidates
-    crops: list[CropCandidate] = []
+    # 1. Parse crop candidates and detect currently occupied crops
+    catalog: list[CropCandidate] = []
+    eligible_candidates: list[CropCandidate] = []
+    occupied_crops: list[OccupiedCrop] = []
+
     for r in raw_rows:
         crop_name = r.get("Crop Name", "").strip()
         biome = r.get("Biome", "").strip().lower()
@@ -238,29 +286,18 @@ def solve_allocation(
         mature_str = r.get("Mature (Days)", "").strip()
         regrowth_str = r.get("Regrowth (Days)", "").strip()
         max_h_str = r.get("Max Harvests", "").strip()
-        profit_str = r.get("Daily NQ Profit (G/d)", "").strip()
-        prod_str = r.get("Production (Days)", "").strip()
 
         if not cost_str or not nq_str or not mature_str:
             continue
+
         try:
             cost = float(cost_str)
             nq_sale = float(nq_str)
             mature = int(mature_str)
-            daily_profit = float(profit_str) if profit_str else 0.0
-            prod_days = int(prod_str) if prod_str else 0
         except ValueError:
             continue
 
         if cost <= 0 or nq_sale <= 0:
-            continue
-        if not is_town_unlocked(town, unlocked_towns):
-            continue
-        if biome == "farm" and farm_cap <= 0:
-            continue
-        if biome == "waterside" and water_cap <= 0:
-            continue
-        if biome == "cave" and cave_cap <= 0:
             continue
 
         is_regrowth = bool(regrowth_str and regrowth_str.isdigit() and int(regrowth_str) > 0)
@@ -271,38 +308,160 @@ def solve_allocation(
         vendor_stock = int(v_stock_str) if (v_stock_str and v_stock_str.isdigit()) else 99
 
         stock_key_town = f"{crop_name} ({town})"
-        if stock_key_town in seed_stock:
-            stock = int(seed_stock[stock_key_town])
-        elif town in seed_stock and isinstance(seed_stock[town], dict) and crop_name in seed_stock[town]:
-            stock = int(seed_stock[town][crop_name])
-        elif crop_name in seed_stock:
-            stock = int(seed_stock[crop_name])
-        else:
-            stock = vendor_stock
 
-        # If both current stock and future vendor restock are non-positive, skip crop
+        # Resolve store stock & optional legacy inline tuple: (plant_day, planted_count, store_stock)
+        plant_day = 0
+        planted_count = 0
+        stock = vendor_stock
+
+        entry = None
+        if stock_key_town in seed_stock_cfg:
+            entry = seed_stock_cfg[stock_key_town]
+        elif town in seed_stock_cfg and isinstance(seed_stock_cfg[town], dict) and crop_name in seed_stock_cfg[town]:
+            entry = seed_stock_cfg[town][crop_name]
+        elif crop_name in seed_stock_cfg:
+            entry = seed_stock_cfg[crop_name]
+
+        if entry is not None:
+            plant_day, planted_count, stock = parse_crop_entry(entry)
+
+        candidate = CropCandidate(
+            name=crop_name,
+            town=town,
+            biome=biome,
+            cost=cost,
+            nq_sale=nq_sale,
+            mature=mature,
+            is_regrowth=is_regrowth,
+            regrowth=regrowth,
+            max_harvests=max_harvests,
+            stock=stock,
+            vendor_stock=vendor_stock,
+        )
+        catalog.append(candidate)
+
+        # Track legacy pre-existing planted crops defined inline in crops/seed_stock
+        if planted_count > 0 and plant_day > 0:
+            occ = build_occupied_crop(candidate, plant_day, planted_count, current_day)
+            if occ is not None:
+                occupied_crops.append(occ)
+
+        # Skip candidate from new purchases if town locked or stock non-positive
+        if not is_town_unlocked(town, unlocked_towns):
+            continue
         if stock <= 0 and (current_day > 20 or vendor_stock <= 0):
             continue
 
-        crops.append(
-            CropCandidate(
-                name=crop_name,
-                town=town,
-                biome=biome,
-                cost=cost,
-                nq_sale=nq_sale,
-                mature=mature,
-                is_regrowth=is_regrowth,
-                regrowth=regrowth,
-                max_harvests=max_harvests,
-                stock=stock,
-                vendor_stock=vendor_stock,
-                daily_profit=daily_profit,
-                prod_days=prod_days,
-            )
-        )
+        eligible_candidates.append(candidate)
 
-    if not crops:
+    # Parse dedicated `planted:` section (Format A: list of dicts with crop, day, count)
+    if isinstance(planted_cfg, list):
+        for item in planted_cfg:
+            if not isinstance(item, dict):
+                continue
+            c_name = str(item.get("crop") or item.get("name") or "").strip()
+            p_day = int(item.get("day") or item.get("plant_day") or 0)
+            c_cnt = int(item.get("count") or item.get("qty") or item.get("quantity") or 0)
+            if not c_name or p_day <= 0 or c_cnt <= 0:
+                continue
+
+            # Find matching candidate from complete seasonal catalog
+            matched_cand = None
+            for cand in catalog:
+                if f"{cand.name} ({cand.town})".lower() == c_name.lower():
+                    matched_cand = cand
+                    break
+            if matched_cand is None:
+                for cand in catalog:
+                    if cand.name.lower() == c_name.lower():
+                        matched_cand = cand
+                        break
+            if matched_cand is None:
+                continue
+
+            occ = build_occupied_crop(matched_cand, p_day, c_cnt, current_day)
+            if occ is not None:
+                occupied_crops.append(occ)
+
+    # 2. Determine daily plot capacity per biome across active_days
+    reserve_cfg = cfg.get("reserve_plots", {})
+    if isinstance(reserve_cfg, (int, float)):
+        reserve = {"farm": int(reserve_cfg), "waterside": 0, "cave": 0}
+    elif isinstance(reserve_cfg, dict):
+        reserve = {
+            "farm": int(reserve_cfg.get("farm", 0)),
+            "waterside": int(reserve_cfg.get("waterside", 0)),
+            "cave": int(reserve_cfg.get("cave", 0)),
+        }
+    else:
+        reserve = {"farm": 0, "waterside": 0, "cave": 0}
+
+    farm_physical = int(cfg.get("farm_level", 1)) * 49 if "farm_level" in cfg else int(cfg.get("farm_plots", 49))
+    water_physical = int(cfg.get("waterside_plots", 81))
+    cave_physical = int(cfg.get("cave_plots", 81))
+
+    daily_biome_cap: dict[str, dict[int, int]] = {"farm": {}, "waterside": {}, "cave": {}}
+
+    for t in active_days:
+        base_f = max(0, farm_physical - reserve["farm"])
+        occ_f = sum(occ.count for occ in occupied_crops if occ.crop.biome == "farm" and t in occ.occupy_days)
+        daily_biome_cap["farm"][t] = max(0, base_f - occ_f)
+
+        base_w = max(0, water_physical - reserve["waterside"])
+        occ_w = sum(occ.count for occ in occupied_crops if occ.crop.biome == "waterside" and t in occ.occupy_days)
+        daily_biome_cap["waterside"][t] = max(0, base_w - occ_w)
+
+        base_c = max(0, cave_physical - reserve["cave"])
+        occ_c = sum(occ.count for occ in occupied_crops if occ.crop.biome == "cave" and t in occ.occupy_days)
+        daily_biome_cap["cave"][t] = max(0, base_c - occ_c)
+
+    farm_init = daily_biome_cap["farm"][current_day]
+    water_init = daily_biome_cap["waterside"][current_day]
+    cave_init = daily_biome_cap["cave"][current_day]
+
+    farm_cap = max(daily_biome_cap["farm"].values(), default=0)
+    water_cap = max(daily_biome_cap["waterside"].values(), default=0)
+    cave_cap = max(daily_biome_cap["cave"].values(), default=0)
+
+    # Filter candidates to biomes with non-zero capacity
+    crops = [c for c in eligible_candidates if (
+        (c.biome == "farm" and farm_cap > 0) or
+        (c.biome == "waterside" and water_cap > 0) or
+        (c.biome == "cave" and cave_cap > 0)
+    )]
+
+    # Pre-existing arrivals from already occupied crops
+    preexisting_arrivals: dict[int, float] = {d: 0.0 for d in range(current_day, 32)}
+    preexisting_daily_harvests: dict[int, list[DailyHarvestEvent]] = {d: [] for d in range(current_day, 31)}
+    total_preexisting_rev = 0.0
+
+    for occ in occupied_crops:
+        tot_h = len(occ.harvest_days)
+        for h_idx, h in enumerate(occ.harvest_days):
+            rev = occ.count * occ.crop.nq_sale
+            total_preexisting_rev += rev
+            arr_day = h + 1
+            if arr_day in preexisting_arrivals:
+                preexisting_arrivals[arr_day] += rev
+            preexisting_daily_harvests[h].append(
+                DailyHarvestEvent(
+                    crop=occ.crop,
+                    quantity=occ.count,
+                    revenue=rev,
+                    is_regrowth=occ.crop.is_regrowth,
+                    harvest_num=h_idx + 1,
+                    total_harvests=tot_h,
+                    plant_day=occ.plant_day,
+                    is_preexisting=True,
+                )
+            )
+
+    occupied_summary = [
+        f"{occ.count}x {occ.crop.name} ({occ.crop.biome.capitalize()}, planted D{occ.plant_day}, harvests: {', '.join(f'D{h}' for h in occ.harvest_days)})"
+        for occ in occupied_crops
+    ]
+
+    if not crops and not occupied_crops:
         return OptimizationResult(
             season=season,
             config_path=config_path,
@@ -381,10 +540,8 @@ def solve_allocation(
     # 3. Variety Limit variables (if active)
     use_variety_limit = max_varieties is not None
     unique_crop_names: list[str] = []
-    crop_to_idx: dict[str, int] = {}
     if use_variety_limit:
         unique_crop_names = sorted(list({crops[v["crop_idx"]].name for v in var_map}))
-        crop_to_idx = {name: idx for idx, name in enumerate(unique_crop_names)}
         total_vars = n_vars + len(unique_crop_names)
     else:
         total_vars = n_vars
@@ -404,7 +561,7 @@ def solve_allocation(
     # A) Daily Plot Capacity per Biome for each day t in [current_day .. 30]
     for t in active_days:
         for biome in ["farm", "waterside", "cave"]:
-            cap = get_plot_capacity(free_plots.get(biome), t, current_day)
+            cap = daily_biome_cap[biome][t]
             if cap <= 0:
                 continue
             row = [0.0] * total_vars
@@ -420,8 +577,8 @@ def solve_allocation(
                 ub_list.append(float(cap))
 
     # B) Daily Cash Liquidity on each day t in [current_day .. 30]
-    # wallet_gold - purchases_up_to(t) + shipping_up_to(t) >= 0
-    # purchases_up_to(t) - shipping_up_to(t) <= wallet_gold
+    # wallet_gold + cum_preexisting_cash(t) - purchases_up_to(t) + shipping_up_to(t) >= 0
+    # purchases_up_to(t) - shipping_up_to(t) <= wallet_gold + cum_preexisting_cash(t)
     for t in active_days:
         row = [0.0] * total_vars
         for i, v in enumerate(var_map):
@@ -434,7 +591,8 @@ def solve_allocation(
                     row[i] -= c.nq_sale
         A_rows.append(row)
         lb_list.append(-np.inf)
-        ub_list.append(float(wallet_gold))
+        cum_preexisting_cash = sum(preexisting_arrivals[d] for d in range(current_day, t + 1))
+        ub_list.append(float(wallet_gold + cum_preexisting_cash))
 
     # C) Seed stock inventory limits per 10-day vendor restock cycle
     windows = [(1, 10), (11, 20), (21, 30)]
@@ -510,41 +668,19 @@ def solve_allocation(
 
     solution = np.round(res.x[:n_vars]).astype(int)
 
-    # Compute daily cash arrivals timeline from solution
-    daily_arrivals = {d: 0.0 for d in active_days}
-    daily_arrivals[31] = 0.0  # Quietus morning arrivals from Day 30 harvest
-
-    for i, count in enumerate(solution):
-        if count <= 0:
-            continue
-        v = var_map[i]
-        c = crops[v["crop_idx"]]
-        for h in v["harvests"]:
-            arr_day = h + 1
-            if arr_day in daily_arrivals:
-                daily_arrivals[arr_day] += count * c.nq_sale
-
-    # Day current_day initial utilization
-    initial_farm = initial_water = initial_cave = 0
-    day1_spent = 0.0
-    for i, count in enumerate(solution):
-        if count <= 0:
-            continue
-        v = var_map[i]
-        c = crops[v["crop_idx"]]
-        if v["day"] == current_day:
-            day1_spent += count * c.cost
-            if c.biome == "farm":
-                initial_farm += count
-            elif c.biome == "waterside":
-                initial_water += count
-            elif c.biome == "cave":
-                initial_cave += count
-
-    # Build Day-by-Day ledger & action events
+    # Build Day-by-Day ledger & action events in a single pass over solution
+    daily_arrivals = {d: preexisting_arrivals.get(d, 0.0) for d in range(current_day, 32)}
     daily_harvest_events: dict[int, list[DailyHarvestEvent]] = {d: [] for d in range(current_day, 31)}
     daily_plant_events: dict[int, list[DailyPlantEvent]] = {d: [] for d in range(current_day, 31)}
-    total_season_profit = 0.0
+
+    # Include pre-existing harvests into daily_harvest_events
+    for d in range(current_day, 31):
+        if d in preexisting_daily_harvests:
+            daily_harvest_events[d].extend(preexisting_daily_harvests[d])
+
+    initial_farm = initial_water = initial_cave = 0
+    day1_spent = 0.0
+    new_planting_profit = 0.0
 
     for i, count in enumerate(solution):
         if count <= 0:
@@ -554,8 +690,19 @@ def solve_allocation(
         p_day = v["day"]
         cost_total = count * c.cost
         profit_subtotal = count * v["net_profit"]
-        total_season_profit += profit_subtotal
+        new_planting_profit += profit_subtotal
 
+        # Day current_day initial utilization
+        if p_day == current_day:
+            day1_spent += cost_total
+            if c.biome == "farm":
+                initial_farm += count
+            elif c.biome == "waterside":
+                initial_water += count
+            elif c.biome == "cave":
+                initial_cave += count
+
+        # Record planting event
         daily_plant_events[p_day].append(
             DailyPlantEvent(
                 crop=c,
@@ -566,9 +713,13 @@ def solve_allocation(
             )
         )
 
+        # Record harvest events & schedule cash arrivals
         tot_h = len(v["harvests"])
         for h_idx, h_day in enumerate(v["harvests"]):
             rev = count * c.nq_sale
+            arr_day = h_day + 1
+            if arr_day in daily_arrivals:
+                daily_arrivals[arr_day] += rev
             daily_harvest_events[h_day].append(
                 DailyHarvestEvent(
                     crop=c,
@@ -578,6 +729,7 @@ def solve_allocation(
                     harvest_num=h_idx + 1,
                     total_harvests=tot_h,
                     plant_day=p_day,
+                    is_preexisting=False,
                 )
             )
 
@@ -589,9 +741,15 @@ def solve_allocation(
         payout_sources: list[str] = []
         if d - 1 in daily_harvest_events:
             prev_groups: dict[str, int] = {}
+            prev_pre: dict[str, bool] = {}
             for h in daily_harvest_events[d - 1]:
                 prev_groups[h.crop.name] = prev_groups.get(h.crop.name, 0) + h.quantity
-            payout_sources = [f"{q}x {name} on Day {d - 1}" for name, q in prev_groups.items()]
+                if h.is_preexisting:
+                    prev_pre[h.crop.name] = True
+            payout_sources = [
+                f"{q}x {name}{' (pre-planted)' if prev_pre.get(name) else ''} on Day {d - 1}"
+                for name, q in prev_groups.items()
+            ]
 
         carryover = current_cash
         morning_cash = carryover + payout_rev
@@ -636,6 +794,8 @@ def solve_allocation(
             d30_groups[h.crop.name] = d30_groups.get(h.crop.name, 0) + h.quantity
         quietus_sources = [f"{q}x {name}" for name, q in d30_groups.items()]
 
+    total_season_profit = new_planting_profit + total_preexisting_rev
+
     return OptimizationResult(
         season=season,
         config_path=config_path,
@@ -659,7 +819,11 @@ def solve_allocation(
         daily_records=daily_records,
         quietus_payout=quietus_payout,
         quietus_sources=quietus_sources,
+        new_planting_profit=new_planting_profit,
+        preexisting_revenue=total_preexisting_rev,
         total_season_profit=total_season_profit,
         final_wallet_gold=wallet_gold + total_season_profit,
+        occupied_summary=occupied_summary,
+        occupied_crops=occupied_crops,
     )
 

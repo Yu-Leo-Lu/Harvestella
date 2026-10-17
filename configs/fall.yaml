@@ -6,26 +6,29 @@ current_day: 1
 wallet_gold: 15000
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
-# Available unplanted plots by biome
-# Format: start: <plots_now> and optional <milestone_day>: <expanded_plots>
-free_plots:
-  farm:
-    start: 70   # Available farm plots from current_day onwards
-  waterside:
-    start: 12   # Available waterside plots from current_day onwards
-  cave:
-    start: 12   # Available cave plots from current_day onwards
+# ------------------------------------------------------------------------------
+# 1. Farm & Biome Plot Capacities
+# Usable plots = Physical plots (farm_level * 49) - Reserved plots
+# ------------------------------------------------------------------------------
+farm_level: 4         # Renovator level (each level adds 49 plots)
+waterside_plots: 81   # Biome capacity (default: 81)
+cave_plots: 81        # Biome capacity (default: 81)
 
-# Town unlock status (set to false if a town vendor is not yet unlocked)
-unlocked_towns:
-  Lethe: true
-  Nemea: true
-  Shatolla: true
-  Argene: true
-  Abandoned Eden: false
+# Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
+reserve_plots:
+  farm: 0
+  waterside: 0
+  cave: 0
 
-# Current in-stock seed count at general stores (default: 99)
-# Grouped by vendor town, sorted by Daily NQ Profit (G/d) descending:
+# ------------------------------------------------------------------------------
+# 2. Currently Planted on Farm (Active Batches)
+# ------------------------------------------------------------------------------
+planted:
+  # - { crop: Unionion, day: 1, count: 10 }
+
+# ------------------------------------------------------------------------------
+# 3. Store Seed Inventory (Remaining Vendor Stock)
+# ------------------------------------------------------------------------------
 seed_stock:
   # Lethe
   Royal Eggplant: 99      # +60.0 G/d
@@ -53,3 +56,13 @@ seed_stock:
 
   # Abandoned Eden
   Eden Rice: 99           # +5.0 G/d
+
+# ------------------------------------------------------------------------------
+# 4. Town Story Progression (set to false if vendor is not yet unlocked)
+# ------------------------------------------------------------------------------
+unlocked_towns:
+  Lethe: true
+  Nemea: true
+  Shatolla: true
+  Argene: true
+  Abandoned Eden: false
