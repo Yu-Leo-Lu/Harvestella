@@ -1,12 +1,41 @@
 # Harvestella Crop Allocation Solver Guide
 
-A complete guide explaining **the problem**, **the mathematical method**, and **how the method is applied** in `solve_allocation()` inside [`scripts/crop_solver.py`](../scripts/crop_solver.py).
+A complete guide explaining **the problem**, **linear optimization**, and **how the method is applied** in `solve_allocation()` inside [`scripts/crop_solver.py`](../scripts/crop_solver.py).
 
 ---
 
-## Part 1: What is the Problem?
+## Table of Contents
+- [Chapter 1: The Farming Problem & Economic Bottlenecks](#chapter-1-the-farming-problem--economic-bottlenecks)
+  - [1.1 In-Game Constraints in Harvestella](#11-in-game-constraints-in-harvestella)
+  - [1.2 Why Intuition & Greedy Heuristics Fail](#12-why-intuition--greedy-heuristics-fail)
+  - [1.3 Formal Classification: Time-Indexed MDKP](#13-formal-classification-time-indexed-mdkp)
+- [Chapter 2: Linear Optimization (MILP)](#chapter-2-linear-optimization-milp)
+  - [2.1 General Mathematical Form of MILP](#21-general-mathematical-form-of-milp)
+  - [2.2 Branch-and-Cut Algorithm](#22-branch-and-cut-algorithm)
+  - [2.3 The Big-M Method for Variety Cardinality](#23-the-big-m-method-for-variety-cardinality)
+- [Chapter 3: Applied Harvestella Model Formulation](#chapter-3-applied-harvestella-model-formulation)
+  - [3.1 Mathematical & Code Variable Reference Table](#31-mathematical--code-variable-reference-table)
+  - [3.2 Preprocessing & Candidate Pruning](#32-preprocessing--candidate-pruning)
+  - [3.3 Quietus (The Season of Death) & The Time Horizon](#33-quietus-the-season-of-death--the-time-horizon)
+  - [3.4 Crop Growth Dynamics: Single-Harvest vs. Regrowth](#34-crop-growth-dynamics-single-harvest-vs-regrowth)
+  - [3.5 Decision Variables: $x_{i, t}$](#35-decision-variables-x_i-t)
+  - [3.6 Objective Function Construction](#36-objective-function-construction)
+  - [3.7 The Constraint Matrix A](#37-the-constraint-matrix-mathbfa)
+  - [3.8 Concrete Numerical Walkthrough](#38-concrete-numerical-walkthrough)
+- [Chapter 4: From Math Solution to Actionable Daily Plan (DailyRecord)](#chapter-4-from-math-solution-to-actionable-daily-plan-dailyrecord)
+  - [4.1 Morning Cash Arrivals (`payout_revenue`)](#41-morning-cash-arrivals-payout_revenue)
+  - [4.2 Daily Harvest & Soil Management](#42-daily-harvest--soil-management)
+  - [4.3 Seed Purchases & Planting Today](#43-seed-purchases--planting-today)
+  - [4.4 Bedtime Wallet (`end_wallet`)](#44-bedtime-wallet-end_wallet)
+  - [4.5 Quietus Morning Finale (Day 31 Payout)](#45-quietus-morning-finale-day-31-payout)
+- [Chapter 5: Code Architecture & Separation of Concerns](#chapter-5-code-architecture--separation-of-concerns)
+  - [5.1 Optimization Engine vs. Presentation CLI](#51-optimization-engine-vs-presentation-cli)
 
-### 1. The Game Constraints in Harvestella
+---
+
+## Chapter 1: The Farming Problem & Economic Bottlenecks
+
+### 1.1 In-Game Constraints in Harvestella
 When deciding what seeds to purchase and plant, a player faces five rigid, simultaneous constraints:
 
 1. **Capital Bottleneck (`wallet_gold`)**: You can only spend the cash currently in your pocket. Reinvesting harvest profits is delayed by the 1-day overnight shipping turnaround.
@@ -21,7 +50,7 @@ When deciding what seeds to purchase and plant, a player faces five rigid, simul
 
 ---
 
-### 2. Why Intuition & Greedy Heuristics Fail
+### 1.2 Why Intuition & Greedy Heuristics Fail
 
 Most players choose seeds using one of two intuitive greedy heuristics. Both fail:
 
@@ -38,19 +67,19 @@ Most players choose seeds using one of two intuitive greedy heuristics. Both fai
 #### The Core Economic Trade-Off
 The true optimal solution is an **inflection point**: you must saturate all available plots with cheap, high-turnaround crops, and then use your remaining capital to systematically "upgrade" individual plots to higher-margin seeds (e.g. Morrocorn @ 200 G seed, +50 G/d) until the budget is completely exhausted.
 
-### 3. Formal Classification
+### 1.3 Formal Classification: Time-Indexed MDKP
 Mathematically, this is a **Day-to-Day Time-Indexed Multi-Dimensional Bounded Integer Knapsack Problem with Cardinality Constraints (MDKP)**:
 - **Multiple knapsack capacities across time**: Daily capital balances + Daily farm, waterside, and cave plot limits across all 30 calendar days.
-- **Bounded integer variables**: Each planting option can be selected up to its store restock inventory cap ($0 \le x_{c, d} \le 99$).
+- **Bounded integer variables**: Each planting option can be selected up to its store restock inventory cap ($0 \le x_{i, t} \le S_i$).
 - **Cardinality constraint**: At most $K$ distinct crop varieties may be selected across the entire season.
 
 ---
 
-## Part 2: What is the Mathematical Method?
+## Chapter 2: Linear Optimization (MILP)
 
 To solve this multi-dimensional knapsack problem to guaranteed global optimality, we use **Mixed-Integer Linear Programming (MILP)** via the HiGHS solver.
 
-### 1. General Mathematical Form of MILP
+### 2.1 General Mathematical Form of MILP
 An MILP problem optimizes a linear objective function subject to linear equality and inequality constraints, where decision variables are constrained to integers:
 
 $$\begin{aligned}
@@ -61,33 +90,15 @@ $$\begin{aligned}
 \end{aligned}$$
 
 Where:
-- $\mathbf{x}$ is the vector of decision variables, where $x_{i, t}$ represents the quantity of seed $i$ planted on calendar day $t$ (along with optional auxiliary binary switches $y_k$ for variety limits).
-- $\mathbf{c}$ is the objective cost/profit coefficient vector. For each planting decision $(i, t)$, $c_{i, t}$ tracks the **negative net profit** generated by 1 seed of crop $i$ planted on calendar day $t$:
-  1. **Net Profit Calculation**:
-     $$\text{Net Profit}(i, t) = \text{Total Revenue from harvests on or before Day 30} - p_i$$
-     - **Single-Harvest Crops**: Yield exactly 1 harvest regardless of day, so $\text{Net Profit} = v_i - p_i$.
-     - **Regrowth Crops (depends on planting day $t$)**: Total revenue depends directly on how many harvests complete before Quietus on Day 30.
-       - *Example (Shatollan Paprika: seed cost $p_i = 250\text{ G}$, sale value $v_i = 110\text{ G}$, initial maturity $m = 5\text{ days}$, regrowth cycle $r = 2\text{ days}$, max harvests $H_{\max} = 9$)*:
-         - **Planted Early (Day 1)**: First harvest occurs on Day 6, then every 2 days (Days 8, 10, 12, 14, 16, 18, 20, 22). All 9 harvests complete comfortably before Day 30:
-           $$\text{Revenue} = 9 \times 110\text{ G} = 990\text{ G} \implies \text{Net Profit} = 990 - 250 = \mathbf{+740\text{ G}}$$
-         - **Planted Late (Day 20)**: First harvest occurs on Day 25, followed by Day 27 and Day 29. Harvest 4 would fall on Day 31 and is wiped out by Quietus. Only 3 harvests complete:
-           $$\text{Revenue} = 3 \times 110\text{ G} = 330\text{ G} \implies \text{Net Profit} = 330 - 250 = \mathbf{+80\text{ G}}$$
-  2. **Microscopic Perturbations (Deterministic Tie-Breakers)**:
-     To break ties when two schedules yield identical integer gold profits, microscopic penalties are subtracted:
-     $$\text{Adjusted Profit}(i, t) = \text{Net Profit}(i, t) - 10^{-6} \cdot p_i - 10^{-8} \cdot (t - \text{current\_day})$$
-     - $-10^{-6} \cdot p_i$: Strictly prefers cheaper seeds to preserve liquid wallet cash.
-     - $-10^{-8} \cdot (t - \text{current\_day})$: Strictly prefers planting earlier to accelerate capital compounding and free soil sooner.
-  3. **Minimization Duality**:
-     Because standard MILP solvers minimize ($\min \mathbf{c}^T \mathbf{x}$), maximizing total season profit is formulated as minimizing negative profit:
-     $$\max \sum_{i, t} \text{Adjusted Profit}(i, t) \cdot x_{i, t} \iff \min \sum_{i, t} \left(-\text{Adjusted Profit}(i, t)\right) \cdot x_{i, t}$$
-     Therefore, $c_{i, t} = -\text{Adjusted Profit}(i, t)$ (and $c_k = 0.0$ for auxiliary variety indicator switches $y_k$).
-- $\mathbf{A}$ is the constraint matrix representing daily cash and plot resource consumption per unit.
-- $\mathbf{lb}, \mathbf{ub}$ are lower and upper bounds on constraint rows.
-- $\mathbf{l}, \mathbf{u}$ are lower and upper variable bounds.
+- $\mathbf{x} \in \mathbb{R}^n$ is the vector of decision variables, where integer constraints ($x_j \in \mathbb{Z}$) enforce discrete non-fractional quantities.
+- $\mathbf{c} \in \mathbb{R}^n$ is the objective cost/coefficient vector.
+- $\mathbf{A} \in \mathbb{R}^{m \times n}$ is the linear constraint matrix encoding resource consumption and structural relationships.
+- $\mathbf{lb}, \mathbf{ub} \in \mathbb{R}^m$ are lower and upper bounds on constraint rows in matrix $\mathbf{A}$.
+- $\mathbf{l}, \mathbf{u} \in \mathbb{R}^n$ are lower and upper bounds on decision variables ($l_j \le x_j \le u_j$).
 
 ---
 
-### 2. How MILP Solves Discrete Combinations: Branch-and-Cut
+### 2.2 Branch-and-Cut Algorithm
 Simple linear programming (LP) allows fractional values (e.g., buying 23.47 seeds). MILP enforces strict integer quantities ($x_i \in \{0, 1, 2, \dots\}$) using the **Branch-and-Cut** algorithm:
 
 1. **LP Relaxation**: The solver first removes the integer requirement and solves the continuous problem in microseconds using the Dual Simplex method. This provides a theoretical upper bound on total possible profit.
@@ -101,17 +112,17 @@ Because the seasonal decision space is bounded ($N \le 450$ variables), the HiGH
 
 ---
 
-### 3. The Big-M Method for Variety Cardinality
+### 2.3 The Big-M Method for Variety Cardinality
 To limit the number of distinct seed varieties to at most $K$, the problem requires modeling logical conditions: *"If crop variety $k$ is planted anywhere in the season, count it as 1 variety."*
 
 This is achieved using **binary indicator variables** $y_k \in \{0, 1\}$ and a **Big-M linking constraint**:
 
-$$\sum_{d} x_{c, d} \le M \cdot y_k \iff \sum_{d} x_{c, d} - M \cdot y_k \le 0$$
+$$\sum_{t} x_{k, t} \le M \cdot y_k \iff \sum_{t} x_{k, t} - M \cdot y_k \le 0$$
 
 Where $M$ is an upper bound on the maximum possible plots a crop could occupy over the entire season.
 
-- If $y_k = 0$, then $\sum_d x_{c, d} \le 0 \implies x_{c, d} = 0$ for all days (the crop cannot be planted).
-- If $y_k = 1$, then $\sum_d x_{c, d} \le M$ (the crop can be planted freely up to its store cap).
+- If $y_k = 0$, then $\sum_t x_{k, t} \le 0 \implies x_{k, t} = 0$ for all days (the crop cannot be planted).
+- If $y_k = 1$, then $\sum_t x_{k, t} \le M$ (the crop can be planted freely up to its store cap).
 
 The cardinality limit across the entire season is then a simple linear constraint:
 
@@ -119,101 +130,166 @@ $$\sum_{k=0}^{U-1} y_k \le K$$
 
 ---
 
-## Part 3: How Did We Apply the Method to the Problem?
+## Chapter 3: Applied Harvestella Model Formulation
 
 The function `solve_allocation()` in [`scripts/crop_solver.py`](../scripts/crop_solver.py) maps the Harvestella data and player configs directly into the MILP formulation.
 
-### Mathematical & Code Variable Reference Table
+### 3.1 Mathematical & Code Variable Reference Table
 
 | Variable / Symbol | Code / Config Name | Mathematical Type | Domain | Description & In-Game Meaning |
 | :---: | :--- | :---: | :---: | :--- |
 | **$n$** | `len(crops)` | Integer Scalar | $n \ge 0$ | Number of eligible catalog crop varieties after town and biome filters. |
-| **$c$** | Loop index `0..n-1` | Index | $0 \le c < n$ | Zero-based index referencing a specific crop candidate catalog entry. |
-| **$d$** | `plant_day` | Integer Day | $`d \in [\text{current\_day}, 30]`$ | **Planting Day**: Calendar day on which seeds are purchased and planted. |
-| **$t$** | `eval_day` | Integer Day | $`t \in [\text{current\_day}, 30]`$ | **Evaluation Day**: Calendar day on which plot occupancy and cash liquidity are checked. |
-| **$x_{c, d}$** | `solution[var_idx]` | Integer Variable | $\{0, 1, 2, \dots\}$ | **Primary Decision Variable**: Number of seeds of crop $c$ planted on day $d$. |
-| **$N$** | `len(var_map)` | Integer Scalar | $N \ge 0$ | Total active $(c, d)$ decision variables that mature on or before Day 30. |
+| **$i$** | Loop index / Catalog ID | Index | $1 \le i \le n$ | Index referencing a specific crop candidate catalog entry. |
+| **$t$** | `plant_day` | Integer Day | $`t \in [\text{current\_day}, 30]`$ | **Planting Day**: Calendar day on which seeds are purchased and planted. |
+| **$\tau$** | `eval_day` | Integer Day | $`\tau \in [\text{current\_day}, 30]`$ | **Evaluation Day**: Calendar day on which plot occupancy and cash liquidity are checked. |
+| **$x_{i, t}$** | `solution[var_idx]` | Integer Variable | $\{0, 1, 2, \dots\}$ | **Primary Decision Variable**: Number of seeds of crop $i$ planted on day $t$. |
+| **$N$** | `len(var_map)` | Integer Scalar | $N \ge 0$ | Total active $(i, t)$ decision variables that mature on or before Day 30. |
 | **$y_k$** | Binary block | Binary Variable | $\{0, 1\}$ | **Auxiliary Indicator**: Flags whether unique crop variety $k$ is planted anywhere in season. |
 | **$U$** | `len(unique_crop_names)` | Integer Scalar | $U \le n$ | Number of unique candidate crop variety names eligible for selection. |
 | **$K$** | `max_crop_varieties` | Integer / Null | $K \in \mathbb{Z}^+$ or `None` | **Cardinality Bound**: Maximum allowed distinct crop varieties to manage simultaneously. |
 | **$M$** | `big_m` | Real Parameter | $M = \max(\text{caps}) \cdot 30 + 100$ | **Big-M Upper Bound**: Theoretical maximum plots a crop could occupy over season. |
-| **$p_c$** | `c.cost` | Real Parameter | $p_c > 0$ (Gold) | Seed purchase price in Gold (G) to buy 1 seed of crop $c$. |
-| **$v_c$** | `c.nq_sale` | Real Parameter | $v_c > 0$ (Gold) | Selling price per unit of Normal Quality (NQ) harvest of crop $c$. |
-| **$m_c$** | `c.mature` | Integer Parameter | Days ($\ge 1$) | Nights of growth required from planting to first harvest. |
-| **$r_c$** | `c.regrowth` | Integer Parameter | Days ($\ge 0$) | Days between subsequent harvests for regrowth crops ($0$ if single-harvest). |
-| **$H_c$** | `c.max_harvests` | Integer Parameter | Integer ($\ge 1$) | Maximum allowed harvests before plant expires ($1$ if single-harvest). |
-| **$H(c, d)$** | `v["harvests"]` | Set of Days | $H \subseteq [d+1, 30]$ | **Harvest Days Set**: All calendar days on which crop $c$ planted on day $d$ matures. |
-| **$R_{c, d}$** | `v["total_rev"]` | Real Parameter | $R_{c, d} > 0$ (Gold) | **Total Harvest Revenue**: Total gold earned by 1 plot of crop $c$ planted on day $d$ ($R_{c, d} = |H(c, d)| \cdot v_c$). |
-| **$b_c$** | `c.biome` | Categorical String | `farm`, `waterside`, `cave` | Required physical soil biome for crop $c$. |
+| **$p_i$** | `c.cost` | Real Parameter | $p_i > 0$ (Gold) | Seed purchase price in Gold (G) to buy 1 seed of crop $i$. |
+| **$s_i$** | `c.nq_sale` | Real Parameter | $s_i > 0$ (Gold) | Selling price per unit of Normal Quality (NQ) harvest of crop $i$. |
+| **$m_i$** | `c.mature` | Integer Parameter | Days ($\ge 1$) | Nights of growth required from planting to first harvest. |
+| **$r_i$** | `c.regrowth` | Integer Parameter | Days ($\ge 0$) | Days between subsequent harvests for regrowth crops ($0$ if single-harvest). |
+| **$H_i$** | `c.max_harvests` | Integer Parameter | Integer ($\ge 1$) | Maximum allowed harvests before plant expires ($1$ if single-harvest). |
+| **$H(i, t)$** | `v["harvests"]` | Set of Days | $H \subseteq [t+1, 30]$ | **Harvest Days Set**: All calendar days on which crop $i$ planted on day $t$ matures. |
+| **$v_{i, t}$** | `v["total_rev"]` | Real Parameter | $v_{i, t} > 0$ (Gold) | **Total Harvest Revenue**: Total gold earned by 1 plot of crop $i$ planted on day $t$ ($v_{i, t} = |H(i, t)| \cdot s_i$). |
+| **$b_i$** | `c.biome` | Categorical String | `farm`, `waterside`, `cave` | Required physical soil biome for crop $i$. |
 | **$W$** | `wallet_gold` | Real Parameter | $W \ge 0$ (Gold) | Gold cash available in player's wallet at start of `current_day`. |
 | **$B_b$** | `caps[biome]` | Integer Parameter | Plots ($\ge 0$) | Available plot capacity for soil biome $b \in \{\text{farm}, \text{waterside}, \text{cave}\}$. |
-| **$S_c$** | `c.stock` | Integer Parameter | $S_c \ge 1$ | General store inventory stock cap per 10-day restock cycle for crop $c$. |
-| **$\mathbf{x}$** | Solver vector | Vector | $\mathbb{Z}^{N}$ (or $\mathbb{Z}^{N + U}$) | Full decision vector sent to solver: $[x_{c_0, d_1}, \dots]^T$ or $[x_{c_0, d_1}, \dots, y_0, \dots, y_{U-1}]^T$. |
+| **$S_i$** | `c.stock` | Integer Parameter | $S_i \ge 1$ | General store inventory stock cap per 10-day restock cycle for crop $i$. |
+| **$\mathbf{x}$** | Solver vector | Vector | $\mathbb{Z}^{N}$ (or $\mathbb{Z}^{N + U}$) | Full decision vector sent to solver: $[x_{i_1, t_1}, \dots]^T$ or $[x_{i_1, t_1}, \dots, y_1, \dots, y_U]^T$. |
 | **$\mathbf{c}$** | Objective vector | Vector | $\mathbb{R}^{N}$ (or padded) | Objective coefficient vector with tie-breakers. |
 | **$\mathbf{A}$** | `A` | Matrix | $\mathbb{R}^{m \times |\mathbf{x}|}$ | Linear constraint matrix encoding plot capacity, cash balances, restock, and variety caps. |
 | **$\mathbf{lb}, \mathbf{ub}$** | `lb`, `ub` | Vectors | $\mathbb{R}^m$ | Lower and upper capacity bounds on constraint rows in matrix $\mathbf{A}$. |
 
 ---
 
-### Step 1: Preprocessing & Candidate Pruning
+### 3.2 Preprocessing & Candidate Pruning
 Before building matrices, `solve_allocation()` filters the seasonal CSV down to viable candidate crops:
 1. **Town Gate**: Checks `unlocked_towns[town] == True`. Multi-town vendors (e.g. `Shatolla/Nemea`) unlock if *either* town is unlocked.
 2. **Biome Plot Check**: Crops requiring Waterside or Cave plots are discarded if the player has 0 plots in that biome.
 3. **Economic Viability**: Drops without purchase cost (e.g. Nitro Pineapple) or negative profits are excluded.
-4. **Time-Indexed Feasibility**: For each eligible crop $c$ and each calendar day $`d \in [\text{current\_day}, 30]`$, the candidate pair $(c, d)$ is accepted only if its first harvest completes on or before Day 30 ($d + m_c \le 30$).
+4. **Time-Indexed Feasibility**: For each eligible crop $i$ and each calendar planting day $`t \in [\text{current\_day}, 30]`$, the candidate pair $(i, t)$ is accepted only if its first harvest completes on or before Day 30 ($t + m_i \le 30$).
 
 ---
 
-### Step 2: Time Horizon, Growth Dynamics & Decision Variables
+### 3.3 Quietus (The Season of Death) & The Time Horizon
 
-#### 1. Time Horizon & Day Indexing
-Given `current_day`, the planning horizon spans every active calendar day $`d \in [\text{current\_day}, 30]`$:
-- Day 30 is the final playable day of the season.
-- Quietus occurs on the night between Day 30 and Day 31, destroying all unharvested crops. All harvests must complete on or before Day 30.
+In *Harvestella*, **Quietus (the Season of Death)** is the critical game mechanic that enforces a hard terminal boundary (a finite time horizon) on the optimization model:
 
-#### 2. Crop Growth Dynamics: Single-Harvest vs. Regrowth
+1. **What Quietus Does in the Game**:
+   - **Strict 30-Day Season**: Every season lasts exactly 30 calendar days.
+   - **Total Field Destruction**: On the night between Day 30 and Day 31, fatal dust covers the world, destroying all unharvested crops remaining in the soil.
+   - **Zero Spillover**: Fields are wiped completely clean before the next season begins. Unharvested produce yields 0 G.
 
-##### Single-Harvest Crops
-- Matures in $m$ days.
-- Planted on morning of Day $d$, harvested on Day $h = d + m$.
-- **Soil Occupancy**: Occupies 1 plot on calendar days $t \in [d, d + m - 1]$. The plot is cleared and freed on the morning of Day $d + m$ for immediate replanting.
+2. **Why We Need the `current_day` Input (Mid-Season Optimization)**:
+   - Players don't always start planning on Day 1; you might run the optimizer on Day 5, Day 14, or Day 22.
+   - Specifying `current_day` tells the solver where you are right now, defining the forward-looking calendar horizon:
+     $$t \in [\text{current\_day}, 30]$$
+   - Past days ($t < \text{current\_day}$) are unchangeable history.
+   - Future days beyond Day 30 ($t > 30$) are destroyed by Quietus.
+   - Thus, every active decision is strictly bounded within the playable window: $t \in \{\text{current\_day}, \dots, 30\}$.
+
+### 3.4 Crop Growth Dynamics: Single-Harvest vs. Regrowth
+
+#### Single-Harvest Crops
+- Matures in $m_i$ days.
+- Planted on morning of Day $t$, harvested on Day $h = t + m_i$.
+- **Soil Occupancy**: Occupies 1 plot on calendar days $\tau \in [t, t + m_i - 1]$. The plot is cleared and freed on the morning of Day $t + m_i$ for immediate replanting.
 - **Overnight Shipping Turnaround**: Harvested produce is placed in the shipping box on Day $h$. Gold arrives in the player's wallet on the morning of Day $h + 1$.
 
-##### Regrowth Crops (e.g., Nemean Tomato, Revol Pepper, Nectarcane, Strawbuddy)
-- Initial maturity in $m$ days, subsequent harvests every $r$ days up to $H_{\max}$ total harvests.
-- Harvest days set: $H(c, d) = \{ d + m + k \cdot r \mid k \in [0, H_{\max}-1], \; d + m + k \cdot r \le 30 \}$.
-- **Soil Occupancy**: Stays permanently rooted in soil from planting day $d$ through its final harvest day $\max(H(c, d))$ (or Day 30), incurring **zero additional seed purchase costs** for subsequent harvests.
-- **Cash Flow**: Each harvest $h \in H(c, d)$ yields $v_c$ deposited into wallet liquidity on the morning of Day $h + 1$.
+#### Regrowth Crops (e.g., Nemean Tomato, Revol Pepper, Nectarcane, Strawbuddy)
+- Initial maturity in $m_i$ days, subsequent harvests every $r_i$ days up to $H_i$ total harvests.
+- Harvest days set: $H(i, t) = \{ t + m_i + k \cdot r_i \mid k \in [0, H_i - 1], \; t + m_i + k \cdot r_i \le 30 \}$.
+- **Soil Occupancy**: Stays permanently rooted in soil from planting day $t$ through its final harvest day $\max(H(i, t))$ (or Day 30), incurring **zero additional seed purchase costs** for subsequent harvests.
+- **Cash Flow**: Each harvest $h \in H(i, t)$ yields unit revenue $s_i$ deposited into wallet liquidity on the morning of Day $h + 1$.
 
-#### 3. Decision Variables: $x_{c, d}$ and $y_k$
-Depending on whether `max_crop_varieties` ($K$) is configured:
-- **Case A: Unconstrained Variety (`max_crop_varieties: null`)**:
-  $N$ integer variables $x_{c, d} \ge 0$ representing the quantity of seeds of crop variety $c$ planted on day $d$.
-- **Case B: Variety Limited (`max_crop_varieties: K`)**:
-  $N$ integer variables $x_{c, d} \ge 0$ plus $U$ binary indicator switches $y_k \in \{0, 1\}$.
-
----
-
-### Step 3: Objective Function Construction
-
-The solver maximizes **Total Cumulative Season Net Profit** across all planting days $`d \in [\text{current\_day}, 30]`$ leading to Quietus:
-
-$$\max_{\mathbf{x}} \sum_{c} \sum_{d} \left( (R_{c, d} - p_c) - 10^{-6} \cdot p_c - 10^{-8} \cdot (d - \text{current\_day}) \right) \cdot x_{c, d}$$
-
-#### Dual Tie-Breakers for Optimal Cash & Land Efficiency
-When two planting options yield identical net profit, the solver applies two deterministic microscopic tie-breaker penalties:
-1. **Cost Tie-Breaker ($\epsilon_1 = 10^{-6} \cdot p_c$)**: Strictly prefers cheaper seed varieties to conserve wallet liquidity.
-2. **Timing Tie-Breaker** ($`\epsilon_2 = 10^{-8} \cdot (d - \text{current\_day})`$): Strictly prefers earlier planting calendar days to accelerate capital compounding and free soil sooner.
-
-In standard SciPy minimization format ($\min \mathbf{c}^T \mathbf{x}$):
-
-$$c_{c, d} = -\left( (R_{c, d} - p_c) - 10^{-6} \cdot p_c - 10^{-8} \cdot (d - \text{current\_day}) \right)$$
-
-Binary indicator variables $y_k$ have an objective coefficient of $0.0$, as unlocking a variety does not earn or cost gold by itself.
+### 3.5 Decision Variables: $x_{i, t}$
+The primary decision variables are $x_{i, t} \ge 0$, representing the integer quantity of seeds of crop variety $i$ purchased and planted on calendar day $t$:
+- **Crop Variety Index ($i$)**: $i \in \{1, 2, \dots, n\}$, indexing eligible crop varieties in the game catalog ($n \le 35$).
+- **Calendar Planting Day ($t$)**: $t \in [\text{current\_day}, 30]$, where $\text{current\_day} \in \{1, 2, \dots, 30\}$ denotes the player's current starting day within the 30-day season.
+- **Variable Count**: Only feasible pairs $(i, t)$ whose maturity completes on or before Day 30 ($t + m_i \le 30$) are instantiated ($N \le 450$ variables).
 
 ---
 
-### Step 4: The Constraint Matrix $\mathbf{A}$
+### 3.6 Objective Function Construction
+
+In standard SciPy/HiGHS format, the solver optimizes the linear objective:
+
+$$\min_{\mathbf{x}} \quad \mathbf{c}^T \mathbf{x}$$
+
+Where:
+- $\mathbf{x} = [x_{i, t}]^T$ is the primary decision vector of seed quantities ($x_{i, t} \in \mathbb{Z}_{\ge 0}$).
+- $\mathbf{c} = [c_{i, t}]^T$ is the objective coefficient vector, where $c_{i, t} = -\text{Adjusted Profit}(i, t)$ defines the negative adjusted net profit per seed with tie-breakers.
+
+---
+
+#### 3.6.1 Why Minimization? Maximizing Profit via Negative Costs
+
+Because the player's goal is to maximize total seasonal profit, the optimizer formulates this as minimizing negative profit:
+
+$$\max \sum_{i, t} \text{Adjusted Profit}(i, t) \cdot x_{i, t} \iff \min_{\mathbf{x}} \sum_{i, t} \underbrace{\left(-\text{Adjusted Profit}(i, t)\right)}_{c_{i, t}} \cdot x_{i, t}$$
+
+---
+
+#### 3.6.2 Components of $c_{i, t}$: Net Profit & Perturbations
+
+Each decision coefficient $c_{i, t}$ is explicitly calculated as:
+
+$$c_{i, t} = -\left( \underbrace{(v_{i, t} - p_i)}_{\text{Base Net Profit}} - \underbrace{10^{-6} \cdot p_i}_{\text{Cost Perturbation}} - \underbrace{10^{-8} \cdot (t - \text{current\_day})}_{\text{Timing Perturbation}} \right)$$
+
+##### A. Base Net Profit ($v_{i, t} - p_i$)
+The gross gold profit generated by purchasing and planting 1 plot of crop $i$ on calendar day $t$:
+
+$$\text{Base Net Profit}(i, t) = v_{i, t} - p_i$$
+
+1. **Seed Purchase Cost ($p_i$)**:
+   The upfront cash price to purchase 1 seed of crop $i$ from the town general store. This cost is paid once on planting day $t$ and is constant across all calendar days.
+
+2. **Total Harvest Revenue ($v_{i, t}$)**:
+   The total gold received from all completed harvests on or before Day 30 for seed $i$ planted on day $t$:
+   - **Single-Harvest Crops**: Matures and is harvested exactly once regardless of planting day, so total revenue $v_{i, t}$ is simply the unit selling price $s_i$:
+     $$v_{i, t} = s_i$$
+   - **Regrowth Crops**: Produces ongoing repeated harvests every $r_i$ days, with each harvest selling for $s_i$. Total revenue $v_{i, t}$ is the number of completed harvests before Quietus multiplied by the sale price per harvest $s_i$:
+     $$v_{i, t} = |H(i, t)| \cdot s_i$$
+     Where $|H(i, t)|$ denotes the number of completed harvests before Quietus.
+
+*Example: Shatollan Paprika (seed cost $p_i = 250\text{ G}$, unit sale price $s_i = 110\text{ G}$, initial maturity $m = 5\text{ days}$, regrowth cycle $r = 2\text{ days}$, max harvests $H_{\max} = 9$):*
+
+| Planting Scenario | Active Harvest Calendar Days | Completed Harvests | Total Revenue ($v_{i, t}$) | Seed Cost ($p_i = 250\text{ G}$) | Net Profit ($v_{i, t} - p_i$) |
+| :--- | :--- | :--- | :---: | :---: | :---: |
+| **Early (Day 1)** | Days 6, 8, 10, 12, 14, 16, 18, 20, 22 | **9** (all) | $v_{i, 1} = 990\text{ G}$ | $-250\text{ G}$ | **$+740\text{ G}$** |
+| **Late (Day 20)** | Days 25, 27, 29 *(Day 31 wiped out)* | **3** | $v_{i, 20} = 330\text{ G}$ | $-250\text{ G}$ | **$+80\text{ G}$** |
+
+##### B. Microscopic Perturbations (Deterministic Tie-Breakers)
+When two planting options yield identical integer net profit, two deterministic perturbation penalties resolve the choice:
+1. **Cost Perturbation ($\epsilon_1 = 10^{-6} \cdot p_i$)**: Strictly prefers cheaper seed varieties to conserve liquid wallet cash.
+2. **Timing Perturbation** ($`\epsilon_2 = 10^{-8} \cdot (t - \text{current\_day})`$): Strictly prefers earlier planting calendar days to accelerate capital compounding and free soil sooner.
+
+---
+
+#### 3.6.3 Optional Cardinality Extension: Crop Variety Indicators ($y_k$)
+
+When the player sets a limit on the number of distinct varieties to manage (`max_crop_varieties: K`), the formulation is augmented:
+
+1. **Augmented Decision Vector**:
+   $U$ binary indicator variables $y_k \in \{0, 1\}$ are appended to the decision vector ($k \in \{1, \dots, U\}$, where $U \le 35$ is the number of eligible catalog varieties):
+   $$\mathbf{x}_{\text{full}} = \begin{bmatrix} \mathbf{x} \\ \mathbf{y} \end{bmatrix} = [x_{i_1, t_1}, \dots, x_{i_N, t_M}, \; y_1, \dots, y_U]^T$$
+2. **Objective Weights ($c_k = 0.0$)**:
+   Activating a crop variety indicator does not directly earn or cost gold, so its objective coefficient is strictly zero:
+   $$c_k = 0.0 \quad \forall k \in \{1, \dots, U\}$$
+3. **Big-M Linking & Season Cardinality**:
+   The solver couples physical seed quantities to the binary switches via Big-M:
+   $$\sum_{t} x_{k, t} \le M \cdot y_k \iff \sum_{t} x_{k, t} - M \cdot y_k \le 0$$
+   $$\sum_{k=1}^U y_k \le K$$
+   - If $y_k = 0 \implies \sum_t x_{k, t} = 0$ (crop $k$ cannot be planted anywhere in the season).
+   - If $y_k = 1 \implies \sum_t x_{k, t} \le M$ (crop $k$ can be planted freely up to plot and inventory caps).
+
+---
+
+### 3.7 The Constraint Matrix $\mathbf{A}$
 
 Every physical game boundary across every calendar day is translated into a row in matrix $\mathbf{A}$:
 
@@ -221,11 +297,11 @@ $$\mathbf{lb} \le \mathbf{A} \mathbf{x} \le \mathbf{ub}$$
 
 | Constraint Family | Scope / Indexing | Equation / Coefficients | Lower Bound ($\mathbf{lb}$) | Upper Bound ($\mathbf{ub}$) |
 | :--- | :--- | :--- | :---: | :---: |
-| **Daily Plot Capacity** | Each day $`t \in [\text{current\_day}, 30]`$, each biome $b$ | $\sum_{(c, d) \text{ occupying } b \text{ on } t} 1.0 \cdot x_{c, d}$ | $0.0$ | $B_b$ |
-| **Daily Cash Liquidity** | Each morning $`t \in [\text{current\_day}, 30]`$ | $\sum_{d \le t} p_c \cdot x_{c, d} - \sum_{h + 1 \le t} v_c \cdot x_{c, d}$ | $-\infty$ | $W$ |
-| **10-Day Restock Caps** | Each window $W_w$, each crop $c$ | $\sum_{d \in W_w} 1.0 \cdot x_{c, d}$ | $0.0$ | $S_c$ |
-| **Big-M Variety Linking** | Each unique variety $k$ *(if $K$ set)* | $\sum_{d} 1.0 \cdot x_{c, d} - M \cdot y_k$ | $-\infty$ | $0.0$ |
-| **Variety Cardinality Cap** | Entire season *(if $K$ set)* | $\sum_{k=0}^{U-1} 1.0 \cdot y_k$ | $0.0$ | $K$ |
+| **Daily Plot Capacity** | Each day $`\tau \in [\text{current\_day}, 30]`$, each biome $b$ | $\sum_{(i, t) \text{ occupying } b \text{ on } \tau} 1.0 \cdot x_{i, t}$ | $0.0$ | $B_b$ |
+| **Daily Cash Liquidity** | Each morning $`\tau \in [\text{current\_day}, 30]`$ | $\sum_{t \le \tau} p_i \cdot x_{i, t} - \sum_{h + 1 \le \tau, \, h \in H(i, t)} s_i \cdot x_{i, t}$ | $-\infty$ | $W$ |
+| **10-Day Restock Caps** | Each window $W_w$, each crop $i$ | $\sum_{t \in W_w} 1.0 \cdot x_{i, t}$ | $0.0$ | $S_i$ |
+| **Big-M Variety Linking** | Each unique variety $k$ *(if $K$ set)* | $\sum_{t} 1.0 \cdot x_{k, t} - M \cdot y_k$ | $-\infty$ | $0.0$ |
+| **Variety Cardinality Cap** | Entire season *(if $K$ set)* | $\sum_{k=1}^{U} 1.0 \cdot y_k$ | $0.0$ | $K$ |
 
 #### Dynamic Time-Indexed Matrix Structure
 ```
@@ -248,7 +324,7 @@ Restock Window 2 (D11-20)[              0              ]   [              0     
 
 ---
 
-### Step 5: Concrete Numerical Walkthrough
+### 3.8 Concrete Numerical Walkthrough
  
 Here is the exact numerical calculation performed by `solve_allocation()` on the baseline **Summer** configuration:
 - **Parameters**: `wallet_gold: 8000`, `farm: 70`, `waterside: 0`, `cave: 0`, `max_crop_varieties: null`.
@@ -291,31 +367,31 @@ The solver proves that buying expensive seeds like Seatide Garlic with an 8,000 
 
 ---
 
-## Part 4: From Math Solution to Actionable Daily Plan (`DailyRecord`)
+## Chapter 4: From Math Solution to Actionable Daily Plan (DailyRecord)
 
 Solving the MILP gives the exact seed allocation vector $\mathbf{x}^*$. [`scripts/crop_solver.py`](../scripts/crop_solver.py) then translates this raw matrix solution into a player-facing day-by-day action ledger via `DailyRecord`:
 
-### 1. Morning Cash Arrivals (`payout_revenue`)
+### 4.1 Morning Cash Arrivals (`payout_revenue`)
 - Produce harvested on calendar day $h$ is placed into the shipping bin on that evening.
 - In *Harvestella*, the shipping payout arrives in the player's wallet on the morning of Day $h + 1$.
 - For each day $d$, the engine looks up all crops shipped on Day $d - 1$ and calculates:
   $`\text{morning\_wallet} = \text{carryover\_cash} + \text{payout\_revenue}`$
 
-### 2. Daily Harvest & Soil Management
+### 4.2 Daily Harvest & Soil Management
 - For each crop maturing on day $d$, the engine checks whether it is a single-harvest or regrowth crop:
   - **Single-Harvest**: Harvest produce and drop in shipping bin. Soil is cleared immediately on day $d$, allowing immediate replanting.
   - **Regrowth**: Harvest produce and drop in shipping bin. The crop remains rooted in the soil (`regrowth k/H`), continuing its cycle without any additional seed expenditure.
 
-### 3. Seed Purchases & Planting Today
+### 4.3 Seed Purchases & Planting Today
 - Displays all seed purchases scheduled for day $d$, grouped by **Vendor Town** (Lethe, Nemea, Shatolla, Argene) to provide an efficient travel route.
 - Shows total daily seed expenditures $`\text{daily\_spent}`$.
 
-### 4. Bedtime Wallet (`end_wallet`)
+### 4.4 Bedtime Wallet (`end_wallet`)
 - Calculates remaining cash before going to sleep:
   $`\text{end\_wallet} = \text{morning\_wallet} - \text{daily\_spent}`$
 - This balance carries over directly into the next morning's `carryover_cash`.
 
-### 5. Quietus Morning Finale (Day 31 Payout)
+### 4.5 Quietus Morning Finale (Day 31 Payout)
 - All crops harvested on the final day of the season (Day 30) are placed in the shipping bin.
 - On the morning of Quietus (Day 31), the final shipping payout arrives:
   $`\text{final\_wallet} = \text{end\_wallet}_{\text{Day 30}} + \text{payout}_{\text{Day 31}} = \text{wallet\_gold} + \text{total\_season\_profit}`$
@@ -323,7 +399,9 @@ Solving the MILP gives the exact seed allocation vector $\mathbf{x}^*$. [`script
 
 ---
 
-## Part 5: Code Architecture & Separation of Concerns
+## Chapter 5: Code Architecture & Separation of Concerns
+
+### 5.1 Optimization Engine vs. Presentation CLI
 
 The codebase maintains a strict two-tier separation between optimization mathematics and presentation:
 
