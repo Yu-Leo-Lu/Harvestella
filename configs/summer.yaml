@@ -10,15 +10,18 @@ max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3,
 # Format: start: <plots_now> and optional <milestone_day>: <expanded_plots>
 free_plots:
   farm: 
-    start: 61   # Free plots right now on current_day (Day 18 to 20)
-    23: 89      # Expands to 89 on Day 23
-    24: 145     # Expands to 145 on Day 24
+    start: 60   # Free plots right now on current_day
+    19: 114     
+    22: 156
+    30: 196     
   waterside: 
-    start: 36   # Free plots right now on current_day (Day 18 to 23)
-    24: 81      # Expands to 81 on Day 24
+    start: 36   # Free plots right now on current_day
+    21: 54
+    23: 72
+    30: 81      
   cave: 
-    start: 54   # Free plots right now on current_day (Day 18 to 21)
-    22: 81      # Expands to 81 on Day 22
+    start: 54   # Free plots right now on current_day
+    30: 81      
 
 # Town unlock status (set to false if a town vendor is not yet unlocked)
 unlocked_towns:

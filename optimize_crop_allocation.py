@@ -66,6 +66,7 @@ class StageCropItem:
     subtotal_cost: float
     subtotal_revenue: float
     subtotal_net_profit: float
+    balance: float = 0.0
 
 
 @dataclass
@@ -542,6 +543,8 @@ def solve_allocation(
                 daily_arrivals[arr_day] += count * c.nq_sale
 
     running_cash = wallet_gold
+    global_cash = wallet_gold
+    global_day = current_day
 
     for s_idx, (s_start, s_end) in enumerate(active_stages):
         st_items: list[StageCropItem] = []
@@ -593,6 +596,21 @@ def solve_allocation(
         # Sort items by plant day, then biome
         biome_order = {"farm": 1, "waterside": 2, "cave": 3}
         st_items.sort(key=lambda it: (it.plant_day, biome_order.get(it.crop.biome, 99), -it.crop.daily_profit))
+
+        # Compute running wallet balance after each seed purchase
+        for it in st_items:
+            if it.plant_day > global_day:
+                for arr_d in range(global_day + 1, it.plant_day + 1):
+                    global_cash += daily_arrivals.get(arr_d, 0.0)
+                global_day = it.plant_day
+            global_cash -= it.subtotal_cost
+            it.balance = global_cash
+
+        # Advance global_cash to end of stage window for any subsequent harvest arrivals
+        if s_end > global_day:
+            for arr_d in range(global_day + 1, s_end + 1):
+                global_cash += daily_arrivals.get(arr_d, 0.0)
+            global_day = s_end
 
         # Peak plots occupied simultaneously on any day during this stage
         stage_farm_cap = max((get_plot_capacity(free_plots.get("farm"), d, current_day) for d in range(s_start, s_end + 1)), default=0)
@@ -742,9 +760,9 @@ def print_result_report(result: OptimizationResult) -> None:
         )
         print(
             f"  {'Plant':<8} {'Biome':<10} {'Crop Name':<18} {'Vendor':<10} "
-            f"{'Qty':>4} {'Seed Spent':>11} {'Harvest Days':<15} {'Net Profit':>11}"
+            f"{'Qty':>4} {'Seed Spent':>11} {'Balance':>11} {'Harvest Days':<15} {'Net Profit':>11}"
         )
-        print("  " + "-" * 82)
+        print("  " + "-" * 94)
         for it in st.items:
             c = it.crop
             h_str = ", ".join(f"D{d}" for d in it.harvest_days)
@@ -757,6 +775,7 @@ def print_result_report(result: OptimizationResult) -> None:
                 f"{c.town:<10} "
                 f"{it.plots_allocated:>4} "
                 f"{it.subtotal_cost:>10,.0f} G "
+                f"{it.balance:>10,.0f} G "
                 f"{h_str:<15} "
                 f"+{it.subtotal_net_profit:>10,.0f} G"
             )
@@ -848,10 +867,10 @@ def generate_markdown_report(
                 f"{plot_str}\n"
             )
             lines.append(
-                "| Plant Day | Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |"
+                "| Plant Day | Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Balance | Harvest Days | Net Profit |"
             )
             lines.append(
-                "| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |"
+                "| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |"
             )
             for it in st.items:
                 c = it.crop
@@ -860,7 +879,7 @@ def generate_markdown_report(
                     h_str = f"Day {it.harvest_days[0]}..{it.harvest_days[-1]} ({len(it.harvest_days)}x)"
                 lines.append(
                     f"| Day {it.plant_day} | {c.biome.capitalize()} | **{c.name}** | {c.town} | {it.plots_allocated} | "
-                    f"{it.subtotal_cost:,.0f} G | {h_str} | +{it.subtotal_net_profit:,.0f} G |"
+                    f"{it.subtotal_cost:,.0f} G | {it.balance:,.0f} G | {h_str} | +{it.subtotal_net_profit:,.0f} G |"
                 )
             net_end = st.cash_remaining + st.revenue_generated
             lines.append(

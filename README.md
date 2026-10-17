@@ -142,7 +142,7 @@ max_crop_varieties: null
 
 # Physical Available Plot Capacities
 free_plots:
-  farm: 70
+  farm: 49
   waterside: 12
   cave: 12
 
@@ -163,18 +163,15 @@ Farm expansions are permanent (they carry over into all future seasons) and are 
 
 | Farm Level | Upgrade Cost | Plot Increment | Total Farm Tiles | Cost / Tile | Payback @ 35 G/d | Strategic Assessment |
 | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
-| Level 1 | Free | Starting (10×7) | 70 tiles | — | — | Starting plot. Capital-constrained early on. |
-| **Level 2** | **3,000 G** | **+56 tiles** (8×7) | **126 tiles** | 53.6 G | 1.5 days | **Highest ROI in the game.** Rush in Spring Year 1. |
-| Level 3 | 8,000 G | +21 tiles (3×7) | 147 tiles | 381.0 G | 10.9 days | Stepping stone to Level 4. |
-| **Level 4** | **15,000 G** | **+70 tiles** (10×7) | **217 tiles** | 214.3 G | 6.1 days | **Major expansion leap.** Pays back in under a week. |
-| Level 5 | 25,000 G | +56 tiles (8×7) | 273 tiles | 446.4 G | 12.8 days | Solid mid-game goal. |
-| Level 6 | 40,000 G | +21 tiles (3×7) | 294 tiles | 1,904.8 G | 54.4 days | Expensive bridge tier to Level 7. |
-| Level 7 | 80,000 G | +70 tiles (10×7) | 364 tiles | 1,142.9 G | 32.7 days | Late-game industrial farming. |
-| Level 8 | 120,000 G | +56 tiles (8×7) | 420 tiles | 2,142.9 G | 61.2 days | End-game passive orchard empire. |
-| Level 9 (Max) | 200,000 G | +21 tiles (3×7) | 441 tiles | 9,523.8 G | 272.1 days | Completionist flex tier. |
-
-> [!TIP]
-> **The Level 4 Working Capital Rule**: Upgrading to Level 4 costs 15,000 G, but buying seeds to plant across all 217 plots requires an additional 7,000–15,000 G. Never spend down to 0 G to buy the expansion—wait until your wallet reaches **~22,000–25,000 G** so your newly acquired plots don't sit empty.
+| Level 1 | Free | Starting (7×7) | 49 tiles | — | — | Starting plot; stamina-constrained. |
+| Level 2 | 3,000 G | +49 tiles (7×7) | 98 tiles | 61.2 G | 1.7 days | Rush post-Ch 2; <2 day payback. |
+| Level 3 | 8,000 G | +49 tiles (7×7) | 147 tiles | 163.3 G | 4.7 days | Completes top row (21×7) for Summer. |
+| Level 4 | 15,000 G | +49 tiles (7×7) | 196 tiles | 306.1 G | 8.7 days | Breaks into row 2; needs Sprinklers. |
+| Level 5 | 25,000 G | +49 tiles (7×7) | 245 tiles | 510.2 G | 14.6 days | Mid-game scale; pair with Makers. |
+| Level 6 | 40,000 G | +49 tiles (7×7) | 294 tiles | 816.3 G | 23.3 days | Completes row 2; needs charged hammer. |
+| Level 7 | 80,000 G | +49 tiles (7×7) | 343 tiles | 1,632.7 G | 46.6 days | Late-game expansion (~1.5 season payback). |
+| Level 8 | 120,000 G | +49 tiles (7×7) | 392 tiles | 2,449.0 G | 70.0 days | Dedicated space for fruit tree orchards. |
+| Level 9 (Max) | 200,000 G | +49 tiles (7×7) | 441 tiles | 4,081.6 G | 116.6 days | Completionist goal (full 21×21). |
 
 ---
 

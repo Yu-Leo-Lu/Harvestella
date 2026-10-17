@@ -1,17 +1,16 @@
 Crop Name,Vendor Town,Vendor Stock,Biome,Seed Cost (G),NQ Sale (G),HQ Sale (G),Mature (Days),Regrowth (Days),Max Harvests,Growth Season,Fruit Season
-Carrop,Lethe,99,Farm,105,115,145,1,,1,"Sp, Su","Sp, Su"
+Carrop,Lethe,50,Farm,105,115,145,1,,1,"Sp, Su","Sp, Su"
 Cucumble,Lethe,99,Farm,370,200,250,4,3,6,Sp,Sp
 Curry Herbs,Lethe,50,Cave,270,350,435,6,,1,"Sp, Su, Fa","Sp, Su, Fa"
 Dress Lettuce,Lethe,99,Farm,55,85,105,2,,1,"Sp, Su, Fa","Sp, Su, Fa"
 Grass,Lethe,99,Farm,30,35,45,2,,1,"Sp, Su, Fa","Sp, Su, Fa"
-Grouply Grape,Lethe,99,Farm,2000,85,105,6,1,Multi-Season,"Sp, Su, Fa, Wi",Fa
+Grouply Grape,Lethe,10,Farm,2000,85,105,6,1,Multi-Season,"Sp, Su, Fa, Wi",Fa
 Lantern Pumpkin,Lethe,99,Farm,3750,3750,,11,,1,Fa,Fa
 Lumpotato,Lethe,99,Farm,90,120,150,3,,1,"Fa, Wi","Fa, Wi"
 Morrocorn,Lethe,50,Farm,230,400,500,4,,1,Su,Su
-Princess Chestnut,Lethe,99,Farm,2200,60,75,7,2,Multi-Season,"Sp, Su, Fa, Wi",Fa
+Princess Chestnut,Lethe,10,Farm,2200,60,75,7,2,Multi-Season,"Sp, Su, Fa, Wi",Fa
 Rainbow Bean,Lethe,99,Farm,180,40,50,6,2,5,Fa,Fa
 Royal Eggplant,Lethe,99,Farm,780,480,960,7,2,3,Fa,Fa
-SnowCap Mikan,Lethe,99,Farm,2300,65,80,7,2,Multi-Season,"Sp, Su, Fa, Wi",Wi
 Stellar Wheat,Lethe,99,Farm,40,55,70,2,,1,"Sp, Su, Fa","Sp, Su, Fa"
 Unionion,Lethe,99,Farm,130,195,245,3,,1,"Sp, Fa","Sp, Fa"
 Carrop,Nemea,99,Farm,95,115,145,1,,1,"Sp, Su","Sp, Su"
@@ -34,8 +33,9 @@ Argene Cabbage,Argene,99,Farm,220,320,400,4,,1,Wi,Wi
 Chilly Plant,Argene,99,Farm,800,1300,1625,7,,1,Wi,Wi
 Curry Herbs,Argene,99,Cave,240,350,435,6,,1,"Sp, Su, Fa","Sp, Su, Fa"
 Lumpotato,Argene,99,Farm,80,120,150,3,,1,"Fa, Wi","Fa, Wi"
-Revol Pepper,Argene,99,Cave,560,265,330,4,3,5,"Sp, Su, Fa","Sp, Su, Fa"
-Sudor Pepper,Argene,99,Cave,400,250,310,3,3,3,"Sp, Su, Fa","Sp, Su, Fa"
+Revol Pepper,Argene,90,Cave,560,265,330,4,3,5,"Sp, Su, Fa","Sp, Su, Fa"
+SnowCap Mikan,Argene,10,Farm,2300,65,80,7,2,Multi-Season,"Sp, Su, Fa, Wi",Wi
+Sudor Pepper,Argene,90,Cave,400,250,310,3,3,3,"Sp, Su, Fa","Sp, Su, Fa"
 Eden Rice,Abandoned Eden,99,Farm,20,35,45,3,,1,"Su, Fa","Su, Fa"
 Macocoa,Abandoned Eden,99,Farm,2400,100,125,6,1,Tree,"Sp, Su, Fa, Wi",Su
 Nitro Pineapple,Astrum Helix,,Cave,,5,5,6,,1,"Sp, Su, Fa","Sp, Su, Fa"
