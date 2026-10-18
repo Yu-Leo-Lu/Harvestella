@@ -212,44 +212,36 @@ def generate_markdown_report(
         for rec in r.daily_records:
             lines.append(f"#### **Day {rec.day}**\n")
             if rec.payout_revenue > 0:
-                src_str = ", ".join(rec.payout_sources) if rec.payout_sources else f"Day {rec.day - 1} shipping"
-                lines.append(f"- 📬 **Payout**: **+{rec.payout_revenue:,.0f} G** *(from {src_str})*")
-                lines.append(f"- **Morning Wallet**: **{rec.morning_wallet:,.0f} G** *({rec.carryover_cash:,.0f} G carryover + {rec.payout_revenue:,.0f} G)*")
+                lines.append(f"- **Morning Wallet**: **{rec.morning_wallet:,.0f} G** *({rec.carryover_cash:,.0f} G carryover + {rec.payout_revenue:,.0f} G payout)*")
             else:
                 lines.append(f"- **Morning Wallet**: **{rec.morning_wallet:,.0f} G**")
 
             if rec.harvests:
+                tot_harvest_rev = sum(h.revenue for h in rec.harvests)
+                arr_day = rec.day + 1
+                lines.append(f"- **Harvest & Ship** *(+{tot_harvest_rev:,.0f} G arriving D{arr_day})*:")
+
                 harvest_groups: dict[tuple[str, str], list[DailyHarvestEvent]] = {}
                 for h in rec.harvests:
                     harvest_groups.setdefault((h.crop.name, h.crop.biome), []).append(h)
 
-                if len(harvest_groups) == 1:
-                    (c_name, b_name), h_list = next(iter(harvest_groups.items()))
+                biome_order = {"farm": 1, "waterside": 2, "cave": 3}
+                sorted_groups = sorted(
+                    harvest_groups.items(),
+                    key=lambda item: (biome_order.get(item[0][1], 99), item[0][0])
+                )
+
+                for (c_name, b_name), h_list in sorted_groups:
                     tot_qty = sum(x.quantity for x in h_list)
                     tot_rev = sum(x.revenue for x in h_list)
                     sample_h = h_list[0]
-                    arr_day = rec.day + 1
                     if sample_h.is_regrowth:
-                        detail = f"regrowth {sample_h.harvest_num}/{sample_h.total_harvests} (stays planted)"
+                        status = f"regrowth {sample_h.harvest_num}/{sample_h.total_harvests}"
                     else:
-                        detail = "single harvest (soil freed)"
+                        status = "freed"
                     lines.append(
-                        f"- 🌾 **Harvest & Ship**: {tot_qty}x {c_name} *({b_name.capitalize()})* — {detail} → +{tot_rev:,.0f} G *(arrives morning D{arr_day})*"
+                        f"  - {tot_qty}x {c_name} *({b_name.capitalize()})* → +{tot_rev:,.0f} G ({status})"
                     )
-                else:
-                    lines.append("- 🌾 **Harvest & Ship**:")
-                    for (c_name, b_name), h_list in harvest_groups.items():
-                        tot_qty = sum(x.quantity for x in h_list)
-                        tot_rev = sum(x.revenue for x in h_list)
-                        sample_h = h_list[0]
-                        arr_day = rec.day + 1
-                        if sample_h.is_regrowth:
-                            detail = f"regrowth {sample_h.harvest_num}/{sample_h.total_harvests} (stays planted)"
-                        else:
-                            detail = "single harvest (soil freed)"
-                        lines.append(
-                            f"  - {tot_qty}x {c_name} *({b_name.capitalize()})* — {detail} → +{tot_rev:,.0f} G *(arrives morning D{arr_day})*"
-                        )
 
             if rec.plantings:
                 lines.append("\n##### 🌱 Seed Purchases & Planting\n")

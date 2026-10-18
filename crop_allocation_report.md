@@ -34,9 +34,9 @@
 #### **Day 22**
 
 - **Morning Wallet**: **20,950 G**
-- 🌾 **Harvest & Ship**:
-  - 15x Shatollan Paprika *(Farm)* — regrowth 1/5 (stays planted) → +1,650 G *(arrives morning D23)*
-  - 33x Nectarcane *(Waterside)* — regrowth 1/3 (stays planted) → +8,250 G *(arrives morning D23)*
+- **Harvest & Ship** *(+9,900 G arriving D23)*:
+  - 15x Shatollan Paprika *(Farm)* → +1,650 G (regrowth 1/5)
+  - 33x Nectarcane *(Waterside)* → +8,250 G (regrowth 1/3)
 
 ##### 🌱 Seed Purchases & Planting
 
@@ -52,12 +52,11 @@
 
 #### **Day 23**
 
-- 📬 **Payout**: **+9,900 G** *(from 15x Shatollan Paprika (pre-planted) on Day 22, 33x Nectarcane (pre-planted) on Day 22)*
-- **Morning Wallet**: **22,650 G** *(12,750 G carryover + 9,900 G)*
-- 🌾 **Harvest & Ship**:
-  - 39x Dress Lettuce *(Farm)* — single harvest (soil freed) → +3,315 G *(arrives morning D24)*
-  - 26x Nemean Tomato *(Farm)* — regrowth 1/6 (stays planted) → +1,690 G *(arrives morning D24)*
-  - 10x Nectarcane *(Waterside)* — regrowth 1/3 (stays planted) → +2,500 G *(arrives morning D24)*
+- **Morning Wallet**: **22,650 G** *(12,750 G carryover + 9,900 G payout)*
+- **Harvest & Ship** *(+7,505 G arriving D24)*:
+  - 39x Dress Lettuce *(Farm)* → +3,315 G (freed)
+  - 26x Nemean Tomato *(Farm)* → +1,690 G (regrowth 1/6)
+  - 10x Nectarcane *(Waterside)* → +2,500 G (regrowth 1/3)
 
 ##### 🌱 Seed Purchases & Planting
 
@@ -72,16 +71,15 @@
 
 #### **Day 24**
 
-- 📬 **Payout**: **+7,505 G** *(from 26x Nemean Tomato (pre-planted) on Day 23, 39x Dress Lettuce (pre-planted) on Day 23, 10x Nectarcane (pre-planted) on Day 23)*
-- **Morning Wallet**: **28,010 G** *(20,505 G carryover + 7,505 G)*
-- 🌾 **Harvest & Ship**:
-  - 9x Revol Pepper *(Cave)* — regrowth 1/3 (stays planted) → +2,385 G *(arrives morning D25)*
-  - 54x Sudor Pepper *(Cave)* — regrowth 1/2 (stays planted) → +13,500 G *(arrives morning D25)*
-  - 26x Nemean Tomato *(Farm)* — regrowth 2/6 (stays planted) → +1,690 G *(arrives morning D25)*
-  - 45x Seatide Garlic *(Farm)* — single harvest (soil freed) → +45,000 G *(arrives morning D25)*
-  - 15x Shatollan Paprika *(Farm)* — regrowth 2/5 (stays planted) → +1,650 G *(arrives morning D25)*
-  - 1x Islet Watermelon *(Waterside)* — single harvest (soil freed) → +4,600 G *(arrives morning D25)*
-  - 9x Nectarcane *(Waterside)* — regrowth 1/3 (stays planted) → +2,250 G *(arrives morning D25)*
+- **Morning Wallet**: **28,010 G** *(20,505 G carryover + 7,505 G payout)*
+- **Harvest & Ship** *(+71,075 G arriving D25)*:
+  - 26x Nemean Tomato *(Farm)* → +1,690 G (regrowth 2/6)
+  - 45x Seatide Garlic *(Farm)* → +45,000 G (freed)
+  - 15x Shatollan Paprika *(Farm)* → +1,650 G (regrowth 2/5)
+  - 1x Islet Watermelon *(Waterside)* → +4,600 G (freed)
+  - 9x Nectarcane *(Waterside)* → +2,250 G (regrowth 1/3)
+  - 9x Revol Pepper *(Cave)* → +2,385 G (regrowth 1/3)
+  - 54x Sudor Pepper *(Cave)* → +13,500 G (regrowth 1/2)
 
 ##### 🌱 Seed Purchases & Planting
 
@@ -98,12 +96,11 @@
 
 #### **Day 25**
 
-- 📬 **Payout**: **+71,075 G** *(from 15x Shatollan Paprika (pre-planted) on Day 24, 45x Seatide Garlic (pre-planted) on Day 24, 26x Nemean Tomato (pre-planted) on Day 24, 1x Islet Watermelon (pre-planted) on Day 24, 9x Nectarcane (pre-planted) on Day 24, 9x Revol Pepper (pre-planted) on Day 24, 54x Sudor Pepper (pre-planted) on Day 24)*
-- **Morning Wallet**: **71,325 G** *(250 G carryover + 71,075 G)*
-- 🌾 **Harvest & Ship**:
-  - 39x Dress Lettuce *(Farm)* — single harvest (soil freed) → +3,315 G *(arrives morning D26)*
-  - 26x Nemean Tomato *(Farm)* — regrowth 3/6 (stays planted) → +1,690 G *(arrives morning D26)*
-  - 33x Nectarcane *(Waterside)* — regrowth 2/3 (stays planted) → +8,250 G *(arrives morning D26)*
+- **Morning Wallet**: **71,325 G** *(250 G carryover + 71,075 G payout)*
+- **Harvest & Ship** *(+13,255 G arriving D26)*:
+  - 39x Dress Lettuce *(Farm)* → +3,315 G (freed)
+  - 26x Nemean Tomato *(Farm)* → +1,690 G (regrowth 3/6)
+  - 33x Nectarcane *(Waterside)* → +8,250 G (regrowth 2/3)
 
 ##### 🌱 Seed Purchases & Planting
 
@@ -118,15 +115,14 @@
 
 #### **Day 26**
 
-- 📬 **Payout**: **+13,255 G** *(from 26x Nemean Tomato (pre-planted) on Day 25, 33x Nectarcane (pre-planted) on Day 25, 39x Dress Lettuce on Day 25)*
-- **Morning Wallet**: **80,875 G** *(67,620 G carryover + 13,255 G)*
-- 🌾 **Harvest & Ship**:
-  - 39x Carrop *(Farm)* — single harvest (soil freed) → +4,485 G *(arrives morning D27)*
-  - 14x Dress Lettuce *(Farm)* — single harvest (soil freed) → +1,190 G *(arrives morning D27)*
-  - 29x Morrocorn *(Farm)* — single harvest (soil freed) → +11,600 G *(arrives morning D27)*
-  - 26x Nemean Tomato *(Farm)* — regrowth 4/6 (stays planted) → +1,690 G *(arrives morning D27)*
-  - 15x Shatollan Paprika *(Farm)* — regrowth 3/5 (stays planted) → +1,650 G *(arrives morning D27)*
-  - 10x Nectarcane *(Waterside)* — regrowth 2/3 (stays planted) → +2,500 G *(arrives morning D27)*
+- **Morning Wallet**: **80,875 G** *(67,620 G carryover + 13,255 G payout)*
+- **Harvest & Ship** *(+23,115 G arriving D27)*:
+  - 39x Carrop *(Farm)* → +4,485 G (freed)
+  - 14x Dress Lettuce *(Farm)* → +1,190 G (freed)
+  - 29x Morrocorn *(Farm)* → +11,600 G (freed)
+  - 26x Nemean Tomato *(Farm)* → +1,690 G (regrowth 4/6)
+  - 15x Shatollan Paprika *(Farm)* → +1,650 G (regrowth 3/5)
+  - 10x Nectarcane *(Waterside)* → +2,500 G (regrowth 2/3)
 
 ##### 🌱 Seed Purchases & Planting
 
@@ -142,14 +138,13 @@
 
 #### **Day 27**
 
-- 📬 **Payout**: **+23,115 G** *(from 15x Shatollan Paprika (pre-planted) on Day 26, 26x Nemean Tomato (pre-planted) on Day 26, 10x Nectarcane (pre-planted) on Day 26, 29x Morrocorn on Day 26, 39x Carrop on Day 26, 14x Dress Lettuce on Day 26)*
-- **Morning Wallet**: **87,230 G** *(64,115 G carryover + 23,115 G)*
-- 🌾 **Harvest & Ship**:
-  - 9x Revol Pepper *(Cave)* — regrowth 2/3 (stays planted) → +2,385 G *(arrives morning D28)*
-  - 54x Sudor Pepper *(Cave)* — regrowth 2/2 (stays planted) → +13,500 G *(arrives morning D28)*
-  - 26x Nemean Tomato *(Farm)* — regrowth 5/6 (stays planted) → +1,690 G *(arrives morning D28)*
-  - 24x Seatide Garlic *(Farm)* — single harvest (soil freed) → +24,000 G *(arrives morning D28)*
-  - 9x Nectarcane *(Waterside)* — regrowth 2/3 (stays planted) → +2,250 G *(arrives morning D28)*
+- **Morning Wallet**: **87,230 G** *(64,115 G carryover + 23,115 G payout)*
+- **Harvest & Ship** *(+43,825 G arriving D28)*:
+  - 26x Nemean Tomato *(Farm)* → +1,690 G (regrowth 5/6)
+  - 24x Seatide Garlic *(Farm)* → +24,000 G (freed)
+  - 9x Nectarcane *(Waterside)* → +2,250 G (regrowth 2/3)
+  - 9x Revol Pepper *(Cave)* → +2,385 G (regrowth 2/3)
+  - 54x Sudor Pepper *(Cave)* → +13,500 G (regrowth 2/2)
 
 ##### 🌱 Seed Purchases & Planting
 
@@ -165,15 +160,14 @@
 
 #### **Day 28**
 
-- 📬 **Payout**: **+43,825 G** *(from 26x Nemean Tomato (pre-planted) on Day 27, 24x Seatide Garlic (pre-planted) on Day 27, 9x Nectarcane (pre-planted) on Day 27, 9x Revol Pepper (pre-planted) on Day 27, 54x Sudor Pepper (pre-planted) on Day 27)*
-- **Morning Wallet**: **129,015 G** *(85,190 G carryover + 43,825 G)*
-- 🌾 **Harvest & Ship**:
-  - 10x Curry Herbs *(Cave)* — single harvest (soil freed) → +3,500 G *(arrives morning D29)*
-  - 18x Carrop *(Farm)* — single harvest (soil freed) → +2,070 G *(arrives morning D29)*
-  - 26x Nemean Tomato *(Farm)* — regrowth 6/6 (stays planted) → +1,690 G *(arrives morning D29)*
-  - 15x Shatollan Paprika *(Farm)* — regrowth 4/5 (stays planted) → +1,650 G *(arrives morning D29)*
-  - 4x Islet Watermelon *(Waterside)* — single harvest (soil freed) → +18,400 G *(arrives morning D29)*
-  - 33x Nectarcane *(Waterside)* — regrowth 3/3 (stays planted) → +8,250 G *(arrives morning D29)*
+- **Morning Wallet**: **129,015 G** *(85,190 G carryover + 43,825 G payout)*
+- **Harvest & Ship** *(+35,560 G arriving D29)*:
+  - 18x Carrop *(Farm)* → +2,070 G (freed)
+  - 26x Nemean Tomato *(Farm)* → +1,690 G (regrowth 6/6)
+  - 15x Shatollan Paprika *(Farm)* → +1,650 G (regrowth 4/5)
+  - 4x Islet Watermelon *(Waterside)* → +18,400 G (freed)
+  - 33x Nectarcane *(Waterside)* → +8,250 G (regrowth 3/3)
+  - 10x Curry Herbs *(Cave)* → +3,500 G (freed)
 
 ##### 🌱 Seed Purchases & Planting
 
@@ -188,12 +182,11 @@
 
 #### **Day 29**
 
-- 📬 **Payout**: **+35,560 G** *(from 15x Shatollan Paprika (pre-planted) on Day 28, 26x Nemean Tomato (pre-planted) on Day 28, 4x Islet Watermelon (pre-planted) on Day 28, 33x Nectarcane (pre-planted) on Day 28, 18x Carrop on Day 28, 10x Curry Herbs on Day 28)*
-- **Morning Wallet**: **162,865 G** *(127,305 G carryover + 35,560 G)*
-- 🌾 **Harvest & Ship**:
-  - 18x Carrop *(Farm)* — single harvest (soil freed) → +2,070 G *(arrives morning D30)*
-  - 6x Dress Lettuce *(Farm)* — single harvest (soil freed) → +510 G *(arrives morning D30)*
-  - 10x Nectarcane *(Waterside)* — regrowth 3/3 (stays planted) → +2,500 G *(arrives morning D30)*
+- **Morning Wallet**: **162,865 G** *(127,305 G carryover + 35,560 G payout)*
+- **Harvest & Ship** *(+5,080 G arriving D30)*:
+  - 18x Carrop *(Farm)* → +2,070 G (freed)
+  - 6x Dress Lettuce *(Farm)* → +510 G (freed)
+  - 10x Nectarcane *(Waterside)* → +2,500 G (regrowth 3/3)
 
 ##### 🌱 Seed Purchases & Planting
 
@@ -208,18 +201,17 @@
 
 #### **Day 30**
 
-- 📬 **Payout**: **+5,080 G** *(from 10x Nectarcane (pre-planted) on Day 29, 18x Carrop on Day 29, 6x Dress Lettuce on Day 29)*
-- **Morning Wallet**: **165,665 G** *(160,585 G carryover + 5,080 G)*
-- 🌾 **Harvest & Ship**:
-  - 9x Revol Pepper *(Cave)* — regrowth 3/3 (stays planted) → +2,385 G *(arrives morning D31)*
-  - 10x Sudor Pepper *(Cave)* — regrowth 3/3 (stays planted) → +2,500 G *(arrives morning D31)*
-  - 24x Carrop *(Farm)* — single harvest (soil freed) → +2,760 G *(arrives morning D31)*
-  - 82x Morrocorn *(Farm)* — single harvest (soil freed) → +32,800 G *(arrives morning D31)*
-  - 31x Seatide Garlic *(Farm)* — single harvest (soil freed) → +31,000 G *(arrives morning D31)*
-  - 15x Shatollan Paprika *(Farm)* — regrowth 5/5 (stays planted) → +1,650 G *(arrives morning D31)*
-  - 18x Honey Flower *(Waterside)* — single harvest (soil freed) → +11,340 G *(arrives morning D31)*
-  - 6x Islet Watermelon *(Waterside)* — single harvest (soil freed) → +27,600 G *(arrives morning D31)*
-  - 9x Nectarcane *(Waterside)* — regrowth 3/3 (stays planted) → +2,250 G *(arrives morning D31)*
+- **Morning Wallet**: **165,665 G** *(160,585 G carryover + 5,080 G payout)*
+- **Harvest & Ship** *(+114,285 G arriving D31)*:
+  - 24x Carrop *(Farm)* → +2,760 G (freed)
+  - 82x Morrocorn *(Farm)* → +32,800 G (freed)
+  - 31x Seatide Garlic *(Farm)* → +31,000 G (freed)
+  - 15x Shatollan Paprika *(Farm)* → +1,650 G (regrowth 5/5)
+  - 18x Honey Flower *(Waterside)* → +11,340 G (freed)
+  - 6x Islet Watermelon *(Waterside)* → +27,600 G (freed)
+  - 9x Nectarcane *(Waterside)* → +2,250 G (regrowth 3/3)
+  - 9x Revol Pepper *(Cave)* → +2,385 G (regrowth 3/3)
+  - 10x Sudor Pepper *(Cave)* → +2,500 G (regrowth 3/3)
 
 - *No seed purchases or planting scheduled today.*
 - **End-of-Day Wallet**: **165,665 G**
