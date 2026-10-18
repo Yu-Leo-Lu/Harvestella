@@ -217,31 +217,17 @@
 
 ---
 
-### ❄️ Quietus Morning (Day 31 Finale & Summary)
+#### **Day 31 (Quietus Morning)**
 
-- 📬 **Final Shipping Payout**: **+79,895 G** *(from Day 30 final harvest: 15x Shatollan Paprika, 6x Islet Watermelon, 9x Nectarcane, 9x Revol Pepper, 10x Sudor Pepper, 6x Seatide Garlic, 29x Morrocorn, 19x Honey Flower, 102x Carrop, 26x Dress Lettuce)*
-- **Starting Budget**: 20,950 G
-- **Total Season Net Profit**: **+259,810 G**
-- 🏆 **Final Quietus Wallet**: **280,760 G**
-
-### Resource Utilization & Financial Summary
-
-- **Farm Plots Used (Init)**: 29 / 29 (expands to 178) (100.0% utilized, 0 idle)
-- **Waterside Plots (Init)**: 0 / 18 (expands to 81) (0.0% utilized, 18 idle)
-- **Cave Plots Used (Init)**: 0 / 10 (expands to 73) (0.0% utilized, 10 idle)
-- **Initial Capital Spent**: 5,800 G / 20,950 G (27.7% spent, 15,150 G leftover)
-- **Pre-planted Crop Sales**: **+216,960 G**
-- **New Planting Net Profit**: **+42,850 G**
-- **Total Cumulative Season Net Profit**: **+259,810 G** across all restock stages
-- **Final Projected Wallet**: **280,760 G** on Day 30 (Quietus)
+- **Morning Wallet**: **280,760 G** *(200,865 G carryover + 79,895 G payout)*
+- ❄️ *Quietus has arrived. All unharvested field crops wither.*
 
 ---
 
-## Key Optimization Principles
+### 🏆 Season Financial Summary
 
-1. **Day-to-Day Rolling Capital Reinvestment**:
-   - Rather than waiting for 10-day shop restocks to reinvest cash, the model dynamically redeploys proceeds the very morning after a harvest arrives (accounting for the 1-day overnight shipping turnaround).
-2. **Soil Occupancy & Regrowth Dynamics**:
-   - Single-harvest crops free up soil immediately on harvest day for replanting, while regrowth crops (such as Tomato, Peppers, and Nectarcane) remain rooted in soil across their full harvesting cycle without incurring additional seed costs.
-3. **Biome Specialization & Plot Balancing**:
-   - High-margin multi-biome crops (**Nectarcane** on Waterside and **Sudor/Revol Pepper** in Cave) run on independent plot constraints, providing pure additive revenue independent of main farm capacity.
+- **Starting Budget**: 20,950 G
+- **Pre-planted Crop Sales**: **+216,960 G**
+- **New Planting Net Profit**: **+42,850 G**
+- **Total Season Net Profit**: **+259,810 G**
+- **Final Quietus Wallet**: **280,760 G**

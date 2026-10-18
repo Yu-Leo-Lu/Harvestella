@@ -118,44 +118,21 @@ def print_result_report(result: OptimizationResult) -> None:
         else:
             print(f"   (No plantings scheduled) | End-of-Day Wallet: {rec.end_wallet:,.0f} G\n")
 
+    carryover = result.daily_records[-1].end_wallet if result.daily_records else result.wallet_gold
     if result.quietus_payout > 0:
-        q_src = f" ({', '.join(result.quietus_sources)})" if result.quietus_sources else ""
-        print(f" [Day 31 - Quietus Morning] Final Payout Arrived: +{result.quietus_payout:,.0f} G{q_src} | Final Wallet: {result.final_wallet_gold:,.0f} G\n")
+        print(f" [Day 31 - Quietus Morning] Morning Wallet: {result.final_wallet_gold:,.0f} G ({carryover:,.0f} G carryover + {result.quietus_payout:,.0f} G payout)\n")
+    else:
+        print(f" [Day 31 - Quietus Morning] Morning Wallet: {result.final_wallet_gold:,.0f} G\n")
 
     print("-" * 86)
-    print(" RESOURCE UTILIZATION & FINANCIAL SUMMARY")
+    print(" SEASON FINANCIAL SUMMARY")
     print("-" * 86)
-
-    farm_pct = (result.farm_used / result.farm_init * 100) if result.farm_init > 0 else 0
-    cap_farm_note = f"{result.farm_init}" if result.farm_init == result.farm_cap else f"{result.farm_init} (expands to {result.farm_cap})"
-    print(
-        f" Farm Plots Used (Init): {result.farm_used:>3} / {result.farm_init:<3} "
-        f"({farm_pct:>5.1f}% utilized on Day {result.current_day}, capacity: {cap_farm_note})"
-    )
-    if result.water_cap > 0:
-        water_pct = (result.water_used / result.water_init * 100) if result.water_init > 0 else 0
-        w_note = f"{result.water_init}" if result.water_init == result.water_cap else f"{result.water_init} (expands to {result.water_cap})"
-        print(
-            f" Waterside Plots (Init): {result.water_used:>3} / {result.water_init:<3} "
-            f"({water_pct:>5.1f}% utilized on Day {result.current_day}, capacity: {w_note})"
-        )
-    if result.cave_cap > 0:
-        cave_pct = (result.cave_used / result.cave_init * 100) if result.cave_init > 0 else 0
-        c_note = f"{result.cave_init}" if result.cave_init == result.cave_cap else f"{result.cave_init} (expands to {result.cave_cap})"
-        print(
-            f" Cave Plots Used (Init): {result.cave_used:>3} / {result.cave_init:<3} "
-            f"({cave_pct:>5.1f}% utilized on Day {result.current_day}, capacity: {c_note})"
-        )
-
-    print(
-        f" Initial Capital Spent : {result.total_spent:>8,.0f} G / {result.wallet_gold:,.0f} G "
-        f"({result.gold_pct:>5.1f}% spent, {result.leftover_gold:,.0f} G leftover)"
-    )
+    print(f" Starting Budget        : {result.wallet_gold:>12,.0f} G")
     if result.preexisting_revenue > 0:
-        print(f" Pre-planted Crop Sales: +{result.preexisting_revenue:>8,.0f} G")
-        print(f" New Planting Net Profit: +{result.new_planting_profit:>8,.0f} G")
-    print(f" Total Season Net Profit: +{result.total_season_profit:>8,.0f} G across all restock stages")
-    print(f" Final Projected Wallet : {result.final_wallet_gold:>8,.0f} G on Day 30 (Quietus)")
+        print(f" Pre-planted Crop Sales : +{result.preexisting_revenue:>11,.0f} G")
+        print(f" New Planting Net Profit: +{result.new_planting_profit:>11,.0f} G")
+    print(f" Total Season Net Profit: +{result.total_season_profit:>11,.0f} G")
+    print(f" Final Quietus Wallet   : {result.final_wallet_gold:>12,.0f} G")
     print("=" * 86 + "\n")
 
 
@@ -284,56 +261,24 @@ def generate_markdown_report(
             lines.append("---\n")
 
         # Quietus Morning section
-        lines.append("### ❄️ Quietus Morning (Day 31 Finale & Summary)\n")
-        q_src_str = f"Day 30 final harvest: {', '.join(r.quietus_sources)}" if r.quietus_sources else "Day 30 final harvest"
-        lines.append(f"- 📬 **Final Shipping Payout**: **+{r.quietus_payout:,.0f} G** *(from {q_src_str})*")
+        lines.append("#### **Day 31 (Quietus Morning)**\n")
+        carryover = r.daily_records[-1].end_wallet if r.daily_records else r.wallet_gold
+        if r.quietus_payout > 0:
+            lines.append(f"- **Morning Wallet**: **{r.final_wallet_gold:,.0f} G** *({carryover:,.0f} G carryover + {r.quietus_payout:,.0f} G payout)*")
+        else:
+            lines.append(f"- **Morning Wallet**: **{r.final_wallet_gold:,.0f} G**")
+        lines.append("- ❄️ *Quietus has arrived. All unharvested field crops wither.*\n")
+        lines.append("---\n")
+
+        lines.append("### 🏆 Season Financial Summary\n")
         lines.append(f"- **Starting Budget**: {r.wallet_gold:,.0f} G")
-        lines.append(f"- **Total Season Net Profit**: **+{r.total_season_profit:,.0f} G**")
-        lines.append(f"- 🏆 **Final Quietus Wallet**: **{r.final_wallet_gold:,.0f} G**\n")
-
-        lines.append("### Resource Utilization & Financial Summary\n")
-        farm_pct = (r.farm_used / r.farm_init * 100) if r.farm_init > 0 else 0
-        cap_farm_note = f"{r.farm_init}" if r.farm_init == r.farm_cap else f"{r.farm_init} (expands to {r.farm_cap})"
-        lines.append(
-            f"- **Farm Plots Used (Init)**: {r.farm_used} / {cap_farm_note} "
-            f"({farm_pct:.1f}% utilized, {r.farm_init - r.farm_used} idle)"
-        )
-        if r.water_cap > 0:
-            water_pct = (r.water_used / r.water_init * 100) if r.water_init > 0 else 0
-            w_note = f"{r.water_init}" if r.water_init == r.water_cap else f"{r.water_init} (expands to {r.water_cap})"
-            lines.append(
-                f"- **Waterside Plots (Init)**: {r.water_used} / {w_note} "
-                f"({water_pct:.1f}% utilized, {r.water_init - r.water_used} idle)"
-            )
-        if r.cave_cap > 0:
-            cave_pct = (r.cave_used / r.cave_init * 100) if r.cave_init > 0 else 0
-            c_note = f"{r.cave_init}" if r.cave_init == r.cave_cap else f"{r.cave_init} (expands to {r.cave_cap})"
-            lines.append(
-                f"- **Cave Plots Used (Init)**: {r.cave_used} / {c_note} "
-                f"({cave_pct:.1f}% utilized, {r.cave_init - r.cave_used} idle)"
-            )
-
-        lines.append(
-            f"- **Initial Capital Spent**: {r.total_spent:,.0f} G / {r.wallet_gold:,.0f} G "
-            f"({r.gold_pct:.1f}% spent, {r.leftover_gold:,.0f} G leftover)"
-        )
         if r.preexisting_revenue > 0:
             lines.append(f"- **Pre-planted Crop Sales**: **+{r.preexisting_revenue:,.0f} G**")
             lines.append(f"- **New Planting Net Profit**: **+{r.new_planting_profit:,.0f} G**")
-        lines.append(f"- **Total Cumulative Season Net Profit**: **+{r.total_season_profit:,.0f} G** across all restock stages")
-        lines.append(f"- **Final Projected Wallet**: **{r.final_wallet_gold:,.0f} G** on Day 30 (Quietus)\n")
+        lines.append(f"- **Total Season Net Profit**: **+{r.total_season_profit:,.0f} G**")
+        lines.append(f"- **Final Quietus Wallet**: **{r.final_wallet_gold:,.0f} G**\n")
 
-        lines.append("---\n")
 
-    lines.append("## Key Optimization Principles\n")
-    lines.append(
-        "1. **Day-to-Day Rolling Capital Reinvestment**:\n"
-        "   - Rather than waiting for 10-day shop restocks to reinvest cash, the model dynamically redeploys proceeds the very morning after a harvest arrives (accounting for the 1-day overnight shipping turnaround).\n"
-        "2. **Soil Occupancy & Regrowth Dynamics**:\n"
-        "   - Single-harvest crops free up soil immediately on harvest day for replanting, while regrowth crops (such as Tomato, Peppers, and Nectarcane) remain rooted in soil across their full harvesting cycle without incurring additional seed costs.\n"
-        "3. **Biome Specialization & Plot Balancing**:\n"
-        "   - High-margin multi-biome crops (**Nectarcane** on Waterside and **Sudor/Revol Pepper** in Cave) run on independent plot constraints, providing pure additive revenue independent of main farm capacity.\n"
-    )
 
     output_path = Path(output_path)
     output_path.write_text("\n".join(lines), encoding="utf-8")
