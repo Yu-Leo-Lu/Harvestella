@@ -199,9 +199,15 @@ def generate_markdown_report(
                 h_str = ", ".join(f"D{h}" for h in occ.harvest_days) if occ.harvest_days else "None"
                 rev = occ.count * len(occ.harvest_days) * occ.crop.nq_sale
                 if occ.crop.is_regrowth:
-                    soil_status = "Stays Planted *(Regrowth)*"
+                    first_h = occ.plant_day + occ.crop.mature
+                    lifetime_harvests = [first_h + k * occ.crop.regrowth for k in range(occ.crop.max_harvests)]
+                    last_h = lifetime_harvests[-1] if lifetime_harvests else 30
+                    if last_h <= 30:
+                        soil_status = f"Freed D{last_h}"
+                    else:
+                        soil_status = "Stays Planted"
                 else:
-                    soil_status = f"Freed D{occ.harvest_days[0]}" if occ.harvest_days else "Freed before Quietus"
+                    soil_status = f"Freed D{occ.harvest_days[0]}" if occ.harvest_days else "Stays Planted"
                 lines.append(
                     f"| {occ.crop.biome.capitalize()} | **{occ.crop.name}** | {occ.count} | "
                     f"Day {occ.plant_day} | {h_str} | {soil_status} | +{rev:,.0f} G |"

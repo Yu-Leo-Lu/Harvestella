@@ -295,7 +295,11 @@ def build_occupied_crop(
         first_h = plant_day + crop.mature
         all_h = [first_h + k * crop.regrowth for k in range(crop.max_harvests)]
         h_days = [h for h in all_h if current_day <= h <= 30]
-        occ_days = list(range(current_day, 31))
+        last_lifetime_h = all_h[-1] if all_h else 30
+        if last_lifetime_h <= 30:
+            occ_days = list(range(current_day, last_lifetime_h))
+        else:
+            occ_days = list(range(current_day, 31))
         return OccupiedCrop(
             crop=crop,
             plant_day=plant_day,
@@ -599,8 +603,10 @@ def solve_allocation(
                     total_rev = len(harvests) * c.nq_sale
                     net_profit = total_rev - c.cost
                     if net_profit > 0:
-                        last_h = max(harvests)
-                        occupy_days = list(range(d, min(31, last_h + 1)))
+                        if len(harvests) == c.max_harvests and harvests[-1] <= 30:
+                            occupy_days = list(range(d, harvests[-1]))
+                        else:
+                            occupy_days = list(range(d, 31))
                         var_map.append({
                             "crop_idx": c_idx,
                             "day": d,
