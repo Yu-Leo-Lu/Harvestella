@@ -3,20 +3,20 @@
 # ==============================================================================
 
 current_day: 1
-wallet_gold: 1000
+wallet_gold: 0
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
 # 1. Farm & Biome Plot Capacities
 # Usable plots = Physical plots (farm_level * 49) - Reserved plots
 # ------------------------------------------------------------------------------
-farm_level: 2         # Renovator level (each level adds 49 plots)
+farm_level: 1         # Renovator level (each level adds 49 plots)
 waterside_plots: 0    # Biome locked in early Spring
 cave_plots: 0         # Biome locked in early Spring
 
 # Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
 reserve_plots:
-  farm: 0
+  farm: 20
   waterside: 0
   cave: 0
 
@@ -25,6 +25,8 @@ reserve_plots:
 # ------------------------------------------------------------------------------
 planted:
   # - { crop: Unionion, day: 1, count: 10 }
+  - { crop: Carrop, day: 1, count: 9 }
+  - { crop: Dress Lettuce, day: 2, count: 3 }
 
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
