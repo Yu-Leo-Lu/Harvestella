@@ -268,8 +268,17 @@ def generate_markdown_report(
                         f"{it.cost:,.0f} G | {h_str} | +{it.net_profit:,.0f} G |"
                     )
                 lines.append(
-                    f"\n- **Daily Seed Spent**: {rec.daily_spent:,.0f} G | **End-of-Day Wallet**: **{rec.end_wallet:,.0f} G**\n"
+                    f"\n- **Daily Seed Spent**: {rec.daily_spent:,.0f} G | **End-of-Day Wallet**: **{rec.end_wallet:,.0f} G**"
                 )
+                slots_parts = []
+                if r.base_farm > 0:
+                    slots_parts.append(f"Farm: {rec.farm_slots_left}")
+                if r.base_water > 0:
+                    slots_parts.append(f"Waterside: {rec.water_slots_left}")
+                if r.base_cave > 0:
+                    slots_parts.append(f"Cave: {rec.cave_slots_left}")
+                if slots_parts:
+                    lines.append(f"- **Plots Left**: {' | '.join(slots_parts)}\n")
             else:
                 lines.append("\n- *No seed purchases or planting scheduled today.*")
                 lines.append(f"- **End-of-Day Wallet**: **{rec.end_wallet:,.0f} G**\n")

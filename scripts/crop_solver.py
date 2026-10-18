@@ -85,6 +85,9 @@ class DailyRecord:
     plantings: list[DailyPlantEvent] = field(default_factory=list)
     daily_spent: float = 0.0
     end_wallet: float = 0.0
+    farm_slots_left: int = 0
+    water_slots_left: int = 0
+    cave_slots_left: int = 0
 
 
 @dataclass
@@ -100,12 +103,15 @@ class OptimizationResult:
     farm_used: int = 0
     farm_init: int = 0
     farm_cap: int = 0
+    base_farm: int = 0
     water_used: int = 0
     water_init: int = 0
     water_cap: int = 0
+    base_water: int = 0
     cave_used: int = 0
     cave_init: int = 0
     cave_cap: int = 0
+    base_cave: int = 0
     success: bool = True
     status_message: str = "Optimal solution found."
     max_varieties: int | None = None
@@ -851,6 +857,24 @@ def solve_allocation(
         end_cash = morning_cash - daily_spent
         current_cash = end_cash
 
+        # Available plots remaining at end of day d
+        new_occ_f = sum(
+            count for i, count in enumerate(solution)
+            if count > 0 and crops[var_map[i]["crop_idx"]].biome == "farm" and d in var_map[i]["occupy_days"]
+        )
+        new_occ_w = sum(
+            count for i, count in enumerate(solution)
+            if count > 0 and crops[var_map[i]["crop_idx"]].biome == "waterside" and d in var_map[i]["occupy_days"]
+        )
+        new_occ_c = sum(
+            count for i, count in enumerate(solution)
+            if count > 0 and crops[var_map[i]["crop_idx"]].biome == "cave" and d in var_map[i]["occupy_days"]
+        )
+
+        f_left = max(0, daily_biome_cap["farm"].get(d, 0) - new_occ_f)
+        w_left = max(0, daily_biome_cap["waterside"].get(d, 0) - new_occ_w)
+        c_left = max(0, daily_biome_cap["cave"].get(d, 0) - new_occ_c)
+
         daily_records.append(
             DailyRecord(
                 day=d,
@@ -862,6 +886,9 @@ def solve_allocation(
                 plantings=plantings_today,
                 daily_spent=daily_spent,
                 end_wallet=end_cash,
+                farm_slots_left=f_left,
+                water_slots_left=w_left,
+                cave_slots_left=c_left,
             )
         )
 
@@ -887,12 +914,15 @@ def solve_allocation(
         farm_used=initial_farm,
         farm_init=farm_init,
         farm_cap=farm_cap,
+        base_farm=base_f,
         water_used=initial_water,
         water_init=water_init,
         water_cap=water_cap,
+        base_water=base_w,
         cave_used=initial_cave,
         cave_init=cave_init,
         cave_cap=cave_cap,
+        base_cave=base_c,
         success=True,
         status_message="Optimal solution found." if res.status == 0 else f"Feasible solution found: {res.message}",
         max_varieties=max_varieties,

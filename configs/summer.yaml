@@ -16,9 +16,9 @@ cave_plots: 81        # Biome capacity (default: 81)
 
 # Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
 reserve_plots:
-  farm: 21
+  farm: 18
   waterside: 0
-  cave: 7
+  cave: 8
 
 # ------------------------------------------------------------------------------
 # 2. Currently Planted on Farm (Active Batches)
@@ -37,10 +37,9 @@ planted:
   - { crop: Nectarcane, day: 19, count: 10 }
   - { crop: Nectarcane, day: 20, count: 9 }
 
-  - { crop: Revol Pepper, day: 14, count: 9 }
-  - { crop: Sudor Pepper, day: 15, count: 9 }
-  - { crop: Sudor Pepper, day: 18, count: 44 }
-  - { crop: Sudor Pepper, day: 21, count: 10 }
+  - { crop: Revol Pepper, day: 14, count: 9 } # 
+  - { crop: Sudor Pepper, day: 18, count: 44 } #
+  - { crop: Sudor Pepper, day: 21, count: 10 } #
 
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
