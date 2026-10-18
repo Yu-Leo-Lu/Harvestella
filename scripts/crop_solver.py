@@ -118,11 +118,93 @@ class OptimizationResult:
     final_wallet_gold: float = 0.0
     occupied_summary: list[str] = field(default_factory=list)
     occupied_crops: list[OccupiedCrop] = field(default_factory=list)
+    catalog: list[CropCandidate] = field(default_factory=list)
 
     @property
     def gold_pct(self) -> float:
         """Percentage of starting wallet gold spent on Day current_day."""
         return (self.total_spent / self.wallet_gold * 100) if self.wallet_gold > 0 else 0.0
+
+    def get_day_snapshot(self, target_day: int) -> dict[str, Any]:
+        """Extract the exact field, wallet, and seed inventory snapshot on morning of target_day."""
+        if target_day <= self.current_day:
+            raise ValueError(
+                f"target_day ({target_day}) must be greater than current_day ({self.current_day})"
+            )
+        if target_day > 30:
+            raise ValueError(f"target_day ({target_day}) cannot exceed Day 30")
+
+        # 1. Morning Wallet
+        rec_map = {r.day: r for r in self.daily_records}
+        morning_wallet = self.wallet_gold
+        if target_day in rec_map:
+            morning_wallet = rec_map[target_day].morning_wallet
+
+        # 2. Planted crops occupying soil on morning of target_day
+        planted_counts: dict[tuple[str, int], int] = {}
+
+        # Pre-existing crops from initial config still active on target_day morning
+        for occ in self.occupied_crops:
+            is_active = False
+            if occ.crop.is_regrowth:
+                is_active = any(h >= target_day for h in occ.harvest_days)
+            else:
+                is_active = (occ.plant_day + occ.crop.mature >= target_day)
+            if is_active:
+                key = (occ.crop.name, occ.plant_day)
+                planted_counts[key] = planted_counts.get(key, 0) + occ.count
+
+        # Crops planted during the simulation on days p_day < target_day
+        for r in self.daily_records:
+            if r.day < target_day:
+                for p in r.plantings:
+                    c = p.crop
+                    is_active = False
+                    if c.is_regrowth:
+                        is_active = any(h >= target_day for h in p.harvest_days)
+                    else:
+                        is_active = (r.day + c.mature >= target_day)
+                    if is_active:
+                        key = (c.name, r.day)
+                        planted_counts[key] = planted_counts.get(key, 0) + p.quantity
+
+        planted_list = [
+            {"crop": name, "day": p_day, "count": count}
+            for (name, p_day), count in sorted(planted_counts.items(), key=lambda x: (x[0][1], x[0][0]))
+        ]
+
+        # 3. Store seed inventory for target_day's 10-day cycle
+        windows = [(1, 10), (11, 20), (21, 30)]
+        target_win = next((w for w in windows if w[0] <= target_day <= w[1]), (21, 30))
+        cur_win = next((w for w in windows if w[0] <= self.current_day <= w[1]), (1, 10))
+
+        name_counts: dict[str, int] = {}
+        for c in self.catalog:
+            name_counts[c.name] = name_counts.get(c.name, 0) + 1
+
+        purchased_in_target_win: dict[tuple[str, str], int] = {}
+        for r in self.daily_records:
+            if target_win[0] <= r.day < target_day:
+                for p in r.plantings:
+                    k = (p.crop.name, p.crop.town)
+                    purchased_in_target_win[k] = purchased_in_target_win.get(k, 0) + p.quantity
+
+        seed_stock: dict[str, int] = {}
+        is_same_window = (target_win == cur_win)
+
+        for c in self.catalog:
+            base_stock = c.stock if is_same_window else c.vendor_stock
+            bought = purchased_in_target_win.get((c.name, c.town), 0)
+            rem = max(0, min(c.vendor_stock, base_stock - bought))
+            key = f"{c.name} ({c.town})" if name_counts.get(c.name, 1) > 1 else c.name
+            seed_stock[key] = rem
+
+        return {
+            "current_day": target_day,
+            "wallet_gold": int(round(morning_wallet)),
+            "planted": planted_list,
+            "seed_stock": seed_stock,
+        }
 
 
 # ==============================================================================
@@ -823,5 +905,6 @@ def solve_allocation(
         final_wallet_gold=wallet_gold + total_season_profit,
         occupied_summary=occupied_summary,
         occupied_crops=occupied_crops,
+        catalog=catalog,
     )
 

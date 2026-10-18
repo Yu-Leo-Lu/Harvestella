@@ -7,7 +7,11 @@ actionable day-by-day gameplay schedules for terminal and GitHub-Flavored Markdo
 from __future__ import annotations
 
 import argparse
+import csv
 from pathlib import Path
+from typing import Any
+
+import yaml
 
 from scripts.crop_solver import (
     CropCandidate,
@@ -27,6 +31,7 @@ __all__ = [
     "generate_markdown_report",
     "main",
     "print_result_report",
+    "roll_config_to_day",
     "solve_allocation",
 ]
 
@@ -329,6 +334,227 @@ def generate_markdown_report(
 
 
 # ==============================================================================
+# Config Roll-Forward In-Place
+# ==============================================================================
+
+def roll_config_to_day(config_path: Path, target_day: int) -> None:
+    """Fast-forward a seasonal config to the morning of target_day in-place."""
+    config_path = Path(config_path)
+    if not config_path.is_file():
+        print(f"Error: Configuration file not found: {config_path}")
+        return
+
+    with open(config_path, encoding="utf-8") as f:
+        cfg = yaml.safe_load(f) or {}
+
+    season = str(cfg.get("season", config_path.stem)).strip().lower()
+    res = solve_allocation(config_path, csv_dir=Path("seasons"))
+    if not res.success:
+        print(f"Cannot roll forward {config_path}: solver failed - {res.status_message}")
+        return
+
+    if target_day <= res.current_day:
+        print(f"Error: target_day ({target_day}) must be greater than current_day ({res.current_day}).")
+        return
+    if target_day > 30:
+        print(f"Error: target_day ({target_day}) cannot exceed Day 30 (Quietus).")
+        return
+
+    snapshot = res.get_day_snapshot(target_day)
+
+    # Load crop catalog metadata to preserve Town groupings, biomes, and G/d annotations
+    csv_path = Path("seasons") / f"{season}.csv"
+    crop_meta: dict[tuple[str, str], dict[str, Any]] = {}
+    name_town_map: dict[str, list[str]] = {}
+    crop_biome_map: dict[str, str] = {}
+    if csv_path.is_file():
+        with open(csv_path, encoding="utf-8") as f_csv:
+            for r in csv.DictReader(f_csv):
+                c_name = r.get("Crop Name", "").strip()
+                town = r.get("Vendor Town", "").strip()
+                biome = r.get("Biome", "").strip().lower()
+                profit_str = r.get("Daily NQ Profit (G/d)", "").strip()
+                cost_str = r.get("Seed Cost (G)", "").strip()
+                if not c_name or not town or not cost_str or not profit_str:
+                    continue
+                try:
+                    profit_val = float(profit_str)
+                    cost_val = float(cost_str)
+                except ValueError:
+                    continue
+                if cost_val <= 0:
+                    continue
+                crop_meta[(c_name, town)] = {
+                    "name": c_name,
+                    "town": town,
+                    "biome": biome,
+                    "profit": profit_val,
+                }
+                name_town_map.setdefault(c_name, []).append(town)
+                crop_biome_map[c_name.lower()] = biome
+
+    # Format output YAML cleanly
+    season_title = season.capitalize()
+    lines = [
+        "# ==============================================================================",
+        f"# Harvestella Planting Optimizer Configuration: {season_title}",
+        "# ==============================================================================",
+        "",
+        f"current_day: {snapshot['current_day']}",
+        f"wallet_gold: {snapshot['wallet_gold']}",
+    ]
+
+    max_vars = cfg.get("max_crop_varieties", None)
+    if max_vars is not None:
+        lines.append(f"max_crop_varieties: {max_vars} # Optional limit on distinct seed varieties")
+    else:
+        lines.append("max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)")
+
+    lines.extend([
+        "",
+        "# ------------------------------------------------------------------------------",
+        "# 1. Farm & Biome Plot Capacities",
+        "# Usable plots = Physical plots (farm_level * 49) - Reserved plots",
+        "# ------------------------------------------------------------------------------",
+    ])
+
+    if "farm_level" in cfg:
+        lines.append(f"farm_level: {cfg.get('farm_level', 1)}         # Renovator level (each level adds 49 plots)")
+    elif "farm_plots" in cfg:
+        lines.append(f"farm_plots: {cfg.get('farm_plots', 49)}")
+    lines.append(f"waterside_plots: {cfg.get('waterside_plots', 81)}   # Biome capacity (default: 81)")
+    lines.append(f"cave_plots: {cfg.get('cave_plots', 81)}        # Biome capacity (default: 81)")
+    lines.append("")
+    lines.append("# Reserved plots excluded from optimizer (fruit trees, quest crops, makers)")
+    lines.append("reserve_plots:")
+    res_plots = cfg.get("reserve_plots", {})
+    if isinstance(res_plots, dict):
+        lines.append(f"  farm: {res_plots.get('farm', 0)}")
+        lines.append(f"  waterside: {res_plots.get('waterside', 0)}")
+        lines.append(f"  cave: {res_plots.get('cave', 0)}")
+    else:
+        lines.append(f"  farm: {int(res_plots) if res_plots else 0}")
+        lines.append("  waterside: 0")
+        lines.append("  cave: 0")
+
+    lines.extend([
+        "",
+        "# ------------------------------------------------------------------------------",
+        "# 2. Currently Planted on Farm (Active Batches)",
+        "# ------------------------------------------------------------------------------",
+        "planted:",
+    ])
+
+    planted_items = snapshot.get("planted", [])
+    if planted_items:
+        biome_groups = [
+            [p for p in planted_items if crop_biome_map.get(p["crop"].lower(), "farm") == "farm"],
+            [p for p in planted_items if crop_biome_map.get(p["crop"].lower(), "farm") == "waterside"],
+            [p for p in planted_items if crop_biome_map.get(p["crop"].lower(), "farm") == "cave"],
+        ]
+        has_group = False
+        for group in biome_groups:
+            if not group:
+                continue
+            if has_group:
+                lines.append("")
+            for p in group:
+                lines.append(f"  - {{ crop: {p['crop']}, day: {p['day']}, count: {p['count']} }}")
+            has_group = True
+    else:
+        lines.append("  # - { crop: Morrocorn, day: 1, count: 10 }")
+
+    lines.extend([
+        "",
+        "# ------------------------------------------------------------------------------",
+        "# 3. Store Seed Inventory (Remaining Vendor Stock)",
+        "# ------------------------------------------------------------------------------",
+        "seed_stock:",
+    ])
+
+    town_order = ["Lethe", "Nemea", "Shatolla", "Argene", "Abandoned Eden"]
+    all_towns: list[str] = []
+    for t in town_order:
+        if any(meta["town"] == t for meta in crop_meta.values()):
+            all_towns.append(t)
+    for meta in crop_meta.values():
+        if meta["town"] not in all_towns:
+            all_towns.append(meta["town"])
+
+    stock_items = snapshot.get("seed_stock", {})
+
+    for idx, town in enumerate(all_towns):
+        town_crops = [meta for meta in crop_meta.values() if meta["town"] == town]
+        if not town_crops:
+            continue
+        town_crops.sort(key=lambda m: m["profit"], reverse=True)
+
+        if idx > 0:
+            lines.append("")
+        lines.append(f"  # {town}")
+
+        for meta in town_crops:
+            c_name = meta["name"]
+            is_multi = len(name_town_map.get(c_name, [])) > 1
+            std_key = f"{c_name} ({town})" if is_multi else c_name
+
+            stock_val = None
+            if std_key in stock_items:
+                stock_val = stock_items[std_key]
+            elif f"{c_name} Seeds" in stock_items:
+                std_key = f"{c_name} Seeds"
+                stock_val = stock_items[std_key]
+            elif c_name in stock_items:
+                stock_val = stock_items[c_name]
+            else:
+                stock_val = 99
+
+            biome_tag = ""
+            if meta["biome"] == "cave":
+                biome_tag = " (Cave)"
+            elif meta["biome"] == "waterside":
+                biome_tag = " (Waterside)"
+
+            key_col = f"{std_key}:"
+            lines.append(f"  {key_col:<24} {stock_val:<2} # +{meta['profit']:.1f} G/d{biome_tag}")
+
+    lines.extend([
+        "",
+        "# ------------------------------------------------------------------------------",
+        "# 4. Town Story Progression (set to false if vendor is not yet unlocked)",
+        "# ------------------------------------------------------------------------------",
+        "unlocked_towns:",
+    ])
+
+    unlocked = cfg.get("unlocked_towns", {})
+    if isinstance(unlocked, dict):
+        for town, status in unlocked.items():
+            lines.append(f"  {town}: {'true' if status else 'false'}")
+    else:
+        lines.append("  Lethe: true")
+        lines.append("  Nemea: true")
+        lines.append("  Shatolla: true")
+        lines.append("  Argene: true")
+        lines.append("  Abandoned Eden: false")
+
+    lines.append("")
+
+    config_path.write_text("\n".join(lines), encoding="utf-8")
+
+    season_flag = f"-{season[:2]}"
+    print("=" * 86)
+    print(f" [+] Fast-forwarded {config_path.as_posix()} to Day {target_day} in-place")
+    print("=" * 86)
+    print(f"  * Current Day   : Day {target_day}")
+    print(f"  * Morning Wallet: {snapshot['wallet_gold']:,} G")
+    print(f"  * Active Batches: {len(planted_items)} batches in ground")
+    print(f"  * Store Stocks  : Refreshed for Cycle (Days {snapshot['current_day']}-30)")
+    print("-" * 86)
+    print(f" Review/tweak {config_path.as_posix()} in your editor, then solve via:")
+    print(f"   python optimize_crop_allocation.py {season_flag}\n")
+
+
+# ==============================================================================
 # CLI Entry Point
 # ==============================================================================
 
@@ -341,6 +567,7 @@ def main() -> None:
     parser.add_argument("-fa", "--fall", action="store_true", help="Optimize Fall (configs/fall.yaml)")
     parser.add_argument("-wi", "--winter", action="store_true", help="Optimize Winter (configs/winter.yaml)")
     parser.add_argument("-a", "--all", action="store_true", help="Run optimization across all 4 seasons (default if no season specified)")
+    parser.add_argument("-r", "--roll-to", type=int, metavar="DAY", help="Fast-forward season config to morning of DAY in-place")
     args = parser.parse_args()
     configs_dir = Path("configs")
     csv_dir = Path("seasons")
@@ -354,6 +581,16 @@ def main() -> None:
         selected.append("fall")
     if args.winter:
         selected.append("winter")
+
+    # If -r/--roll-to is specified, require exactly one season to roll forward
+    if args.roll_to is not None:
+        if not selected or len(selected) > 1:
+            print("Please specify a single season flag to roll forward (e.g. -su -r 22 or -sp -r 15).")
+            return
+        target_season = selected[0]
+        cfg_p = configs_dir / f"{target_season}.yaml"
+        roll_config_to_day(cfg_p, args.roll_to)
+        return
 
     if args.all or not selected:
         selected = ["spring", "summer", "fall", "winter"]

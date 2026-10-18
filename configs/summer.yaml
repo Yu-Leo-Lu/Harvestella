@@ -2,8 +2,8 @@
 # Harvestella Planting Optimizer Configuration: Summer
 # ==============================================================================
 
-current_day: 19
-wallet_gold: 24415
+current_day: 22
+wallet_gold: 20950
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -16,67 +16,65 @@ cave_plots: 81        # Biome capacity (default: 81)
 
 # Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
 reserve_plots:
-  farm: 20
+  farm: 21
   waterside: 0
-  cave: 6
+  cave: 7
 
 # ------------------------------------------------------------------------------
 # 2. Currently Planted on Farm (Active Batches)
 # ------------------------------------------------------------------------------
 planted:
-  # - { crop: Morrocorn, day: 1, count: 10 }
+  - { crop: Shatollan Paprika, day: 9, count: 15 } #
+  - { crop: Seatide Garlic, day: 18, count: 45 } #
+  - { crop: Nemean Tomato, day: 18, count: 26 } #
+  - { crop: Dress Lettuce, day: 21, count: 39 } #
+  - { crop: Seatide Garlic, day: 21, count: 24 } #
 
-  - { crop: Seatide Garlic, day: 16, count: 45 }
-  - { crop: Carrop, day: 19, count: 37 }
-  - { crop: Stellar Wheat, day: 19, count: 47 }
-  - { crop: Nemean Tomato, day: 18, count: 26 }
-  - { crop: Nemean Tomato, day: 10, count: 6 }
-  - { crop: Shatollan Paprika, day: 9, count: 15 }
-
-  - { crop: Nectarcane, day: 18, count: 33 }
-  - { crop: Honey Flower, day: 17, count: 18 }
-  - { crop: Islet Watermelon, day: 18, count: 6 }
-  - { crop: Islet Watermelon, day: 16, count: 4 }
   - { crop: Islet Watermelon, day: 12, count: 1 }
+  - { crop: Islet Watermelon, day: 16, count: 4 }
+  - { crop: Islet Watermelon, day: 18, count: 6 }
+  - { crop: Nectarcane, day: 18, count: 33 }
+  - { crop: Nectarcane, day: 19, count: 10 }
+  - { crop: Nectarcane, day: 20, count: 9 }
 
-  - { crop: Sudor Pepper, day: 18, count: 44 }
   - { crop: Revol Pepper, day: 14, count: 9 }
   - { crop: Sudor Pepper, day: 15, count: 9 }
-
+  - { crop: Sudor Pepper, day: 18, count: 44 }
+  - { crop: Sudor Pepper, day: 21, count: 10 }
 
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
 # ------------------------------------------------------------------------------
 seed_stock:
   # Lethe
-  Morrocorn (Lethe): 0    # +42.5 G/d
-  Dress Lettuce: 0        # +15.0 G/d
-  Curry Herbs (Lethe): 50 # +13.3 G/d (Cave)
-  Carrop (Lethe): 99      # +10.0 G/d
-  Stellar Wheat: 51       # +7.5 G/d
-  Grass: 99               # +2.5 G/d
+  Morrocorn (Lethe):       50 # +42.5 G/d
+  Dress Lettuce:           60 # +15.0 G/d
+  Curry Herbs (Lethe):     50 # +13.3 G/d (Cave)
+  Carrop (Lethe):          50 # +10.0 G/d
+  Stellar Wheat:           99 # +7.5 G/d
+  Grass:                   99 # +2.5 G/d
 
   # Nemea
-  Nemean Tomato: 99       # +22.0 G/d
-  Carrop (Nemea): 21      # +20.0 G/d
-  Nectarcane (Nemea): 10  # +38.0 G/d (Waterside)
+  Nectarcane (Nemea):      10 # +38.0 G/d (Waterside)
+  Nemean Tomato:           99 # +22.0 G/d
+  Carrop (Nemea):          99 # +20.0 G/d
 
   # Shatolla
-  Islet Watermelon: 99    # +175.0 G/d (Waterside)
-  Seatide Garlic: 99      # +58.3 G/d
-  Morrocorn (Shatolla): 0 # +50.0 G/d
-  Honey Flower: 99        # +41.7 G/d (Waterside)
-  Nectarcane (Shatolla): 99 # +38.0 G/d (Waterside)
-  Shatollan Paprika: 99   # +35.2 G/d
-  Bellhop Seeds: 99       # +17.3 G/d
+  Islet Watermelon:        99 # +175.0 G/d (Waterside)
+  Seatide Garlic:          99 # +58.3 G/d
+  Morrocorn (Shatolla):    99 # +50.0 G/d
+  Honey Flower:            99 # +41.7 G/d (Waterside)
+  Nectarcane (Shatolla):   99 # +38.0 G/d (Waterside)
+  Shatollan Paprika:       99 # +35.2 G/d
+  Bellhop:                 99 # +17.3 G/d
 
   # Argene
-  Revol Pepper: 99        # +47.8 G/d (Cave)
-  Sudor Pepper: 99        # +38.9 G/d (Cave)
-  Curry Herbs (Argene): 99 # +18.3 G/d (Cave)
+  Revol Pepper:            90 # +47.8 G/d (Cave)
+  Sudor Pepper:            89 # +38.9 G/d (Cave)
+  Curry Herbs (Argene):    99 # +18.3 G/d (Cave)
 
   # Abandoned Eden
-  Eden Rice: 99           # +5.0 G/d
+  Eden Rice:               99 # +5.0 G/d
 
 # ------------------------------------------------------------------------------
 # 4. Town Story Progression (set to false if vendor is not yet unlocked)
