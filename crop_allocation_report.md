@@ -8,7 +8,7 @@
 - **Current Day**: Day 22
 - **Planning Timeline**: Day 22 -> Day 30 (9d Quietus window)
 - **Capital Budget**: 20,950 G
-- **Plot Capacities**: Farm 29 -> 178 | Waterside 18 -> 81 | Cave 10 -> 73
+- **Plot Capacities (Usable / Max)**: Farm: 178/196 | Waterside: 81/81 | Cave: 73/81
 
 ### 🌾 Pre-Planted Crop Field Status
 

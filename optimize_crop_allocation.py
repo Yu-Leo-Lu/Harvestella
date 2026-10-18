@@ -53,12 +53,13 @@ def print_result_report(result: OptimizationResult) -> None:
         print(f" Variety Limit   : Max {result.max_varieties} distinct crop varieties")
     print(f" Capital Budget  : {result.wallet_gold:,.0f} G")
     cap_strs = []
-    for b_name, b_init, b_cap in [("Farm", result.farm_init, result.farm_cap), ("Waterside", result.water_init, result.water_cap), ("Cave", result.cave_init, result.cave_cap)]:
-        if b_cap > 0:
-            if b_init == b_cap:
-                cap_strs.append(f"{b_name} {b_cap}")
-            else:
-                cap_strs.append(f"{b_name} {b_init} -> {b_cap}")
+    for b_name, b_usable, b_phys in [
+        ("Farm", result.base_farm, result.farm_physical or result.base_farm),
+        ("Waterside", result.base_water, result.water_physical or result.base_water),
+        ("Cave", result.base_cave, result.cave_physical or result.base_cave),
+    ]:
+        if b_phys > 0:
+            cap_strs.append(f"{b_name} {b_usable}/{b_phys}")
         else:
             cap_strs.append(f"{b_name} 0")
     print(f" Plot Capacities : {' | '.join(cap_strs)}")
@@ -182,15 +183,14 @@ def generate_markdown_report(
             lines.append(f"- **Variety Limit**: Max {r.max_varieties} distinct crop varieties")
         lines.append(f"- **Capital Budget**: {r.wallet_gold:,.0f} G")
         cap_strs = []
-        for b_name, b_init, b_cap in [("Farm", r.farm_init, r.farm_cap), ("Waterside", r.water_init, r.water_cap), ("Cave", r.cave_init, r.cave_cap)]:
-            if b_cap > 0:
-                if b_init == b_cap:
-                    cap_strs.append(f"{b_name} {b_cap}")
-                else:
-                    cap_strs.append(f"{b_name} {b_init} -> {b_cap}")
-            else:
-                cap_strs.append(f"{b_name} 0")
-        lines.append(f"- **Plot Capacities**: {' | '.join(cap_strs)}\n")
+        for b_name, b_usable, b_phys in [
+            ("Farm", r.base_farm, r.farm_physical or r.base_farm),
+            ("Waterside", r.base_water, r.water_physical or r.base_water),
+            ("Cave", r.base_cave, r.cave_physical or r.base_cave),
+        ]:
+            if b_phys > 0:
+                cap_strs.append(f"{b_name}: {b_usable}/{b_phys}")
+        lines.append(f"- **Plot Capacities (Usable / Max)**: {' | '.join(cap_strs)}\n")
         if r.occupied_crops:
             lines.append("### 🌾 Pre-Planted Crop Field Status\n")
             lines.append("| Biome | Crop Name | Quantity | Planted | Expected Harvests | Soil Status | Est. Revenue |")

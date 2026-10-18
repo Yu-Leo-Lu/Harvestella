@@ -104,14 +104,17 @@ class OptimizationResult:
     farm_init: int = 0
     farm_cap: int = 0
     base_farm: int = 0
+    farm_physical: int = 0
     water_used: int = 0
     water_init: int = 0
     water_cap: int = 0
     base_water: int = 0
+    water_physical: int = 0
     cave_used: int = 0
     cave_init: int = 0
     cave_cap: int = 0
     base_cave: int = 0
+    cave_physical: int = 0
     success: bool = True
     status_message: str = "Optimal solution found."
     max_varieties: int | None = None
@@ -563,10 +566,16 @@ def solve_allocation(
             leftover_gold=wallet_gold,
             farm_init=farm_init,
             farm_cap=farm_cap,
+            base_farm=base_f,
+            farm_physical=farm_physical,
             water_init=water_init,
             water_cap=water_cap,
+            base_water=base_w,
+            water_physical=water_physical,
             cave_init=cave_init,
             cave_cap=cave_cap,
+            base_cave=base_c,
+            cave_physical=cave_physical,
             status_message="No eligible crops match current filters (unlocked towns or plot capacity).",
         )
 
@@ -626,8 +635,14 @@ def solve_allocation(
             wallet_gold=wallet_gold,
             leftover_gold=wallet_gold,
             farm_cap=farm_cap,
+            base_farm=base_f,
+            farm_physical=farm_physical,
             water_cap=water_cap,
+            base_water=base_w,
+            water_physical=water_physical,
             cave_cap=cave_cap,
+            base_cave=base_c,
+            cave_physical=cave_physical,
             status_message="No crops can reach harvest before Day 30 (Quietus).",
         )
 
@@ -921,14 +936,17 @@ def solve_allocation(
         farm_init=farm_init,
         farm_cap=farm_cap,
         base_farm=base_f,
+        farm_physical=farm_physical,
         water_used=initial_water,
         water_init=water_init,
         water_cap=water_cap,
         base_water=base_w,
+        water_physical=water_physical,
         cave_used=initial_cave,
         cave_init=cave_init,
         cave_cap=cave_cap,
         base_cave=base_c,
+        cave_physical=cave_physical,
         success=True,
         status_message="Optimal solution found." if res.status == 0 else f"Feasible solution found: {res.message}",
         max_varieties=max_varieties,
