@@ -148,10 +148,6 @@ def print_result_report(result: OptimizationResult) -> None:
         print(f" New Planting Net Profit  : +{result.new_planting_profit:>11,.0f} G")
     print(f" Net Profit ({active_days} {day_plural})      : +{result.total_season_profit:>11,.0f} G")
     print(f" Average Daily Profit     : +{avg_daily_profit:>11,.0f} G/day (over {active_days} active {day_plural})")
-    if result.wallet_gold > 0:
-        growth_mult = result.final_wallet_gold / result.wallet_gold
-        pct_return = (result.total_season_profit / result.wallet_gold) * 100
-        print(f" Capital Growth           : {growth_mult:>12.2f}x (+{pct_return:,.1f}%)")
     print("=" * 86 + "\n")
 
 
@@ -169,7 +165,7 @@ def generate_markdown_report(
         "> Mathematically optimal seed purchase and planting allocations generated via Day-to-Day Time-Indexed Mixed-Integer Linear Programming (MILP).\n",
     ]
 
-    for idx, r in enumerate(valid):
+    for r in valid:
         season_title = r.season.upper() if r.season else "UNKNOWN"
         lines.append(f"## {season_title} Optimization Plan\n")
         lines.append(f"- **Config Profile**: [`{r.config_path.as_posix()}`]({r.config_path.as_posix()})")
@@ -279,8 +275,6 @@ def generate_markdown_report(
                 lines.append(f"- **End-of-Day Wallet**: **{rec.end_wallet:,.0f} G**")
                 if slots_parts:
                     lines.append(f"- **Plots Left**: {' | '.join(slots_parts)}\n")
-                else:
-                    lines.append("")
 
             lines.append("---\n")
 
@@ -306,13 +300,7 @@ def generate_markdown_report(
             lines.append(f"- **Pre-planted Crop Sales**: **+{r.preexisting_revenue:,.0f} G**")
             lines.append(f"- **New Planting Net Profit**: **+{r.new_planting_profit:,.0f} G**")
         lines.append(f"- **Net Profit ({active_days} {day_plural})**: **+{r.total_season_profit:,.0f} G**")
-        lines.append(f"- **Average Daily Profit**: **+{avg_daily_profit:,.0f} G/day** *(over {active_days} active {day_plural})*")
-        if r.wallet_gold > 0:
-            growth_mult = r.final_wallet_gold / r.wallet_gold
-            pct_return = (r.total_season_profit / r.wallet_gold) * 100
-            lines.append(f"- **Capital Growth**: **{growth_mult:.2f}x** *(+{pct_return:,.1f}% return on starting purse)*\n")
-        else:
-            lines.append("- **Capital Growth**: **N/A** *(Starting purse: 0 G)*\n")
+        lines.append(f"- **Average Daily Profit**: **+{avg_daily_profit:,.0f} G/day** *(over {active_days} active {day_plural})*\n")
 
 
 

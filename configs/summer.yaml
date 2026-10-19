@@ -3,7 +3,7 @@
 # ==============================================================================
 
 current_day: 27
-wallet_gold: 69065
+wallet_gold: 19065
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------

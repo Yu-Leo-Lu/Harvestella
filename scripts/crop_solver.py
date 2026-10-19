@@ -79,7 +79,6 @@ class DailyRecord:
     day: int
     carryover_cash: float
     payout_revenue: float
-    payout_sources: list[str]
     morning_wallet: float
     harvests: list[DailyHarvestEvent] = field(default_factory=list)
     plantings: list[DailyPlantEvent] = field(default_factory=list)
@@ -98,20 +97,12 @@ class OptimizationResult:
     current_day: int = 1
     timeline: str = ""
     wallet_gold: float = 0.0
-    total_spent: float = 0.0
-    leftover_gold: float = 0.0
-    farm_used: int = 0
-    farm_init: int = 0
     farm_cap: int = 0
     base_farm: int = 0
     farm_physical: int = 0
-    water_used: int = 0
-    water_init: int = 0
     water_cap: int = 0
     base_water: int = 0
     water_physical: int = 0
-    cave_used: int = 0
-    cave_init: int = 0
     cave_cap: int = 0
     base_cave: int = 0
     cave_physical: int = 0
@@ -120,19 +111,12 @@ class OptimizationResult:
     max_varieties: int | None = None
     daily_records: list[DailyRecord] = field(default_factory=list)
     quietus_payout: float = 0.0
-    quietus_sources: list[str] = field(default_factory=list)
     new_planting_profit: float = 0.0
     preexisting_revenue: float = 0.0
     total_season_profit: float = 0.0
     final_wallet_gold: float = 0.0
-    occupied_summary: list[str] = field(default_factory=list)
     occupied_crops: list[OccupiedCrop] = field(default_factory=list)
     catalog: list[CropCandidate] = field(default_factory=list)
-
-    @property
-    def gold_pct(self) -> float:
-        """Percentage of starting wallet gold spent on Day current_day."""
-        return (self.total_spent / self.wallet_gold * 100) if self.wallet_gold > 0 else 0.0
 
     def get_day_snapshot(self, target_day: int) -> dict[str, Any]:
         """Extract the exact field, wallet, and seed inventory snapshot on morning of target_day."""
@@ -510,10 +494,6 @@ def solve_allocation(
         occ_c = sum(occ.count for occ in occupied_crops if occ.crop.biome == "cave" and t in occ.occupy_days)
         daily_biome_cap["cave"][t] = max(0, base_c - occ_c)
 
-    farm_init = daily_biome_cap["farm"][current_day]
-    water_init = daily_biome_cap["waterside"][current_day]
-    cave_init = daily_biome_cap["cave"][current_day]
-
     farm_cap = max(daily_biome_cap["farm"].values(), default=0)
     water_cap = max(daily_biome_cap["waterside"].values(), default=0)
     cave_cap = max(daily_biome_cap["cave"].values(), default=0)
@@ -551,11 +531,6 @@ def solve_allocation(
                 )
             )
 
-    occupied_summary = [
-        f"{occ.count}x {occ.crop.name} ({occ.crop.biome.capitalize()}, planted D{occ.plant_day}, harvests: {', '.join(f'D{h}' for h in occ.harvest_days)})"
-        for occ in occupied_crops
-    ]
-
     if not crops and not occupied_crops:
         return OptimizationResult(
             season=season,
@@ -563,16 +538,12 @@ def solve_allocation(
             current_day=current_day,
             timeline=timeline_desc,
             wallet_gold=wallet_gold,
-            leftover_gold=wallet_gold,
-            farm_init=farm_init,
             farm_cap=farm_cap,
             base_farm=base_f,
             farm_physical=farm_physical,
-            water_init=water_init,
             water_cap=water_cap,
             base_water=base_w,
             water_physical=water_physical,
-            cave_init=cave_init,
             cave_cap=cave_cap,
             base_cave=base_c,
             cave_physical=cave_physical,
@@ -633,7 +604,6 @@ def solve_allocation(
             current_day=current_day,
             timeline=timeline_desc,
             wallet_gold=wallet_gold,
-            leftover_gold=wallet_gold,
             farm_cap=farm_cap,
             base_farm=base_f,
             farm_physical=farm_physical,
@@ -785,8 +755,6 @@ def solve_allocation(
         if d in preexisting_daily_harvests:
             daily_harvest_events[d].extend(preexisting_daily_harvests[d])
 
-    initial_farm = initial_water = initial_cave = 0
-    day1_spent = 0.0
     new_planting_profit = 0.0
 
     for i, count in enumerate(solution):
@@ -798,16 +766,6 @@ def solve_allocation(
         cost_total = count * c.cost
         profit_subtotal = count * v["net_profit"]
         new_planting_profit += profit_subtotal
-
-        # Day current_day initial utilization
-        if p_day == current_day:
-            day1_spent += cost_total
-            if c.biome == "farm":
-                initial_farm += count
-            elif c.biome == "waterside":
-                initial_water += count
-            elif c.biome == "cave":
-                initial_cave += count
 
         # Record planting event
         daily_plant_events[p_day].append(
@@ -845,19 +803,6 @@ def solve_allocation(
 
     for d in range(current_day, 31):
         payout_rev = daily_arrivals.get(d, 0.0)
-        payout_sources: list[str] = []
-        if d - 1 in daily_harvest_events:
-            prev_groups: dict[str, int] = {}
-            prev_pre: dict[str, bool] = {}
-            for h in daily_harvest_events[d - 1]:
-                prev_groups[h.crop.name] = prev_groups.get(h.crop.name, 0) + h.quantity
-                if h.is_preexisting:
-                    prev_pre[h.crop.name] = True
-            payout_sources = [
-                f"{q}x {name}{' (pre-planted)' if prev_pre.get(name) else ''} on Day {d - 1}"
-                for name, q in prev_groups.items()
-            ]
-
         carryover = current_cash
         morning_cash = carryover + payout_rev
 
@@ -901,7 +846,6 @@ def solve_allocation(
                 day=d,
                 carryover_cash=carryover,
                 payout_revenue=payout_rev,
-                payout_sources=payout_sources,
                 morning_wallet=morning_cash,
                 harvests=harvests_today,
                 plantings=plantings_today,
@@ -915,12 +859,6 @@ def solve_allocation(
 
     # Quietus morning (Day 31) payout
     quietus_payout = daily_arrivals.get(31, 0.0)
-    quietus_sources: list[str] = []
-    if 30 in daily_harvest_events:
-        d30_groups: dict[str, int] = {}
-        for h in daily_harvest_events[30]:
-            d30_groups[h.crop.name] = d30_groups.get(h.crop.name, 0) + h.quantity
-        quietus_sources = [f"{q}x {name}" for name, q in d30_groups.items()]
 
     total_season_profit = new_planting_profit + total_preexisting_rev
 
@@ -930,20 +868,12 @@ def solve_allocation(
         current_day=current_day,
         timeline=timeline_desc,
         wallet_gold=wallet_gold,
-        total_spent=day1_spent,
-        leftover_gold=wallet_gold - day1_spent,
-        farm_used=initial_farm,
-        farm_init=farm_init,
         farm_cap=farm_cap,
         base_farm=base_f,
         farm_physical=farm_physical,
-        water_used=initial_water,
-        water_init=water_init,
         water_cap=water_cap,
         base_water=base_w,
         water_physical=water_physical,
-        cave_used=initial_cave,
-        cave_init=cave_init,
         cave_cap=cave_cap,
         base_cave=base_c,
         cave_physical=cave_physical,
@@ -952,12 +882,10 @@ def solve_allocation(
         max_varieties=max_varieties,
         daily_records=daily_records,
         quietus_payout=quietus_payout,
-        quietus_sources=quietus_sources,
         new_planting_profit=new_planting_profit,
         preexisting_revenue=total_preexisting_rev,
         total_season_profit=total_season_profit,
         final_wallet_gold=wallet_gold + total_season_profit,
-        occupied_summary=occupied_summary,
         occupied_crops=occupied_crops,
         catalog=catalog,
     )
