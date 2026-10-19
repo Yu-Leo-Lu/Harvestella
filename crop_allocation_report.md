@@ -187,10 +187,12 @@
 
 ---
 
-### 🏆 Season Financial Summary
+### 🏆 Season Financial Summary (Days 24–30)
 
-- **Starting Budget**: 69,775 G
+- **Starting Wallet (Day 24)**: 69,775 G
+- **Ending Wallet (Day 31 Quietus)**: **306,370 G**
 - **Pre-planted Crop Sales**: **+183,185 G**
 - **New Planting Net Profit**: **+53,410 G**
-- **Total Season Net Profit**: **+236,595 G**
-- **Final Quietus Wallet**: **306,370 G**
+- **Net Profit (7 days)**: **+236,595 G**
+- **Average Daily Profit**: **+33,799 G/day** *(over 7 active days)*
+- **Capital Growth**: **4.39x** *(+339.1% return on starting purse)*

@@ -124,15 +124,25 @@ def print_result_report(result: OptimizationResult) -> None:
     else:
         print(f" [Day 31 - Quietus Morning] Morning Wallet: {result.final_wallet_gold:,.0f} G\n")
 
+    active_days = max(1, 31 - result.current_day)
+    avg_daily_profit = result.total_season_profit / active_days
+    timeline_str = f"Days {result.current_day}-30" if result.current_day < 30 else f"Day {result.current_day}"
+    day_plural = "days" if active_days > 1 else "day"
+
     print("-" * 86)
-    print(" SEASON FINANCIAL SUMMARY")
+    print(f" SEASON FINANCIAL SUMMARY ({timeline_str})")
     print("-" * 86)
-    print(f" Starting Budget        : {result.wallet_gold:>12,.0f} G")
+    print(f" Starting Wallet (Day {result.current_day:<2}) : {result.wallet_gold:>12,.0f} G")
+    print(f" Ending Wallet (Day 31)   : {result.final_wallet_gold:>12,.0f} G")
     if result.preexisting_revenue > 0:
-        print(f" Pre-planted Crop Sales : +{result.preexisting_revenue:>11,.0f} G")
-        print(f" New Planting Net Profit: +{result.new_planting_profit:>11,.0f} G")
-    print(f" Total Season Net Profit: +{result.total_season_profit:>11,.0f} G")
-    print(f" Final Quietus Wallet   : {result.final_wallet_gold:>12,.0f} G")
+        print(f" Pre-planted Crop Sales   : +{result.preexisting_revenue:>11,.0f} G")
+        print(f" New Planting Net Profit  : +{result.new_planting_profit:>11,.0f} G")
+    print(f" Net Profit ({active_days} {day_plural})      : +{result.total_season_profit:>11,.0f} G")
+    print(f" Average Daily Profit     : +{avg_daily_profit:>11,.0f} G/day (over {active_days} active {day_plural})")
+    if result.wallet_gold > 0:
+        growth_mult = result.final_wallet_gold / result.wallet_gold
+        pct_return = (result.total_season_profit / result.wallet_gold) * 100
+        print(f" Capital Growth           : {growth_mult:>12.2f}x (+{pct_return:,.1f}%)")
     print("=" * 86 + "\n")
 
 
@@ -270,13 +280,25 @@ def generate_markdown_report(
         lines.append("- ❄️ *Quietus has arrived. All unharvested field crops wither.*\n")
         lines.append("---\n")
 
-        lines.append("### 🏆 Season Financial Summary\n")
-        lines.append(f"- **Starting Budget**: {r.wallet_gold:,.0f} G")
+        active_days = max(1, 31 - r.current_day)
+        avg_daily_profit = r.total_season_profit / active_days
+        active_days_label = f"Days {r.current_day}–30" if r.current_day < 30 else f"Day {r.current_day}"
+        day_plural = "days" if active_days > 1 else "day"
+
+        lines.append(f"### 🏆 Season Financial Summary ({active_days_label})\n")
+        lines.append(f"- **Starting Wallet (Day {r.current_day})**: {r.wallet_gold:,.0f} G")
+        lines.append(f"- **Ending Wallet (Day 31 Quietus)**: **{r.final_wallet_gold:,.0f} G**")
         if r.preexisting_revenue > 0:
             lines.append(f"- **Pre-planted Crop Sales**: **+{r.preexisting_revenue:,.0f} G**")
             lines.append(f"- **New Planting Net Profit**: **+{r.new_planting_profit:,.0f} G**")
-        lines.append(f"- **Total Season Net Profit**: **+{r.total_season_profit:,.0f} G**")
-        lines.append(f"- **Final Quietus Wallet**: **{r.final_wallet_gold:,.0f} G**\n")
+        lines.append(f"- **Net Profit ({active_days} {day_plural})**: **+{r.total_season_profit:,.0f} G**")
+        lines.append(f"- **Average Daily Profit**: **+{avg_daily_profit:,.0f} G/day** *(over {active_days} active {day_plural})*")
+        if r.wallet_gold > 0:
+            growth_mult = r.final_wallet_gold / r.wallet_gold
+            pct_return = (r.total_season_profit / r.wallet_gold) * 100
+            lines.append(f"- **Capital Growth**: **{growth_mult:.2f}x** *(+{pct_return:,.1f}% return on starting purse)*\n")
+        else:
+            lines.append("- **Capital Growth**: **N/A** *(Starting purse: 0 G)*\n")
 
 
 
