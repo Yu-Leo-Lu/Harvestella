@@ -99,6 +99,15 @@ def print_result_report(result: OptimizationResult) -> None:
                 h_lines.append(f"{tot_qty}x {c_name} ({b_name.capitalize()}){r_tag} -> +{tot_rev:,.0f} G")
             print(f"   Harvest & Ship: {'; '.join(h_lines)}")
 
+        slots_parts = []
+        if result.base_farm > 0:
+            slots_parts.append(f"Farm: {rec.farm_slots_left}")
+        if result.base_water > 0:
+            slots_parts.append(f"Waterside: {rec.water_slots_left}")
+        if result.base_cave > 0:
+            slots_parts.append(f"Cave: {rec.cave_slots_left}")
+        slots_str = f" | Plots Left: {' | '.join(slots_parts)}" if slots_parts else ""
+
         if rec.plantings:
             print(f"   {'Biome':<10} {'Crop Name':<18} {'Vendor':<10} {'Qty':>4} {'Seed Spent':>11} {'Harvest Days':<15} {'Net Profit':>11}")
             print("   " + "-" * 82)
@@ -114,9 +123,9 @@ def print_result_report(result: OptimizationResult) -> None:
                     f"   {c.biome.capitalize():<10} {c.name:<18} {c.town:<10} {it.quantity:>4} "
                     f"{it.cost:>10,.0f} G {h_str:<15} +{it.net_profit:>10,.0f} G"
                 )
-            print(f"   Spent Today: {rec.daily_spent:,.0f} G | End-of-Day Wallet: {rec.end_wallet:,.0f} G\n")
+            print(f"   Spent Today: {rec.daily_spent:,.0f} G | End-of-Day Wallet: {rec.end_wallet:,.0f} G{slots_str}\n")
         else:
-            print(f"   (No plantings scheduled) | End-of-Day Wallet: {rec.end_wallet:,.0f} G\n")
+            print(f"   (No plantings scheduled) | End-of-Day Wallet: {rec.end_wallet:,.0f} G{slots_str}\n")
 
     carryover = result.daily_records[-1].end_wallet if result.daily_records else result.wallet_gold
     if result.quietus_payout > 0:
@@ -236,6 +245,14 @@ def generate_markdown_report(
                         f"  - {tot_qty}x {c_name} *({b_name.capitalize()})* → +{tot_rev:,.0f} G ({status})"
                     )
 
+            slots_parts = []
+            if r.base_farm > 0:
+                slots_parts.append(f"Farm: {rec.farm_slots_left}")
+            if r.base_water > 0:
+                slots_parts.append(f"Waterside: {rec.water_slots_left}")
+            if r.base_cave > 0:
+                slots_parts.append(f"Cave: {rec.cave_slots_left}")
+
             if rec.plantings:
                 lines.append("\n##### 🌱 Seed Purchases & Planting\n")
                 lines.append("| Biome | Crop Name | Vendor Town | Quantity | Seed Spent | Harvest Days | Net Profit |")
@@ -255,18 +272,15 @@ def generate_markdown_report(
                 lines.append(
                     f"\n- **Daily Seed Spent**: {rec.daily_spent:,.0f} G | **End-of-Day Wallet**: **{rec.end_wallet:,.0f} G**"
                 )
-                slots_parts = []
-                if r.base_farm > 0:
-                    slots_parts.append(f"Farm: {rec.farm_slots_left}")
-                if r.base_water > 0:
-                    slots_parts.append(f"Waterside: {rec.water_slots_left}")
-                if r.base_cave > 0:
-                    slots_parts.append(f"Cave: {rec.cave_slots_left}")
                 if slots_parts:
                     lines.append(f"- **Plots Left**: {' | '.join(slots_parts)}\n")
             else:
                 lines.append("\n- *No seed purchases or planting scheduled today.*")
-                lines.append(f"- **End-of-Day Wallet**: **{rec.end_wallet:,.0f} G**\n")
+                lines.append(f"- **End-of-Day Wallet**: **{rec.end_wallet:,.0f} G**")
+                if slots_parts:
+                    lines.append(f"- **Plots Left**: {' | '.join(slots_parts)}\n")
+                else:
+                    lines.append("")
 
             lines.append("---\n")
 
