@@ -2,8 +2,8 @@
 # Harvestella Planting Optimizer Configuration: Summer
 # ==============================================================================
 
-current_day: 24
-wallet_gold: 69775
+current_day: 25
+wallet_gold: 34530
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -28,18 +28,22 @@ planted:
   - { crop: Nemean Tomato, day: 18, count: 26 }
   - { crop: Seatide Garlic, day: 21, count: 24 }
   - { crop: Morrocorn, day: 22, count: 29 }
-  - { crop: Carrop, day: 23, count: 84 }
+  - { crop: Dress Lettuce, day: 24, count: 24 }
+  - { crop: Seatide Garlic, day: 24, count: 99 }
+  - { crop: Stellar Wheat, day: 24, count: 6 }
 
-  - { crop: Islet Watermelon, day: 16, count: 4 }
-  - { crop: Islet Watermelon, day: 18, count: 6 }
-  - { crop: Nectarcane, day: 18, count: 33 }
+  - { crop: Islet Watermelon, day: 13, count: 2 }
+  - { crop: Islet Watermelon, day: 16, count: 5 }
   - { crop: Nectarcane, day: 17, count: 10 }
+  - { crop: Islet Watermelon, day: 18, count: 3 }
+  - { crop: Nectarcane, day: 18, count: 33 }
   - { crop: Nectarcane, day: 20, count: 9 }
   - { crop: Honey Flower, day: 23, count: 19 }
 
   - { crop: Revol Pepper, day: 14, count: 9 }
   - { crop: Sudor Pepper, day: 18, count: 44 }
   - { crop: Sudor Pepper, day: 21, count: 10 }
+  - { crop: Curry Herbs, day: 24, count: 16 }
 
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
@@ -47,10 +51,10 @@ planted:
 seed_stock:
   # Lethe
   Morrocorn (Lethe):       50 # +42.5 G/d
-  Dress Lettuce:           60 # +15.0 G/d
+  Dress Lettuce:           36 # +15.0 G/d
   Curry Herbs (Lethe):     50 # +13.3 G/d (Cave)
   Carrop (Lethe):          50 # +10.0 G/d
-  Stellar Wheat:           99 # +7.5 G/d
+  Stellar Wheat:           93 # +7.5 G/d
   Grass:                   99 # +2.5 G/d
 
   # Nemea
@@ -60,7 +64,7 @@ seed_stock:
 
   # Shatolla
   Islet Watermelon:        99 # +175.0 G/d (Waterside)
-  Seatide Garlic:          99 # +58.3 G/d
+  Seatide Garlic:          0  # +58.3 G/d
   Morrocorn (Shatolla):    70 # +50.0 G/d
   Honey Flower:            80 # +41.7 G/d (Waterside)
   Nectarcane (Shatolla):   99 # +38.0 G/d (Waterside)
@@ -70,7 +74,7 @@ seed_stock:
   # Argene
   Revol Pepper:            90 # +47.8 G/d (Cave)
   Sudor Pepper:            89 # +38.9 G/d (Cave)
-  Curry Herbs (Argene):    99 # +18.3 G/d (Cave)
+  Curry Herbs (Argene):    83 # +18.3 G/d (Cave)
 
   # Abandoned Eden
   Eden Rice:               99 # +5.0 G/d
