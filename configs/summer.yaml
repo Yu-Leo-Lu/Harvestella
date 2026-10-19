@@ -2,8 +2,8 @@
 # Harvestella Planting Optimizer Configuration: Summer
 # ==============================================================================
 
-current_day: 22
-wallet_gold: 20950
+current_day: 23
+wallet_gold: 40735
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -24,22 +24,23 @@ reserve_plots:
 # 2. Currently Planted on Farm (Active Batches)
 # ------------------------------------------------------------------------------
 planted:
-  - { crop: Shatollan Paprika, day: 9, count: 15 } #
-  - { crop: Seatide Garlic, day: 18, count: 45 } #
-  - { crop: Nemean Tomato, day: 18, count: 26 } #
-  - { crop: Dress Lettuce, day: 21, count: 39 } #
-  - { crop: Seatide Garlic, day: 21, count: 24 } #
+  - { crop: Shatollan Paprika, day: 9, count: 15 }
+  - { crop: Nemean Tomato, day: 18, count: 26 }
+  - { crop: Seatide Garlic, day: 17, count: 45 }
+  - { crop: Dress Lettuce, day: 21, count: 39 }
+  - { crop: Seatide Garlic, day: 21, count: 24 }
+  - { crop: Morrocorn, day: 22, count: 29 }
 
-  - { crop: Islet Watermelon, day: 12, count: 1 }
+  - { crop: Islet Watermelon, day: 11, count: 1 }
   - { crop: Islet Watermelon, day: 16, count: 4 }
   - { crop: Islet Watermelon, day: 18, count: 6 }
   - { crop: Nectarcane, day: 18, count: 33 }
   - { crop: Nectarcane, day: 19, count: 10 }
   - { crop: Nectarcane, day: 20, count: 9 }
 
-  - { crop: Revol Pepper, day: 14, count: 9 } # 
-  - { crop: Sudor Pepper, day: 18, count: 44 } #
-  - { crop: Sudor Pepper, day: 21, count: 10 } #
+  - { crop: Revol Pepper, day: 14, count: 9 }
+  - { crop: Sudor Pepper, day: 18, count: 44 }
+  - { crop: Sudor Pepper, day: 21, count: 10 }
 
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
@@ -61,7 +62,7 @@ seed_stock:
   # Shatolla
   Islet Watermelon:        99 # +175.0 G/d (Waterside)
   Seatide Garlic:          99 # +58.3 G/d
-  Morrocorn (Shatolla):    99 # +50.0 G/d
+  Morrocorn (Shatolla):    70 # +50.0 G/d
   Honey Flower:            99 # +41.7 G/d (Waterside)
   Nectarcane (Shatolla):   99 # +38.0 G/d (Waterside)
   Shatollan Paprika:       99 # +35.2 G/d
@@ -83,4 +84,4 @@ unlocked_towns:
   Nemea: true
   Shatolla: true
   Argene: true
-  Abandoned Eden: false
+  Abandoned Eden: true
