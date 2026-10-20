@@ -112,7 +112,7 @@ Simple linear programming (LP) allows fractional values (e.g., buying 23.47 seed
    - Branch Right: $x_1 \ge 15$
 4. **Pruning**: Any branch whose continuous upper bound is worse than an already discovered integer solution is immediately discarded ("pruned").
 
-Because the seasonal decision space is bounded ($N \le 450$ variables), the HiGHS branch-and-cut engine evaluates this tree in **less than 15 milliseconds**, guaranteeing 0% optimality gap.
+Because the seasonal decision space is bounded ($N \le 450$ variables), the HiGHS branch-and-cut engine evaluates this tree in **less than 15 milliseconds**. The solver is configured with `options={"disp": False, "mip_rel_gap": 0.005, "time_limit": 10}`, ensuring tight integer optimality (within 0.5% gap) while preventing premature halts on late-season micro-allocations.
 
 ---
 
@@ -240,7 +240,7 @@ Where each decision coefficient $c_{i, t}$ is explicitly calculated by expanding
 
 $$\begin{aligned}
 c_{i, t} &= -\text{Adjusted Profit}(i, t) \\
-&= -\left( \underbrace{(v_{i, t} - p_i)}_{\text{Base Net Profit}} - \underbrace{10^{-6} \cdot p_i}_{\text{Cost Perturbation}} - \underbrace{10^{-8} \cdot (t - \text{current\_day})}_{\text{Timing Perturbation}} \right)
+&= -\left( \underbrace{(v_{i, t} - p_i)}_{\text{Base Net Profit}} - \underbrace{10^{-4} \cdot p_i}_{\text{Cost Perturbation}} - \underbrace{10^{-6} \cdot (t - \text{current\_day})}_{\text{Timing Perturbation}} \right)
 \end{aligned}$$
 
 ---
@@ -286,27 +286,38 @@ Without perturbations, an MILP solver faces a flat plateau of alternate optima: 
 
 To ensure deterministic, optimal choices, the model maximizes the positive **Adjusted Profit** with two microscopic deductions:
 
-$$\text{Adjusted Profit}(i, t) = -c_{i, t} = \underbrace{(v_{i, t} - p_i)}_{\text{Base Net Profit}} - \underbrace{10^{-6} \cdot p_i}_{\text{Cost Perturbation}} - \underbrace{10^{-8} \cdot (t - \text{current\_day})}_{\text{Timing Perturbation}}$$
+$$\text{Adjusted Profit}(i, t) = -c_{i, t} = \underbrace{(v_{i, t} - p_i)}_{\text{Base Net Profit}} - \underbrace{10^{-4} \cdot p_i}_{\text{Cost Perturbation}} - \underbrace{10^{-6} \cdot (t - \text{current\_day})}_{\text{Timing Perturbation}}$$
 
 Because the objective is to **maximize positive profit**, subtracting these tiny penalties favors the more resource-efficient option:
 
-1. **Cost Perturbation (Maximizing $\text{Base Net Profit} - 10^{-6} \cdot p_i$)**:
+1. **Cost Perturbation (Maximizing $\text{Base Net Profit} - 10^{-4} \cdot p_i$)**:
    - **What It Penalizes**: Penalizes seeds with higher upfront purchase costs ($p_i$).
    - **Why We Penalize It**: When two crop options yield identical net profit, we want to spend as little money as possible, preserving liquid cash in our wallet for other investments.
 
-2. **Timing Perturbation (Maximizing $\text{Base Net Profit} - 10^{-8} \cdot (t - \text{current\_day})$)**:
+2. **Timing Perturbation (Maximizing $\text{Base Net Profit} - 10^{-6} \cdot (t - \text{current\_day})$)**:
    - **What It Penalizes**: Penalizes delaying planting to a later calendar day $t$ (leaving plots idle).
    - **Why We Penalize It**: Single-harvest crops earn the same profit whether planted on Day 1 or Day 10. We penalize waiting so the solver plants immediately, avoiding wasted idle plot days and speeding up harvest payouts for cash compounding.
 
+##### Lexicographic Hierarchy & Numerical Precision Guarantee
+
+The scaling coefficients ($10^{-4}$ for Cost and $10^{-6}$ for Timing) are mathematically calibrated to satisfy a strict three-tier hierarchy while remaining safely above solver floating-point limits:
+
+| Tier | Decision Level | Scale Range across Game | Interaction & Invariance Guarantee |
+| :--- | :--- | :--- | :--- |
+| **Tier 1** | **Net Profit** | $\ge 1.0\text{ G}$ (integer payoffs) | **Absolute Priority**: Dominates all tie-breakers. |
+| **Tier 2** | **Seed Cost** ($10^{-4}$) | $0.0010\text{ G} \dots 0.25\text{ G}$ ($p_i \le 2500$) | **Never overrides Tier 1**: Max cost penalty is $0.25\text{ G} < 1.0\text{ G}$. |
+| **Tier 3** | **Timing** ($10^{-6}$) | $0.000001\text{ G} \dots 0.000030\text{ G}$ ($\Delta t \le 29$) | **Never overrides Tier 2**: Min cost diff ($10\text{ G} \implies 0.0010\text{ G}$) is **33× larger** than max monthly day penalty ($30 \times 10^{-6} = 0.000030\text{ G}$). |
+| **Floor** | **HiGHS Tolerance** | $10^{-7}$ numerical noise threshold | **Always Detected**: A 1-day difference ($10^{-6}$) is **10× above** the solver's $10^{-7}$ feasibility tolerance, preventing ties from being ignored as floating-point rounding error. |
+
 ##### Concrete Examples of Tie-Breaking in Action
 - **Cost Example**: Suppose Seed A costs $55\text{ G}$ and Seed B costs $200\text{ G}$, and both earn $100\text{ G}$ base net profit:
-  - $\text{Adjusted Profit}(A) = 100 - (10^{-6} \cdot 55) = 99.999945\text{ G}$
-  - $\text{Adjusted Profit}(B) = 100 - (10^{-6} \cdot 200) = 99.999800\text{ G}$
-  - Since $99.999945 > 99.999800$, maximizing adjusted profit strictly selects cheaper Seed A, saving $145\text{ G}$ of wallet cash.
+  - $\text{Adjusted Profit}(A) = 100 - (10^{-4} \cdot 55) = 99.9945\text{ G}$
+  - $\text{Adjusted Profit}(B) = 100 - (10^{-4} \cdot 200) = 99.9800\text{ G}$
+  - Since $99.9945 > 99.9800$, maximizing adjusted profit strictly selects cheaper Seed A, saving $145\text{ G}$ of wallet cash.
 - **Timing Example**: With $\text{current\_day} = 1$, Morrocorn earns $+200\text{ G}$ base net profit whether planted on Day 1 or delayed to Day 10:
-  - Plant on Day 1 ($t = 1$): Delay is $1 - 1 = 0\text{ days} \implies \text{Adjusted Profit} = 200 - (10^{-8} \cdot 0) = 200.00000000\text{ G}$
-  - Plant on Day 10 ($t = 10$): Delay is $10 - 1 = 9\text{ days} \implies \text{Adjusted Profit} = 200 - (10^{-8} \cdot 9) = 199.99999991\text{ G}$
-  - Since $200.00000000 > 199.99999991$, maximizing adjusted profit strictly plants on Day 1 rather than leaving the plot empty for 9 days.
+  - Plant on Day 1 ($t = 1$): Delay is $1 - 1 = 0\text{ days} \implies \text{Adjusted Profit} = 200 - (10^{-6} \cdot 0) = 200.000000\text{ G}$
+  - Plant on Day 10 ($t = 10$): Delay is $10 - 1 = 9\text{ days} \implies \text{Adjusted Profit} = 200 - (10^{-6} \cdot 9) = 199.999991\text{ G}$
+  - Since $200.000000 > 199.999991$, maximizing adjusted profit strictly plants on Day 1 rather than leaving the plot empty for 9 days.
 
 ---
 

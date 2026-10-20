@@ -2,8 +2,8 @@
 # Harvestella Planting Optimizer Configuration: Summer
 # ==============================================================================
 
-current_day: 28
-wallet_gold: 50665
+current_day: 29
+wallet_gold: 66290
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -25,14 +25,15 @@ reserve_plots:
 # ------------------------------------------------------------------------------
 planted:
   - { crop: Shatollan Paprika, day: 9, count: 15 }
-  - { crop: Nemean Tomato, day: 18, count: 26 }
   - { crop: Seatide Garlic, day: 24, count: 99 }
   - { crop: Morrocorn, day: 25, count: 14 }
   - { crop: Morrocorn, day: 26, count: 83 }
+  - { crop: Carrop, day: 28, count: 25 }
+  - { crop: Dress Lettuce, day: 28, count: 36 }
+  - { crop: Stellar Wheat, day: 28, count: 14 }
 
-  - { crop: Islet Watermelon, day: 16, count: 2 }
-  - { crop: Islet Watermelon, day: 18, count: 4 }
-  - { crop: Nectarcane, day: 18, count: 33 }
+  - { crop: Islet Watermelon, day: 17, count: 1 }
+  - { crop: Islet Watermelon, day: 18, count: 3 }
   - { crop: Nectarcane, day: 20, count: 9 }
   - { crop: Honey Flower, day: 23, count: 19 }
 
@@ -46,10 +47,10 @@ planted:
 seed_stock:
   # Lethe
   Morrocorn (Lethe):       23 # +42.5 G/d
-  Dress Lettuce:           36 # +15.0 G/d
+  Dress Lettuce:           0  # +15.0 G/d
   Curry Herbs (Lethe):     50 # +13.3 G/d (Cave)
-  Carrop (Lethe):          50 # +10.0 G/d
-  Stellar Wheat:           93 # +7.5 G/d
+  Carrop (Lethe):          25 # +10.0 G/d
+  Stellar Wheat:           79 # +7.5 G/d
   Grass:                   99 # +2.5 G/d
 
   # Nemea

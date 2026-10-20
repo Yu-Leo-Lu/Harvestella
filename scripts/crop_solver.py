@@ -630,7 +630,7 @@ def solve_allocation(
     for i, v in enumerate(var_map):
         c = crops[v["crop_idx"]]
         # Tie-breakers: prefer cheaper seeds and earlier planting
-        c_obj[i] = -(v["net_profit"] - 1e-6 * c.cost - 1e-8 * (v["day"] - current_day))
+        c_obj[i] = -(v["net_profit"] - 1e-4 * c.cost - 1e-6 * (v["day"] - current_day))
 
     A_rows: list[list[float]] = []
     lb_list: list[float] = []

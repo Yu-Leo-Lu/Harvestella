@@ -3,14 +3,14 @@
 # ==============================================================================
 
 current_day: 1
-wallet_gold: 15000
+wallet_gold: 236090
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
 # 1. Farm & Biome Plot Capacities
 # Usable plots = Physical plots (farm_level * 49) - Reserved plots
 # ------------------------------------------------------------------------------
-farm_level: 4         # Renovator level (each level adds 49 plots)
+farm_level: 6         # Renovator level (each level adds 49 plots)
 waterside_plots: 81   # Biome capacity (default: 81)
 cave_plots: 81        # Biome capacity (default: 81)
 
