@@ -732,7 +732,7 @@ def solve_allocation(
         constraints=constraints,
         bounds=bounds,
         integrality=integrality,
-        options={"disp": False, "mip_rel_gap": 0.015, "time_limit": 10},
+        options={"disp": False, "mip_rel_gap": 0.005, "time_limit": 10},
     )
 
     if res.x is None:

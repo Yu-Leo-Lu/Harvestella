@@ -2,15 +2,15 @@
 # Harvestella Planting Optimizer Configuration: Summer
 # ==============================================================================
 
-current_day: 27
-wallet_gold: 19065
+current_day: 28
+wallet_gold: 50665
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
 # 1. Farm & Biome Plot Capacities
 # Usable plots = Physical plots (farm_level * 49) - Reserved plots
 # ------------------------------------------------------------------------------
-farm_level: 5         # Renovator level (each level adds 49 plots)
+farm_level: 6         # Renovator level (each level adds 49 plots)
 waterside_plots: 81   # Biome capacity (default: 81)
 cave_plots: 81        # Biome capacity (default: 81)
 
@@ -30,16 +30,13 @@ planted:
   - { crop: Morrocorn, day: 25, count: 14 }
   - { crop: Morrocorn, day: 26, count: 83 }
 
-  - { crop: Islet Watermelon, day: 15, count: 2 }
-  - { crop: Islet Watermelon, day: 16, count: 3 }
-  - { crop: Nectarcane, day: 17, count: 10 }
-  - { crop: Islet Watermelon, day: 18, count: 3 }
+  - { crop: Islet Watermelon, day: 16, count: 2 }
+  - { crop: Islet Watermelon, day: 18, count: 4 }
   - { crop: Nectarcane, day: 18, count: 33 }
   - { crop: Nectarcane, day: 20, count: 9 }
   - { crop: Honey Flower, day: 23, count: 19 }
 
   - { crop: Revol Pepper, day: 14, count: 9 }
-  - { crop: Sudor Pepper, day: 18, count: 44 }
   - { crop: Sudor Pepper, day: 21, count: 10 }
   - { crop: Curry Herbs, day: 24, count: 16 }
 
