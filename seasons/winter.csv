@@ -1,6 +1,6 @@
 Crop Name,Vendor Town,Vendor Stock,Biome,Seed Cost (G),NQ Sale (G),HQ Sale (G),Mature (Days),Regrowth (Days),Max Harvests,Growth Season,Fruit Season,Daily NQ Profit (G/d),Cash Compound Rate (%/d),Production (Days),Planting Schedule
 Chilly Plant,Argene,99,Farm,800,1300,1625,7,,1,Wi,Wi,71.4,6.26,7,"23, 16, 9, 2"
-Argene Cabbage,Argene,99,Farm,220,320,400,4,,1,Wi,Wi,25.0,7.78,4,"26, 22, 18, 14, 10, 6, 2"
+Argene Cabbage,Argene,99,Farm,220,320,400,4,,1,"Sp, Wi","Sp, Wi",25.0,7.78,4,"26, 22, 18, 14, 10, 6, 2"
 Lumpotato,Argene,99,Farm,80,120,150,3,,1,"Fa, Wi","Fa, Wi",13.3,10.67,3,"27, 24, 21, 18, 15, ... , 3"
 Lumpotato,Lethe,99,Farm,90,120,150,3,,1,"Fa, Wi","Fa, Wi",10.0,7.46,3,"27, 24, 21, 18, 15, ... , 3"
 SnowCap Mikan,Argene,10,Farm,2300,65,80,7,2,Multi-Season,"Sp, Su, Fa, Wi",Wi,,,,

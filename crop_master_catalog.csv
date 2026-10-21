@@ -23,19 +23,19 @@ Wisty Peach,Nemea,99,Farm,4200,115,230,10,2,Multi-Season,"Sp, Su, Fa, Wi",Sp
 Bellhop,Shatolla,99,Farm,560,45,55,7,1,24,Su,Su
 Honey Flower,Shatolla,99,Waterside,380,630,785,6,,1,"Sp, Su, Fa","Sp, Su, Fa"
 Islet Watermelon,Shatolla,99,Waterside,2500,4600,5800,12,,1,Su,Su
-Lococonut,Shatolla,99,Waterside,3200,35,45,7,2,Multi-Season,"Sp, Su, Fa, Wi",Su
+Lococonut,Shatolla,10,Waterside,3200,35,45,7,2,Multi-Season,"Sp, Su, Fa, Wi",Su
 Morrocorn,Shatolla,99,Farm,200,400,500,4,,1,"Su, Fa","Su, Fa"
 Nectarcane,Shatolla,99,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa"
-Numblemon,Shatolla,99,Farm,2000,95,120,6,1,Multi-Season,"Sp, Su, Fa, Wi",Su
+Numblemon,Shatolla,10,Farm,2200,95,120,6,1,Multi-Season,"Sp, Su, Fa, Wi",Su
 Seatide Garlic,Shatolla,99,Farm,650,1000,1250,6,,1,Su,Su
 Shatollan Paprika,Shatolla,99,Farm,250,110,135,5,2,9,Su,Su
-Argene Cabbage,Argene,99,Farm,220,320,400,4,,1,Wi,Wi
+Argene Cabbage,Argene,99,Farm,220,320,400,4,,1,"Sp, Wi","Sp, Wi"
 Chilly Plant,Argene,99,Farm,800,1300,1625,7,,1,Wi,Wi
 Curry Herbs,Argene,99,Cave,240,350,435,6,,1,"Sp, Su, Fa","Sp, Su, Fa"
 Lumpotato,Argene,99,Farm,80,120,150,3,,1,"Fa, Wi","Fa, Wi"
-Revol Pepper,Argene,90,Cave,560,265,330,4,3,5,"Sp, Su, Fa","Sp, Su, Fa"
+Revol Pepper,Argene,99,Cave,560,265,330,4,3,5,"Sp, Su, Fa","Sp, Su, Fa"
 SnowCap Mikan,Argene,10,Farm,2300,65,80,7,2,Multi-Season,"Sp, Su, Fa, Wi",Wi
-Sudor Pepper,Argene,90,Cave,400,250,310,3,3,3,"Sp, Su, Fa","Sp, Su, Fa"
+Sudor Pepper,Argene,99,Cave,400,250,310,3,3,3,"Sp, Su, Fa","Sp, Su, Fa"
 Eden Rice,Abandoned Eden,99,Farm,20,35,45,3,,1,"Su, Fa","Su, Fa"
 Macocoa,Abandoned Eden,99,Farm,2400,100,125,6,1,Tree,"Sp, Su, Fa, Wi",Su
 Nitro Pineapple,Astrum Helix,,Cave,,5,5,6,,1,"Sp, Su, Fa","Sp, Su, Fa"
