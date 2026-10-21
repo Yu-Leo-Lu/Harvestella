@@ -1,10 +1,10 @@
 Crop Name,Vendor Town,Vendor Stock,Biome,Seed Cost (G),NQ Sale (G),HQ Sale (G),Mature (Days),Regrowth (Days),Max Harvests,Growth Season,Fruit Season,Daily NQ Profit (G/d),Cash Compound Rate (%/d),Production (Days),Planting Schedule
 Islet Watermelon,Shatolla,99,Waterside,2500,4600,5800,12,,1,Su,Su,175.0,4.8,12,"18, 6"
 Seatide Garlic,Shatolla,99,Farm,650,1000,1250,6,,1,Su,Su,58.3,6.35,6,"24, 18, 12, 6"
-Morrocorn,Shatolla,99,Farm,200,400,500,4,,1,Su,Su,50.0,14.87,4,"26, 22, 18, 14, 10, 6, 2"
+Morrocorn,Shatolla,99,Farm,200,400,500,4,,1,"Su, Fa","Su, Fa",50.0,14.87,4,"26, 22, 18, 14, 10, 6, 2"
 Revol Pepper,Argene,90,Cave,560,265,330,4,3,5,"Sp, Su, Fa","Sp, Su, Fa",47.8,5.2,16,14
 Morrocorn,Lethe,50,Farm,230,400,500,4,,1,"Su, Fa","Su, Fa",42.5,11.7,4,"26, 22, 18, 14, 10, 6, 2"
-Honey Flower,Shatolla,99,Waterside,380,630,785,6,,1,Su,Su,41.7,7.49,6,"24, 18, 12, 6"
+Honey Flower,Shatolla,99,Waterside,380,630,785,6,,1,"Sp, Su, Fa","Sp, Su, Fa",41.7,7.49,6,"24, 18, 12, 6"
 Sudor Pepper,Argene,90,Cave,400,250,310,3,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.9,6.49,9,"21, 12, 3"
 Nectarcane,Nemea,10,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.0,6.63,10,"20, 10"
 Nectarcane,Shatolla,99,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.0,6.63,10,"20, 10"

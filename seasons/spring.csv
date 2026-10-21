@@ -1,6 +1,7 @@
 Crop Name,Vendor Town,Vendor Stock,Biome,Seed Cost (G),NQ Sale (G),HQ Sale (G),Mature (Days),Regrowth (Days),Max Harvests,Growth Season,Fruit Season,Daily NQ Profit (G/d),Cash Compound Rate (%/d),Production (Days),Planting Schedule
 Revol Pepper,Argene,90,Cave,560,265,330,4,3,5,"Sp, Su, Fa","Sp, Su, Fa",47.8,5.2,16,14
 Cucumble,Lethe,99,Farm,370,200,250,4,3,6,Sp,Sp,43.7,6.06,19,11
+Honey Flower,Shatolla,99,Waterside,380,630,785,6,,1,"Sp, Su, Fa","Sp, Su, Fa",41.7,7.49,6,"24, 18, 12, 6"
 Sudor Pepper,Argene,90,Cave,400,250,310,3,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.9,6.49,9,"21, 12, 3"
 Nectarcane,Nemea,10,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.0,6.63,10,"20, 10"
 Nectarcane,Shatolla,99,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa",38.0,6.63,10,"20, 10"
