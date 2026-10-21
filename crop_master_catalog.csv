@@ -6,13 +6,13 @@ Dress Lettuce,Lethe,99,Farm,55,85,105,2,,1,"Sp, Su, Fa","Sp, Su, Fa"
 Grass,Lethe,99,Farm,30,35,45,2,,1,"Sp, Su, Fa","Sp, Su, Fa"
 Grouply Grape,Lethe,10,Farm,2000,85,105,6,1,Sapling,"Sp, Su, Fa, Wi",Fa
 Lantern Pumpkin,Lethe,99,Farm,3750,3750,,11,,1,Fa,Fa
-Lumpotato,Lethe,99,Farm,90,120,150,3,,1,"Fa, Wi","Fa, Wi"
+Lumpotato,Lethe,50,Farm,90,120,150,3,,1,"Fa, Wi","Fa, Wi"
 Morrocorn,Lethe,50,Farm,230,400,500,4,,1,"Su, Fa","Su, Fa"
 Princess Chestnut,Lethe,10,Farm,2200,60,75,7,2,Tree,"Sp, Su, Fa, Wi",Fa
 Rainbow Bean,Lethe,99,Farm,180,40,50,6,2,5,Fa,Fa
 Royal Eggplant,Lethe,99,Farm,780,480,960,7,2,3,Fa,Fa
 Stellar Wheat,Lethe,99,Farm,40,55,70,2,,1,"Sp, Su, Fa","Sp, Su, Fa"
-Unionion,Lethe,99,Farm,130,195,245,3,,1,"Sp, Fa","Sp, Fa"
+Unionion,Lethe,50,Farm,130,195,245,3,,1,"Sp, Fa","Sp, Fa"
 Carrop,Nemea,99,Farm,95,115,145,1,,1,"Sp, Su","Sp, Su"
 Nectarcane,Nemea,10,Waterside,370,250,310,4,3,3,"Sp, Su, Fa","Sp, Su, Fa"
 Nemean Tomato,Nemea,99,Farm,170,65,95,5,1,6,"Sp, Su","Sp, Su"
