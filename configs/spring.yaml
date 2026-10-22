@@ -2,7 +2,7 @@
 # Harvestella Planting Optimizer Configuration: Spring
 # ==============================================================================
 
-current_day: 1
+current_day: 2
 wallet_gold: 0
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
@@ -25,8 +25,9 @@ reserve_plots:
 # ------------------------------------------------------------------------------
 planted:
   # - { crop: Unionion, day: 1, count: 10 }
-  - { crop: Carrop, day: 1, count: 9 }
+  - { crop: Carrop, day: 2, count: 6 }
   - { crop: Dress Lettuce, day: 2, count: 3 }
+  - { crop: Stellar Wheat, day: 2, count: 7 }
 
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
@@ -62,7 +63,7 @@ seed_stock:
 # ------------------------------------------------------------------------------
 unlocked_towns:
   Lethe: true
-  Nemea: true
-  Shatolla: true
-  Argene: true
+  Nemea: false
+  Shatolla: false
+  Argene: false
   Abandoned Eden: false
