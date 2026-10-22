@@ -2,8 +2,8 @@
 # Harvestella Planting Optimizer Configuration: Spring
 # ==============================================================================
 
-current_day: 2
-wallet_gold: 0
+current_day: 8
+wallet_gold: 1265
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -11,8 +11,8 @@ max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3,
 # Usable plots = Physical plots (farm_level * 49) - Reserved plots
 # ------------------------------------------------------------------------------
 farm_level: 1         # Renovator level (each level adds 49 plots)
-waterside_plots: 0    # Biome locked in early Spring
-cave_plots: 0         # Biome locked in early Spring
+waterside_plots: 0   # Biome capacity (default: 81)
+cave_plots: 0        # Biome capacity (default: 81)
 
 # Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
 reserve_plots:
@@ -24,39 +24,45 @@ reserve_plots:
 # 2. Currently Planted on Farm (Active Batches)
 # ------------------------------------------------------------------------------
 planted:
-  # - { crop: Unionion, day: 1, count: 10 }
-  - { crop: Carrop, day: 2, count: 6 }
-  - { crop: Dress Lettuce, day: 2, count: 3 }
-  - { crop: Stellar Wheat, day: 2, count: 7 }
+  - { crop: Stellar Wheat, day: 6, count: 6 }
+  - { crop: Unionion, day: 6, count: 2 }
+  - { crop: Dress Lettuce, day: 7, count: 5 }
+  - { crop: Unionion, day: 7, count: 6 }
+
+  - { crop: Stellar Wheat, day: 7, count: 3 }
+  - { crop: Dress Lettuce, day: 7, count: 6 }
+  - { crop: Unionion, day: 7, count: 1 }
 
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
 # ------------------------------------------------------------------------------
 seed_stock:
   # Lethe
-  Cucumble: 99            # +43.7 G/d
-  Unionion (Lethe): 99    # +21.7 G/d
-  Curry Herbs (Lethe): 50 # +13.3 G/d (Cave)
-  Dress Lettuce: 99       # +15.0 G/d
-  Carrop (Lethe): 99      # +10.0 G/d
-  Stellar Wheat: 99       # +7.5 G/d
-  Grass: 99               # +2.5 G/d
+  Cucumble:                99 # +43.7 G/d
+  Unionion (Lethe):        44 # +21.7 G/d
+  Dress Lettuce:           70 # +15.0 G/d
+  Curry Herbs (Lethe):     50 # +13.3 G/d (Cave)
+  Carrop (Lethe):          50 # +10.0 G/d
+  Stellar Wheat:           99 # +7.5 G/d
+  Grass:                   99 # +2.5 G/d
 
   # Nemea
-  Strawbuddy: 99          # +35.8 G/d
-  Tingle Radish: 99       # +35.0 G/d
-  Unionion (Nemea): 99    # +30.0 G/d
-  Nemean Tomato: 99       # +22.0 G/d
-  Carrop (Nemea): 99      # +20.0 G/d
-  Nectarcane (Nemea): 10  # +38.0 G/d (Waterside)
+  Nectarcane (Nemea):      10 # +38.0 G/d (Waterside)
+  Strawbuddy:              99 # +35.8 G/d
+  Tingle Radish:           99 # +35.0 G/d
+  Unionion (Nemea):        99 # +30.0 G/d
+  Nemean Tomato:           99 # +22.0 G/d
+  Carrop (Nemea):          99 # +20.0 G/d
 
   # Shatolla
-  Nectarcane (Shatolla): 99 # +38.0 G/d (Waterside)
+  Honey Flower:            99 # +41.7 G/d (Waterside)
+  Nectarcane (Shatolla):   99 # +38.0 G/d (Waterside)
 
   # Argene
-  Revol Pepper: 99        # +47.8 G/d
-  Sudor Pepper: 99        # +38.9 G/d
-  Curry Herbs (Argene): 99 # +18.3 G/d
+  Revol Pepper:            99 # +47.8 G/d (Cave)
+  Sudor Pepper:            99 # +38.9 G/d (Cave)
+  Argene Cabbage:          99 # +25.0 G/d
+  Curry Herbs (Argene):    99 # +18.3 G/d (Cave)
 
 # ------------------------------------------------------------------------------
 # 4. Town Story Progression (set to false if vendor is not yet unlocked)
