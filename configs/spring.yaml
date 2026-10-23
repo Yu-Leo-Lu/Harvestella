@@ -2,8 +2,8 @@
 # Harvestella Planting Optimizer Configuration: Spring
 # ==============================================================================
 
-current_day: 10
-wallet_gold: 2515
+current_day: 11
+wallet_gold: 5460
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -24,23 +24,25 @@ reserve_plots:
 # 2. Currently Planted on Farm (Active Batches)
 # ------------------------------------------------------------------------------
 planted:
-  - { crop: Unionion, day: 7, count: 7 }
   - { crop: Cucumble, day: 8, count: 3 }
-  - { crop: Dress Lettuce, day: 8, count: 1 }
-  - { crop: Stellar Wheat, day: 8, count: 1 }
   - { crop: Unionion, day: 8, count: 1 }
+  
   - { crop: Dress Lettuce, day: 9, count: 7 }
-  - { crop: Nemean Tomato, day: 9, count: 3 }
+  - { crop: Nemean Tomato, day: 9, count: 6 }
   - { crop: Stellar Wheat, day: 9, count: 6 }
+
+  - { crop: Dress Lettuce, day: 10, count: 6 }
+  - { crop: Tingle Radish, day: 10, count: 2 }
+  - { crop: Unionion, day: 10, count: 1 }
 
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
 # ------------------------------------------------------------------------------
 seed_stock:
   # Lethe
-  Cucumble:                98 # +43.7 G/d
-  Unionion (Lethe):        44 # +21.7 G/d
-  Dress Lettuce:           70 # +15.0 G/d
+  Cucumble:                99 # +43.7 G/d
+  Unionion (Lethe):        50 # +21.7 G/d
+  Dress Lettuce:           99 # +15.0 G/d
   Curry Herbs (Lethe):     50 # +13.3 G/d (Cave)
   Carrop (Lethe):          50 # +10.0 G/d
   Stellar Wheat:           99 # +7.5 G/d
