@@ -2,21 +2,21 @@
 # Harvestella Planting Optimizer Configuration: Spring
 # ==============================================================================
 
-current_day: 11
-wallet_gold: 5460
+current_day: 15
+wallet_gold: 3120
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
 # 1. Farm & Biome Plot Capacities
 # Usable plots = Physical plots (farm_level * 49) - Reserved plots
 # ------------------------------------------------------------------------------
-farm_level: 1         # Renovator level (each level adds 49 plots)
+farm_level: 2         # Renovator level (each level adds 49 plots)
 waterside_plots: 0   # Biome capacity (default: 81)
 cave_plots: 0        # Biome capacity (default: 81)
 
 # Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
 reserve_plots:
-  farm: 20
+  farm: 37
   waterside: 0
   cave: 0
 
@@ -25,24 +25,24 @@ reserve_plots:
 # ------------------------------------------------------------------------------
 planted:
   - { crop: Cucumble, day: 8, count: 3 }
-  - { crop: Unionion, day: 8, count: 1 }
-  
-  - { crop: Dress Lettuce, day: 9, count: 7 }
   - { crop: Nemean Tomato, day: 9, count: 6 }
-  - { crop: Stellar Wheat, day: 9, count: 6 }
-
-  - { crop: Dress Lettuce, day: 10, count: 6 }
-  - { crop: Tingle Radish, day: 10, count: 2 }
-  - { crop: Unionion, day: 10, count: 1 }
+  - { crop: Cucumble, day: 11, count: 11 }
+  - { crop: Nemean Tomato, day: 12, count: 3 }
+  - { crop: Cucumble, day: 13, count: 6 }
+  - { crop: Dress Lettuce, day: 13, count: 11 }
+  - { crop: Nemean Tomato, day: 13, count: 10 }
+  - { crop: Stellar Wheat, day: 13, count: 4 }
+  - { crop: Strawbuddy, day: 13, count: 2 }
+  - { crop: Cucumble, day: 14, count: 5 }
 
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
 # ------------------------------------------------------------------------------
 seed_stock:
   # Lethe
-  Cucumble:                99 # +43.7 G/d
+  Cucumble:                77 # +43.7 G/d
   Unionion (Lethe):        50 # +21.7 G/d
-  Dress Lettuce:           99 # +15.0 G/d
+  Dress Lettuce:           93 # +15.0 G/d
   Curry Herbs (Lethe):     50 # +13.3 G/d (Cave)
   Carrop (Lethe):          50 # +10.0 G/d
   Stellar Wheat:           99 # +7.5 G/d
