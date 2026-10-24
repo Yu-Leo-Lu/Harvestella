@@ -2,21 +2,21 @@
 # Harvestella Planting Optimizer Configuration: Spring
 # ==============================================================================
 
-current_day: 15
-wallet_gold: 3120
+current_day: 17
+wallet_gold: 4975
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
 # 1. Farm & Biome Plot Capacities
 # Usable plots = Physical plots (farm_level * 49) - Reserved plots
 # ------------------------------------------------------------------------------
-farm_level: 2         # Renovator level (each level adds 49 plots)
+farm_level: 3         # Renovator level (each level adds 49 plots)
 waterside_plots: 0   # Biome capacity (default: 81)
 cave_plots: 0        # Biome capacity (default: 81)
 
 # Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
 reserve_plots:
-  farm: 37
+  farm: 49
   waterside: 0
   cave: 0
 
@@ -29,12 +29,11 @@ planted:
   - { crop: Cucumble, day: 11, count: 11 }
   - { crop: Nemean Tomato, day: 12, count: 3 }
   - { crop: Cucumble, day: 13, count: 6 }
-  - { crop: Dress Lettuce, day: 13, count: 11 }
   - { crop: Nemean Tomato, day: 13, count: 10 }
-  - { crop: Stellar Wheat, day: 13, count: 4 }
   - { crop: Strawbuddy, day: 13, count: 2 }
   - { crop: Cucumble, day: 14, count: 5 }
-
+  - { crop: Unionion, day: 15, count: 15 }
+  
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
 # ------------------------------------------------------------------------------
@@ -52,7 +51,7 @@ seed_stock:
   Nectarcane (Nemea):      10 # +38.0 G/d (Waterside)
   Strawbuddy:              99 # +35.8 G/d
   Tingle Radish:           99 # +35.0 G/d
-  Unionion (Nemea):        99 # +30.0 G/d
+  Unionion (Nemea):        84 # +30.0 G/d
   Nemean Tomato:           99 # +22.0 G/d
   Carrop (Nemea):          99 # +20.0 G/d
 
