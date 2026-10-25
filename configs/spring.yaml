@@ -2,15 +2,15 @@
 # Harvestella Planting Optimizer Configuration: Spring
 # ==============================================================================
 
-current_day: 17
-wallet_gold: 4975
+current_day: 20
+wallet_gold: 11980
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
 # 1. Farm & Biome Plot Capacities
 # Usable plots = Physical plots (farm_level * 49) - Reserved plots
 # ------------------------------------------------------------------------------
-farm_level: 3         # Renovator level (each level adds 49 plots)
+farm_level: 3        # Renovator level (each level adds 49 plots)
 waterside_plots: 0   # Biome capacity (default: 81)
 cave_plots: 0        # Biome capacity (default: 81)
 
@@ -25,15 +25,17 @@ reserve_plots:
 # ------------------------------------------------------------------------------
 planted:
   - { crop: Cucumble, day: 8, count: 3 }
-  - { crop: Nemean Tomato, day: 9, count: 6 }
   - { crop: Cucumble, day: 11, count: 11 }
   - { crop: Nemean Tomato, day: 12, count: 3 }
   - { crop: Cucumble, day: 13, count: 6 }
   - { crop: Nemean Tomato, day: 13, count: 10 }
   - { crop: Strawbuddy, day: 13, count: 2 }
   - { crop: Cucumble, day: 14, count: 5 }
-  - { crop: Unionion, day: 15, count: 15 }
-  
+  - { crop: Strawbuddy, day: 17, count: 22 }
+  - { crop: Tingle Radish, day: 17, count: 6 }
+  - { crop: Strawbuddy, day: 18, count: 16 }
+  - { crop: Unionion, day: 19, count: 14 }
+
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
 # ------------------------------------------------------------------------------
@@ -49,11 +51,11 @@ seed_stock:
 
   # Nemea
   Nectarcane (Nemea):      10 # +38.0 G/d (Waterside)
-  Strawbuddy:              99 # +35.8 G/d
+  Strawbuddy:              83 # +35.8 G/d
   Tingle Radish:           99 # +35.0 G/d
-  Unionion (Nemea):        84 # +30.0 G/d
+  Unionion (Nemea):        70 # +30.0 G/d
   Nemean Tomato:           99 # +22.0 G/d
-  Carrop (Nemea):          99 # +20.0 G/d
+  Carrop (Nemea):          98 # +20.0 G/d
 
   # Shatolla
   Honey Flower:            99 # +41.7 G/d (Waterside)
@@ -71,6 +73,6 @@ seed_stock:
 unlocked_towns:
   Lethe: true
   Nemea: true
-  Shatolla: false
+  Shatolla: true
   Argene: false
   Abandoned Eden: false
