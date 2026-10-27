@@ -2,8 +2,8 @@
 # Harvestella Planting Optimizer Configuration: Spring
 # ==============================================================================
 
-current_day: 25
-wallet_gold: 940
+current_day: 26
+wallet_gold: 150
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3,
 # Usable plots = Physical plots (farm_level * 49) - Reserved plots
 # ------------------------------------------------------------------------------
 farm_level: 4         # Renovator level (each level adds 49 plots)
-waterside_plots: 0   # Biome capacity (default: 81)
+waterside_plots: 81   # Biome capacity (default: 81)
 cave_plots: 0        # Biome capacity (default: 81)
 
 # Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
@@ -27,16 +27,17 @@ planted:
   - { crop: Cucumble, day: 8, count: 3 }
   - { crop: Cucumble, day: 11, count: 11 }
   - { crop: Cucumble, day: 13, count: 6 }
-  - { crop: Strawbuddy, day: 13, count: 2 }
   - { crop: Cucumble, day: 14, count: 5 }
   - { crop: Strawbuddy, day: 17, count: 22 }
   - { crop: Strawbuddy, day: 18, count: 16 }
   - { crop: Tingle Radish, day: 22, count: 23 }
   - { crop: Unionion, day: 23, count: 10 }
-
-  - { crop: Tingle Radish, day: 25, count: 28 }
-  - { crop: Dress Lettuce, day: 25, count: 8 }
   - { crop: Carrop, day: 25, count: 2 }
+  - { crop: Dress Lettuce, day: 25, count: 8 }
+  - { crop: Tingle Radish, day: 25, count: 28 }
+
+  - { crop: Tingle Radish, day: 26, count: 23 }
+  - { crop: Carrop, day: 26, count: 12 }
 
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
