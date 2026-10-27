@@ -2,8 +2,8 @@
 # Harvestella Planting Optimizer Configuration: Spring
 # ==============================================================================
 
-current_day: 26
-wallet_gold: 150
+current_day: 27
+wallet_gold: 13160
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -30,14 +30,10 @@ planted:
   - { crop: Cucumble, day: 14, count: 5 }
   - { crop: Strawbuddy, day: 17, count: 22 }
   - { crop: Strawbuddy, day: 18, count: 16 }
-  - { crop: Tingle Radish, day: 22, count: 23 }
-  - { crop: Unionion, day: 23, count: 10 }
-  - { crop: Carrop, day: 25, count: 2 }
   - { crop: Dress Lettuce, day: 25, count: 8 }
   - { crop: Tingle Radish, day: 25, count: 28 }
-
-  - { crop: Tingle Radish, day: 26, count: 23 }
   - { crop: Carrop, day: 26, count: 12 }
+  - { crop: Tingle Radish, day: 26, count: 23 }
 
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
