@@ -2,8 +2,8 @@
 # Harvestella Planting Optimizer Configuration: Summer
 # ==============================================================================
 
-current_day: 2
-wallet_gold: 2520
+current_day: 3
+wallet_gold: 8760
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ seed_stock:
   Grass:                   99 # +2.5 G/d
 
   # Nemea
-  Nectarcane (Nemea):      10  # +38.0 G/d (Waterside)
+  Nectarcane (Nemea):      10 # +38.0 G/d (Waterside)
   Nemean Tomato:           99 # +22.0 G/d
   Carrop (Nemea):          99 # +20.0 G/d
 
