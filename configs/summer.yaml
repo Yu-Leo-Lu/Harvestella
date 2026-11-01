@@ -2,8 +2,8 @@
 # Harvestella Planting Optimizer Configuration: Summer
 # ==============================================================================
 
-current_day: 15
-wallet_gold: 99690
+current_day: 16
+wallet_gold: 116290
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -32,21 +32,19 @@ planted:
   - { crop: Seatide Garlic, day: 10, count: 25 }
   - { crop: Morrocorn, day: 12, count: 18 }
   - { crop: Seatide Garlic, day: 12, count: 6 }
-  - { crop: Carrop, day: 14, count: 52 }
   - { crop: Morrocorn, day: 14, count: 35 }
   - { crop: Seatide Garlic, day: 14, count: 24 }
-
   - { crop: Dress Lettuce, day: 15, count: 16 }
-  - { crop: Stellar Wheat, day: 15, count: 33 }
   - { crop: Grass, day: 15, count: 3 }
+  - { crop: Stellar Wheat, day: 15, count: 33 }
 
-  - { crop: Islet Watermelon, day: 3, count: 3 }
   - { crop: Islet Watermelon, day: 4, count: 2 }
   - { crop: Islet Watermelon, day: 5, count: 5 }
   - { crop: Islet Watermelon, day: 6, count: 15 }
   - { crop: Nectarcane, day: 7, count: 6 }
   - { crop: Honey Flower, day: 11, count: 43 }
   - { crop: Islet Watermelon, day: 13, count: 3 }
+  - { crop: Islet Watermelon, day: 15, count: 3 }
 
   - { crop: Revol Pepper, day: 1, count: 12 }
   - { crop: Revol Pepper, day: 10, count: 69 }
@@ -69,7 +67,7 @@ seed_stock:
   Carrop (Nemea):          37 # +20.0 G/d
 
   # Shatolla
-  Islet Watermelon:        96 # +175.0 G/d (Waterside)
+  Islet Watermelon:        93 # +175.0 G/d (Waterside)
   Seatide Garlic:          69 # +58.3 G/d
   Morrocorn (Shatolla):    85 # +50.0 G/d
   Honey Flower:            56 # +41.7 G/d (Waterside)
