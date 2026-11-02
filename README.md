@@ -25,61 +25,58 @@ In *Harvestella*, deciding what seeds to buy is not a simple matter of looking u
 
 ---
 
-### The Dual Economic Engines: Capital Compounding vs. Land Efficiency
+### How Players Usually Plant (And Why Intuition Fails)
 
-When evaluating crops, players encounter two fundamentally different economic metrics:
+Without an optimizer, managing a farm across a 30-day season breaks down on two fronts: **daily operational friction** and **suboptimal buying heuristics**.
 
-| Economic Engine | Metric | What It Measures | In-Game Role |
-| :--- | :---: | :--- | :--- |
-| Capital Compounding | Cash Compound Rate (%/day) | Return on Gold ($\text{Gold earned per Gold spent}$) | The Growth Engine: When starting out with low gold (Day 1, 1,000 G), you cannot afford expensive seeds. High-compound crops (e.g. Dress Lettuce at $+15.6\%/\text{d}$) multiply your wallet exponentially ($W_t = W_0 (1+r)^t$) over short 1–2 day sprints, rapidly building capital for farm expansions. |
-| Land Efficiency | Daily NQ Profit (G/d) | Return on Land ($\text{Gold earned per Plot occupied}$) | The Revenue Engine: Once your wallet has enough cash to fill all available plots, idle gold in your pocket earns 0% return. You want every square foot of dirt generating maximum raw gold per day. |
+#### 1. The Daily Mental Overhead & Vendor Runaround
+In a typical play session, simply figuring out what to buy becomes an exhausting chore:
+- **Counting & Memorizing Plots**: Every morning, you harvest ready crops and manually count open tiles across three separate biomes (`Farm`, `Waterside`, `Cave`) around partially grown repeat crops and fruit trees—then try to keep those numbers in your head through dungeons and story missions.
+- **The Shop Stock Surprise**: When you finally visit a general store at the end of an adventure day, you often discover the vendor doesn't have enough seeds left in stock (or the crop's growth time will miss the Day 30 Quietus deadline).
+- **The Back-and-Forth Loop**: You end up bouncing between your farm, multiple town vendors (Lethe, Nemea, Shatolla, Argene), and a community spreadsheet—frantically cross-checking open plots, remaining store stock, growth days, and wallet cash on the fly.
 
----
+#### 2. The Single-Seed Traps at the Shop Counter
+Even when you stand at a vendor with a spreadsheet open, you cannot mentally solve a multi-variable allocation problem on the spot. Players naturally fall back on trying to buy a single go-to crop—and as shown in a **Summer benchmark** (`8,000 G` budget, `70` Farm plots, with `20` Morrocorn remaining in shop stock), every single-crop playbook hits a wall:
 
-### The Single-Seed Traps: Why Intuition Fails
+- **Playbook A: All-In on the Highest-Profit Crop (The Capital Starvation Trap)**
+  - *Player Intuition (Chasing Land Efficiency — `Daily NQ Profit`, G/d)*: Sort the spreadsheet by raw daily profit per plot, pick the #1 crop (**Seatide Garlic** at `+58.3 G/d`), and spend all your gold on it.
+  - *Why It Fails*: At `650 G` per seed, an `8,000 G` budget buys only `12` seeds (spending `7,800 G`). You maximize profit *per seed*, but **58 of your 70 farm plots sit completely empty**, earning only **+700.0 G/d**.
 
-To see why simple rules of thumb fail, consider a standard benchmark scenario entering Summer (Season 2, with 8,000 G saved from Spring):
-- Season & Timing: Summer, Day 1 (Full 30-day Quietus planning horizon)
-- Starting Budget: 8,000 G (accumulated from Spring harvests)
-- Available Land: 70 standard Farm plots (Level 1 farm)
-- Town Unlocks: Lethe and Shatolla unlocked
+- **Playbook B: Spamming Cheap, Fast Crops (The Land Bottleneck Trap)**
+  - *Player Intuition (Chasing Capital Velocity — `Cash Compound Rate`, %/day)*: Realizing expensive seeds drain the wallet too fast, pivot to cheap, fast-turnaround seeds (**Dress Lettuce** at `55 G`, `+15.62%/d` compound rate) so every single plot is planted.
+  - *Why It Fails*: Filling all `70` plots costs only `70 × 55 G = 3,850 G`. Your farm is 100% full, but **4,150 G sits idle in your wallet** earning `0%` return. Total daily profit stalls at **+1,050.0 G/d**.
 
-Most players follow simple greedy heuristics and fall into one of two traps:
-
-#### Trap A: Greedy by Raw Daily Profit (The Capital Starvation Trap)
-- *"Seatide Garlic yields +58.3 G/d, the highest profit of any Summer farm crop. I should spend all my money on Garlic."*
-- At 650 G per seed, an 8,000 G budget buys only 12 seeds (spending 7,800 G).
-- Result: You occupy only 12 plots while 58 farm plots sit empty, earning only +700.0 G/d.
-
-#### Trap B: Greedy by Compound Velocity (The Land Bottleneck Trap)
-- *"Dress Lettuce doubles money fastest (+15.62%/d). I should buy only Lettuce."*
-- At 55 G per seed, filling all 70 plots costs only $70 \times 55 = 3,850\text{ G}$.
-- Result: All plots are occupied, but 4,150 G sits idle in your wallet earning 0% return. Total daily profit is only +1,050.0 G/d.
+- **Playbook C: Buying Out a Mid-Cost Crop (The Vendor Stock Cap Trap)**
+  - *Player Intuition*: Pick a balanced crop with strong daily profit and compound rate (**Morrocorn** at `200 G`, `+50.0 G/d`, `+14.87%/d`) and buy out the store.
+  - *Why It Fails*: The vendor only has `20` Morrocorn seeds left in stock (spending `4,000 G`). Once the shop sells out, **50 farm plots and 4,000 G sit completely idle**, capping daily profit at **+1,000.0 G/d**.
 
 ---
 
-### The Solution: How the Optimizer Harmonizes Both Engines
+### The Solution: How the MILP Optimizer Solves Both
 
-The true optimal solution is an **inflection point** that balances both forces:
+Instead of memorizing plot counts across dungeons or guessing between single-crop extremes, the MILP optimizer takes your exact farm state (`configs/<season>.yaml`) and outputs a complete, vendor-by-vendor daily shopping list before you ever leave your farm.
 
+Economically, it finds the exact **inflection point** across Land Efficiency (`G/d`), Capital Compounding (`%/day`), and Vendor Stock Caps:
 1. **Plot-Filling**: Uses cheap, high-compounding crops (like Dress Lettuce) to ensure no farm tile sits idle.
-2. **Marginal Upgrading**: Systematically upgrades individual plots to higher-margin crops (like Morrocorn @ 200 G seed, +50 G/d) until both land and gold are exhausted.
+2. **Marginal Upgrading**: Systematically upgrades individual plots to higher-margin crops (like Morrocorn and Seatide Garlic) across all available vendors until both land and gold are fully utilized.
 
 > [!IMPORTANT]
 > ### 🌾 The Power of Balanced Allocation (Summer 8,000 G Benchmark)
 > 
-> Look at what happens to your plots and cash across all three strategies on the same 70 Farm plots:
+> Look at what happens to your plots and cash across single-crop strategies versus the MILP blend on the same 70 Farm plots (`8,000 G` budget, `20` Morrocorn in store stock):
 > 
-> | Strategy | Farm Plots Occupied | Gold Capital Spent | Daily Profit | What Went Wrong? |
-> | :--- | :---: | :---: | :---: | :--- |
-> | Pure Garlic | 12 / 70 (17.1%) | 7,800 G / 8,000 G | +700.0 G/d | Capital Starvation: 650 G seeds deplete cash; 58 plots sit empty! |
-> | Pure Lettuce | 70 / 70 (100%) | 3,850 G / 8,000 G | +1,050.0 G/d | Land Bottleneck: Farm is full, but 4,150 G sits idle in your pocket. |
-> | **MILP Optimizer** | **69 / 70 (98.6%)** | **8,000 G / 8,000 G (100%)** | **+2,050.0 G/d** | **Optimal Sweet Spot**: Nearly full farm, 100% working capital! |
+> | Strategy | Daily NQ Profit | Compound Rate | Farm Plots Occupied | Gold Capital Spent | Total Daily Profit | What Went Wrong? |
+> | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+> | Pure Garlic | +58.3 G/d | +6.35%/d | 12 / 70 (17.1%) | 7,800 G / 8,000 G | +700.0 G/d | Capital Starvation: 650 G seeds deplete cash; 58 plots sit empty! |
+> | Pure Morrocorn | +50.0 G/d | +14.87%/d | 20 / 70 (28.6%) | 4,000 G / 8,000 G | +1,000.0 G/d | Vendor Stock Cap: Store runs out at 20 seeds; 50 plots & 4,000 G sit idle! |
+> | Pure Lettuce | +15.0 G/d | +15.62%/d | 70 / 70 (100%) | 3,850 G / 8,000 G | +1,050.0 G/d | Land Bottleneck: Farm is full, but 4,150 G sits idle in your pocket. |
+> | **MILP Optimizer** | | | **70 / 70 (100%)** | **7,940 G / 8,000 G (99.3%)** | **+1,836.7 G/d** | **Optimal Sweet Spot**: 100% full farm, 99.3% working capital! |
 > 
-> The optimizer proposes **29 Morrocorn** + **40 Dress Lettuce**:
-> - Spending exactly 8,000 G (0 G left idle).
-> - Planting 69 of 70 plots (only 1 tile left open).
-> - Delivering **+2,050.0 G/day** — nearly 3× the profit of Garlic (+192.9%) and double the profit of Lettuce (+95.2%)!
+> **MILP Optimizer Crop Selection & Breakdown**:
+> - **20 × Morrocorn** (`200 G` each -> `4,000 G` spent, `+1,000.0 G/d`): Buys out all remaining high-efficiency Morrocorn stock first.
+> - **2 × Seatide Garlic** (`650 G` each -> `1,300 G` spent, `+116.7 G/d`): Upgrades 2 plots into high-margin Garlic using excess capital.
+> - **48 × Dress Lettuce** (`55 G` each -> `2,640 G` spent, `+720.0 G/d`): Fills all remaining 48 open farm plots so zero dirt sits idle.
+> - **Total Result**: Plants **70 / 70 plots (100%)**, deploys **7,940 G / 8,000 G (99.3%)**, and generates **+1,836.7 G/day** — outperforming Pure Garlic by **+162.4%** (`+1,136.7 G/d`), Pure Morrocorn by **+83.7%** (`+836.7 G/d`), and Pure Lettuce by **+74.9%** (`+786.7 G/d`)!
 
 ---
 
