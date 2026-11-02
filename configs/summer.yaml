@@ -2,8 +2,8 @@
 # Harvestella Planting Optimizer Configuration: Summer
 # ==============================================================================
 
-current_day: 16
-wallet_gold: 116290
+current_day: 19
+wallet_gold: 123030
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ cave_plots: 81        # Biome capacity (default: 81)
 
 # Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
 reserve_plots:
-  farm: 8
+  farm: 11
   waterside: 4
   cave: 0
 
@@ -29,25 +29,21 @@ planted:
   - { crop: Bellhop, day: 6, count: 1 }
   - { crop: Nemean Tomato, day: 9, count: 5 }
   - { crop: Shatollan Paprika, day: 9, count: 3 }
-  - { crop: Seatide Garlic, day: 10, count: 25 }
-  - { crop: Morrocorn, day: 12, count: 18 }
-  - { crop: Seatide Garlic, day: 12, count: 6 }
-  - { crop: Morrocorn, day: 14, count: 35 }
   - { crop: Seatide Garlic, day: 14, count: 24 }
-  - { crop: Dress Lettuce, day: 15, count: 16 }
-  - { crop: Grass, day: 15, count: 3 }
-  - { crop: Stellar Wheat, day: 15, count: 33 }
+  - { crop: Morrocorn, day: 16, count: 40 }
+  - { crop: Eden Rice, day: 17, count: 15 }
+  - { crop: Shatollan Paprika, day: 17, count: 37 }
+  - { crop: Carrop, day: 18, count: 6 }
+  - { crop: Seatide Garlic, day: 18, count: 32 }
 
-  - { crop: Islet Watermelon, day: 4, count: 2 }
-  - { crop: Islet Watermelon, day: 5, count: 5 }
-  - { crop: Islet Watermelon, day: 6, count: 15 }
-  - { crop: Nectarcane, day: 7, count: 6 }
-  - { crop: Honey Flower, day: 11, count: 43 }
   - { crop: Islet Watermelon, day: 13, count: 3 }
   - { crop: Islet Watermelon, day: 15, count: 3 }
+  - { crop: Islet Watermelon, day: 16, count: 2 }
+  - { crop: Islet Watermelon, day: 17, count: 54 }
+  - { crop: Islet Watermelon, day: 18, count: 15 }
 
-  - { crop: Revol Pepper, day: 1, count: 12 }
   - { crop: Revol Pepper, day: 10, count: 69 }
+  - { crop: Revol Pepper, day: 17, count: 12 }
 
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
@@ -64,19 +60,19 @@ seed_stock:
   # Nemea
   Nectarcane (Nemea):      10 # +38.0 G/d (Waterside)
   Nemean Tomato:           99 # +22.0 G/d
-  Carrop (Nemea):          37 # +20.0 G/d
+  Carrop (Nemea):          31 # +20.0 G/d
 
   # Shatolla
-  Islet Watermelon:        93 # +175.0 G/d (Waterside)
-  Seatide Garlic:          69 # +58.3 G/d
-  Morrocorn (Shatolla):    85 # +50.0 G/d
+  Islet Watermelon:        22 # +175.0 G/d (Waterside)
+  Seatide Garlic:          37 # +58.3 G/d
+  Morrocorn (Shatolla):    45 # +50.0 G/d
   Honey Flower:            56 # +41.7 G/d (Waterside)
   Nectarcane (Shatolla):   99 # +38.0 G/d (Waterside)
-  Shatollan Paprika:       99 # +35.2 G/d
+  Shatollan Paprika:       62 # +35.2 G/d
   Bellhop:                 99 # +17.3 G/d
 
   # Argene
-  Revol Pepper:            99 # +47.8 G/d (Cave)
+  Revol Pepper:            87 # +47.8 G/d (Cave)
   Sudor Pepper:            99 # +38.9 G/d (Cave)
   Curry Herbs (Argene):    99 # +18.3 G/d (Cave)
 
@@ -91,4 +87,4 @@ unlocked_towns:
   Nemea: true
   Shatolla: true
   Argene: true
-  Abandoned Eden: false
+  Abandoned Eden: true
