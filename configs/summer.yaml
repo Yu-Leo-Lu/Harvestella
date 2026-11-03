@@ -2,8 +2,8 @@
 # Harvestella Planting Optimizer Configuration: Summer
 # ==============================================================================
 
-current_day: 19
-wallet_gold: 123030
+current_day: 20
+wallet_gold: 99185
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -27,14 +27,13 @@ planted:
   - { crop: Shatollan Paprika, day: 1, count: 70 }
   - { crop: Bellhop, day: 5, count: 1 }
   - { crop: Bellhop, day: 6, count: 1 }
-  - { crop: Nemean Tomato, day: 9, count: 5 }
   - { crop: Shatollan Paprika, day: 9, count: 3 }
   - { crop: Seatide Garlic, day: 14, count: 24 }
   - { crop: Morrocorn, day: 16, count: 40 }
   - { crop: Eden Rice, day: 17, count: 15 }
   - { crop: Shatollan Paprika, day: 17, count: 37 }
-  - { crop: Carrop, day: 18, count: 6 }
   - { crop: Seatide Garlic, day: 18, count: 32 }
+  - { crop: Carrop, day: 19, count: 11 }
 
   - { crop: Islet Watermelon, day: 13, count: 3 }
   - { crop: Islet Watermelon, day: 15, count: 3 }
@@ -60,7 +59,7 @@ seed_stock:
   # Nemea
   Nectarcane (Nemea):      10 # +38.0 G/d (Waterside)
   Nemean Tomato:           99 # +22.0 G/d
-  Carrop (Nemea):          31 # +20.0 G/d
+  Carrop (Nemea):          20 # +20.0 G/d
 
   # Shatolla
   Islet Watermelon:        22 # +175.0 G/d (Waterside)
