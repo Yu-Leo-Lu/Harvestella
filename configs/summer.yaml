@@ -2,8 +2,8 @@
 # Harvestella Planting Optimizer Configuration: Summer
 # ==============================================================================
 
-current_day: 20
-wallet_gold: 99185
+current_day: 22
+wallet_gold: 120180
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ cave_plots: 81        # Biome capacity (default: 81)
 
 # Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
 reserve_plots:
-  farm: 11
+  farm: 13
   waterside: 4
   cave: 0
 
@@ -28,12 +28,10 @@ planted:
   - { crop: Bellhop, day: 5, count: 1 }
   - { crop: Bellhop, day: 6, count: 1 }
   - { crop: Shatollan Paprika, day: 9, count: 3 }
-  - { crop: Seatide Garlic, day: 14, count: 24 }
-  - { crop: Morrocorn, day: 16, count: 40 }
-  - { crop: Eden Rice, day: 17, count: 15 }
   - { crop: Shatollan Paprika, day: 17, count: 37 }
   - { crop: Seatide Garlic, day: 18, count: 32 }
-  - { crop: Carrop, day: 19, count: 11 }
+  - { crop: Morrocorn, day: 20, count: 51 }
+  - { crop: Seatide Garlic, day: 20, count: 37 }
 
   - { crop: Islet Watermelon, day: 13, count: 3 }
   - { crop: Islet Watermelon, day: 15, count: 3 }
@@ -49,29 +47,29 @@ planted:
 # ------------------------------------------------------------------------------
 seed_stock:
   # Lethe
-  Morrocorn (Lethe):       11 # +42.5 G/d
-  Dress Lettuce:           83 # +15.0 G/d
+  Morrocorn (Lethe):       50 # +42.5 G/d
+  Dress Lettuce:           99 # +15.0 G/d
   Curry Herbs (Lethe):     50 # +13.3 G/d (Cave)
   Carrop (Lethe):          50 # +10.0 G/d
-  Stellar Wheat:           66 # +7.5 G/d
-  Grass:                   97 # +2.5 G/d
+  Stellar Wheat:           99 # +7.5 G/d
+  Grass:                   99 # +2.5 G/d
 
   # Nemea
   Nectarcane (Nemea):      10 # +38.0 G/d (Waterside)
   Nemean Tomato:           99 # +22.0 G/d
-  Carrop (Nemea):          20 # +20.0 G/d
+  Carrop (Nemea):          99 # +20.0 G/d
 
   # Shatolla
-  Islet Watermelon:        22 # +175.0 G/d (Waterside)
-  Seatide Garlic:          37 # +58.3 G/d
-  Morrocorn (Shatolla):    45 # +50.0 G/d
-  Honey Flower:            56 # +41.7 G/d (Waterside)
+  Islet Watermelon:        99 # +175.0 G/d (Waterside)
+  Seatide Garlic:          99 # +58.3 G/d
+  Morrocorn (Shatolla):    99 # +50.0 G/d
+  Honey Flower:            99 # +41.7 G/d (Waterside)
   Nectarcane (Shatolla):   99 # +38.0 G/d (Waterside)
-  Shatollan Paprika:       62 # +35.2 G/d
+  Shatollan Paprika:       99 # +35.2 G/d
   Bellhop:                 99 # +17.3 G/d
 
   # Argene
-  Revol Pepper:            87 # +47.8 G/d (Cave)
+  Revol Pepper:            99 # +47.8 G/d (Cave)
   Sudor Pepper:            99 # +38.9 G/d (Cave)
   Curry Herbs (Argene):    99 # +18.3 G/d (Cave)
 
