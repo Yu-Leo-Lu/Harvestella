@@ -2,21 +2,21 @@
 # Harvestella Planting Optimizer Configuration: Summer
 # ==============================================================================
 
-current_day: 23
-wallet_gold: 97670
+current_day: 25
+wallet_gold: 72065
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
 # 1. Farm & Biome Plot Capacities
 # Usable plots = Physical plots (farm_level * 49) - Reserved plots
 # ------------------------------------------------------------------------------
-farm_level: 5         # Renovator level (each level adds 49 plots)
+farm_level: 6         # Renovator level (each level adds 49 plots)
 waterside_plots: 81   # Biome capacity (default: 81)
 cave_plots: 81        # Biome capacity (default: 81)
 
 # Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
 reserve_plots:
-  farm: 14
+  farm: 18
   waterside: 4
   cave: 0
 
@@ -28,11 +28,13 @@ planted:
   - { crop: Bellhop, day: 6, count: 1 }
   - { crop: Shatollan Paprika, day: 9, count: 3 }
   - { crop: Shatollan Paprika, day: 17, count: 37 }
-  - { crop: Seatide Garlic, day: 18, count: 32 }
-  - { crop: Morrocorn, day: 20, count: 51 }
   - { crop: Seatide Garlic, day: 20, count: 37 }
-  - { crop: Carrop, day: 22, count: 16 }
   - { crop: Morrocorn, day: 22, count: 53 }
+  - { crop: Carrop, day: 24, count: 4 }
+  - { crop: Eden Rice, day: 24, count: 15 }
+  - { crop: Grass, day: 24, count: 20 }
+  - { crop: Nemean Tomato, day: 24, count: 6 }
+  - { crop: Seatide Garlic, day: 24, count: 99 }
 
   - { crop: Islet Watermelon, day: 13, count: 3 }
   - { crop: Islet Watermelon, day: 15, count: 3 }
@@ -58,11 +60,11 @@ seed_stock:
   # Nemea
   Nectarcane (Nemea):      10 # +38.0 G/d (Waterside)
   Nemean Tomato:           99 # +22.0 G/d
-  Carrop (Nemea):          83 # +20.0 G/d
+  Carrop (Nemea):          63 # +20.0 G/d
 
   # Shatolla
   Islet Watermelon:        99 # +175.0 G/d (Waterside)
-  Seatide Garlic:          99 # +58.3 G/d
+  Seatide Garlic:          0  # +58.3 G/d
   Morrocorn (Shatolla):    46 # +50.0 G/d
   Honey Flower:            99 # +41.7 G/d (Waterside)
   Nectarcane (Shatolla):   99 # +38.0 G/d (Waterside)
