@@ -38,6 +38,9 @@ seed_stock:
   Argene Cabbage: 99      # +25.0 G/d
   Lumpotato (Argene): 99  # +13.3 G/d
 
+  # Monster Drop
+  Nitro Pineapple: 0      # +0.8 G/d (Cave)
+
 # ------------------------------------------------------------------------------
 # 4. Town Story Progression (set to false if vendor is not yet unlocked)
 # ------------------------------------------------------------------------------

@@ -315,7 +315,7 @@ def analyze_csv_file(
             rate_display = f"+{float(rate_val):.2f}%"
         elif max_h_display == "Tree":
             rate_display = "Tree"
-        elif cost_val is None:
+        elif cost_val is None or cost_val <= 0:
             rate_display = "Free Drop"
         else:
             rate_display = "-"

@@ -3,7 +3,7 @@
 # ==============================================================================
 
 current_day: 1
-wallet_gold: 236090
+wallet_gold: 662825
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ cave_plots: 81        # Biome capacity (default: 81)
 
 # Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
 reserve_plots:
-  farm: 30
+  farm: 19
   waterside: 4
   cave: 0
 
@@ -24,7 +24,15 @@ reserve_plots:
 # 2. Currently Planted on Farm (Active Batches)
 # ------------------------------------------------------------------------------
 planted:
-  # - { crop: Unionion, day: 1, count: 10 }
+  - { crop: Stellar Wheat, day: 1, count: 9 }
+  - { crop: Dress Lettuce, day: 1, count: 9 }
+  - { crop: Unionion, day: 1, count: 6 }
+  - { crop: Lumpotato, day: 1, count: 27 }
+  - { crop: Royal Eggplant, day: 1, count: 6 }
+  - { crop: Rainbow Bean, day: 1, count: 9 }
+  - { crop: Lantern Pumpkin, day: 1, count: 2 }
+  
+  - { crop: Unionion, day: 1, count: 10 }
 
 # ------------------------------------------------------------------------------
 # 3. Store Seed Inventory (Remaining Vendor Stock)
@@ -56,6 +64,9 @@ seed_stock:
 
   # Abandoned Eden
   Eden Rice: 99           # +5.0 G/d
+
+  # Monster Drop
+  Nitro Pineapple: 0      # +0.8 G/d (Cave)
 
 # ------------------------------------------------------------------------------
 # 4. Town Story Progression (set to false if vendor is not yet unlocked)

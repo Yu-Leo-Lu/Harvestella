@@ -358,7 +358,7 @@ def roll_config_to_day(config_path: Path, target_day: int) -> None:
                     cost_val = float(cost_str)
                 except ValueError:
                     continue
-                if cost_val <= 0:
+                if cost_val < 0:
                     continue
                 crop_meta[(c_name, town)] = {
                     "name": c_name,

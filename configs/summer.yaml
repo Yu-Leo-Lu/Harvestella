@@ -74,6 +74,9 @@ seed_stock:
   # Abandoned Eden
   Eden Rice:               99 # +5.0 G/d
 
+  # Monster Drop
+  Nitro Pineapple:         0  # +0.8 G/d (Cave)
+
 # ------------------------------------------------------------------------------
 # 4. Town Story Progression (set to false if vendor is not yet unlocked)
 # ------------------------------------------------------------------------------

@@ -188,7 +188,7 @@ class OptimizationResult:
         for c in self.catalog:
             base_stock = c.stock if is_same_window else c.vendor_stock
             bought = purchased_in_target_win.get((c.name, c.town), 0)
-            rem = max(0, min(c.vendor_stock, base_stock - bought))
+            rem = max(0, base_stock - bought) if c.vendor_stock <= 0 else max(0, min(c.vendor_stock, base_stock - bought))
             key = f"{c.name} ({c.town})" if name_counts.get(c.name, 1) > 1 else c.name
             seed_stock[key] = rem
 
@@ -206,6 +206,8 @@ class OptimizationResult:
 
 def is_town_unlocked(vendor_town: str, unlocked_towns: Any) -> bool:
     """Check if the vendor town is currently unlocked (split on '/' for multi-town)."""
+    if vendor_town.strip().lower() == "monster drop":
+        return True
     towns = [t.strip() for t in vendor_town.split("/")]
     if isinstance(unlocked_towns, (list, set, tuple)):
         return any(t in unlocked_towns for t in towns)
@@ -376,7 +378,7 @@ def solve_allocation(
         except ValueError:
             continue
 
-        if cost <= 0 or nq_sale <= 0:
+        if cost < 0 or nq_sale <= 0:
             continue
 
         is_regrowth = bool(regrowth_str and regrowth_str.isdigit() and int(regrowth_str) > 0)

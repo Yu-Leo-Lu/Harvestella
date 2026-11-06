@@ -17,6 +17,7 @@ VENDOR_ORDER = {
     "abandoned eden": 4,
     "astrum helix": 5,
     "stella cradle": 6,
+    "monster drop": 7,
 }
 
 

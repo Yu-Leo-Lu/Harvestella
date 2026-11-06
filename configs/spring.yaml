@@ -66,6 +66,9 @@ seed_stock:
   Argene Cabbage:          99 # +25.0 G/d
   Curry Herbs (Argene):    99 # +18.3 G/d (Cave)
 
+  # Monster Drop
+  Nitro Pineapple:         0  # +0.8 G/d (Cave)
+
 # ------------------------------------------------------------------------------
 # 4. Town Story Progression (set to false if vendor is not yet unlocked)
 # ------------------------------------------------------------------------------
