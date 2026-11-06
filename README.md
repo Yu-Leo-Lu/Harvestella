@@ -8,15 +8,15 @@ A data-driven toolkit and Mixed-Integer Linear Programming (MILP) optimizer for 
 
 ## Bottom Line Up Front: 756,040 Grilla + Level 6 Farm (91,000 Grilla) by End of Month 2 (Summer, Year 1)
 
-By using Mixed-Integer Linear Programming (MILP) schedule to plan daily seed purchases and crop rotations, we achieved **756,040 Grilla** in liquid cash by **Quietus at the end of Summer, Year 1 (end of Month 2)** — on top of already paying for **Level 6 Farm expansions (`91,000 G` cumulative Renovator cost, 294 farm tiles)** and **Backpack Lv 3**:
+By using Mixed-Integer Linear Programming (MILP) schedule to plan daily seed purchases and crop rotations, we achieved **756,040 Grilla** in liquid cash by **Quietus at the end of Summer, Year 1 (end of Month 2)** — on top of already paying for **Level 6 Farm expansions (`91,000 G` cumulative Renovator cost, 294 farm tiles)**, **Backpack Lv 3**, and a **Max-Level Totokaku Mount**:
 
-![756,040 Grilla at End of Summer Year 1](images/20261105222120_1.jpg)
-*1. **756,040 Grilla** in liquid cash alongside **Backpack Lv 3**.*
-
-| **2. Level 6 Farm (294 Tiles) on Summer Day 30** | **3. Timestamp: End of Summer, Year 1 (Month 2 Quietus)** |
+| **1. 756,040 Grilla Liquid Cash** | **2. Timestamp: End of Summer, Year 1 (Month 2 Quietus)** |
 | :---: | :---: |
-| ![Level 6 Farm on Summer Breeze 30th, Year 1](images/20261105211722_1.jpg) | ![Save File Proof - Quietus after Summer Breeze Year 1](images/20261105223005_1.jpg) |
-| *Full-scale **Level 6 Farm (`91,000 G` cumulative upgrade cost)** on `Summer Breeze 30th Friday`.* | *Save log confirming progression right after `Summer Breeze 29th, year 1` (`Quietus 1st Saturday, year 1`).* |
+| ![756,040 Grilla at End of Summer Year 1](images/20261105222120_1.jpg) | ![Save File Proof - Quietus after Summer Breeze Year 1](images/20261105223005_1.jpg) |
+| ***756,040 Grilla** in liquid cash alongside **Backpack Lv 3**.* | *Save log confirming progression right after `Summer Breeze 29th, year 1` (`Quietus 1st Saturday, year 1`).* |
+| **3. Level 6 Farm (294 Tiles) on Summer Day 30** | **4. Max-Level Totokaku Mount on Summer Day 30** |
+| ![Level 6 Farm on Summer Breeze 30th, Year 1](images/20261105211722_1.jpg) | ![Max-Level Totokaku Mount on Summer Breeze 30th, Year 1](images/20261105211915_1.jpg) |
+| *Full-scale **Level 6 Farm (`91,000 G` cumulative upgrade cost)** on `Summer Breeze 30th Friday`.* | *Fully upgraded **Max-Level Totokaku** swimming on `Summer Breeze 30th Friday`.* |
 
 ---
 
@@ -265,8 +265,9 @@ Harvestella/
 │
 ├── images/                             # 📁 In-Game Proof & Benchmark Screenshots
 │   ├── 20261105222120_1.jpg            # 1. 756,040 Grilla wallet proof
-│   ├── 20261105211722_1.jpg            # 2. Level 6 Farm (294 tiles) on Summer Breeze 30th, Year 1
-│   └── 20261105223005_1.jpg            # 3. Year 1 Summer Quietus (end of Month 2) save proof
+│   ├── 20261105223005_1.jpg            # 2. Year 1 Summer Quietus (end of Month 2) save proof
+│   ├── 20261105211722_1.jpg            # 3. Level 6 Farm (294 tiles) on Summer Breeze 30th, Year 1
+│   └── 20261105211915_1.jpg            # 4. Max-Level Totokaku mount on Summer Breeze 30th, Year 1
 │
 ├── configs/                            # 📁 User Season Configurations (Gold, Plots, Horizons)
 │   ├── spring.yaml, summer.yaml, fall.yaml, winter.yaml
