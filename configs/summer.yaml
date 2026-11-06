@@ -2,8 +2,8 @@
 # Harvestella Planting Optimizer Configuration: Summer
 # ==============================================================================
 
-current_day: 27
-wallet_gold: 133495
+current_day: 28
+wallet_gold: 150945
 max_crop_varieties: null # Optional limit on distinct seed varieties (e.g. 2, 3, or null for unlimited)
 
 # ------------------------------------------------------------------------------
@@ -28,13 +28,12 @@ planted:
   - { crop: Bellhop, day: 6, count: 1 }
   - { crop: Shatollan Paprika, day: 9, count: 3 }
   - { crop: Shatollan Paprika, day: 17, count: 37 }
-  - { crop: Eden Rice, day: 24, count: 15 }
   - { crop: Nemean Tomato, day: 24, count: 6 }
   - { crop: Seatide Garlic, day: 24, count: 99 }
   - { crop: Grass, day: 26, count: 17 }
   - { crop: Morrocorn, day: 26, count: 96 }
+  - { crop: Eden Rice, day: 27, count: 15 }
 
-  - { crop: Islet Watermelon, day: 15, count: 3 }
   - { crop: Islet Watermelon, day: 16, count: 2 }
   - { crop: Islet Watermelon, day: 17, count: 54 }
   - { crop: Islet Watermelon, day: 18, count: 15 }
