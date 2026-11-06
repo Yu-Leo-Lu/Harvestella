@@ -2,7 +2,21 @@
 
 A data-driven toolkit and Mixed-Integer Linear Programming (MILP) optimizer for maximizing farming profits in Square Enix's Harvestella.
 
-> ⚡ **Quick Navigation**: [The Big Picture](#the-big-picture-why-crop-allocation-is-hard) • [Quick Start & Solver](#quick-start--workflow) • [Farm Expansion Benchmarks](#renovator-plot-expansion-benchmarks-levels-19) • [Data Pipeline](#1-click-data-preparation-pipeline) • [Project Architecture](#project-architecture--documentation)
+> ⚡ **Quick Navigation**: [In-Game Proof (756k G + Lv 6 Farm in Month 2)](#bottom-line-up-front-756040-grilla--level-6-farm-91000-grilla-by-end-of-month-2-summer-year-1) • [The Big Picture](#the-big-picture-why-crop-allocation-is-hard) • [Quick Start & Solver](#quick-start--workflow) • [Farm Expansion Benchmarks](#renovator-plot-expansion-benchmarks-levels-19) • [Data Pipeline](#1-click-data-preparation-pipeline) • [Project Architecture](#project-architecture--documentation)
+
+---
+
+## Bottom Line Up Front: 756,040 Grilla + Level 6 Farm (91,000 Grilla) by End of Month 2 (Summer, Year 1)
+
+By using Mixed-Integer Linear Programming (MILP) schedule to plan daily seed purchases and crop rotations, we achieved **756,040 Grilla** in liquid cash by **Quietus at the end of Summer, Year 1 (end of Month 2)** — on top of already paying for **Level 6 Farm expansions (`91,000 G` cumulative Renovator cost, 294 farm tiles)** and **Backpack Lv 3**:
+
+![756,040 Grilla at End of Summer Year 1](images/20261105222120_1.jpg)
+*1. **756,040 Grilla** in liquid cash alongside **Backpack Lv 3**.*
+
+| **2. Level 6 Farm (294 Tiles) on Summer Day 30** | **3. Timestamp: End of Summer, Year 1 (Month 2 Quietus)** |
+| :---: | :---: |
+| ![Level 6 Farm on Summer Breeze 30th, Year 1](images/20261105211722_1.jpg) | ![Save File Proof - Quietus after Summer Breeze Year 1](images/20261105223005_1.jpg) |
+| *Full-scale **Level 6 Farm (`91,000 G` cumulative upgrade cost)** on `Summer Breeze 30th Friday`.* | *Save log confirming progression right after `Summer Breeze 29th, year 1` (`Quietus 1st Saturday, year 1`).* |
 
 ---
 
@@ -52,9 +66,9 @@ Even when you stand at a vendor with a spreadsheet open, you cannot mentally sol
 
 ---
 
-### The Solution: How the MILP Optimizer Solves Both
+### The Solution: How Linear Optimization (MILP) Solves Both
 
-Instead of memorizing plot counts across dungeons or guessing between single-crop extremes, the MILP optimizer takes your exact farm state (`configs/<season>.yaml`) and outputs a complete, vendor-by-vendor daily shopping list before you ever leave your farm.
+Instead of memorizing plot counts across dungeons or guessing between single-crop extremes, this project formulates crop allocation as a **Mixed-Integer Linear Programming (MILP)** model. It takes your exact farm state (`configs/<season>.yaml`) and outputs a complete, vendor-by-vendor daily shopping list before you ever leave your farm.
 
 Economically, it finds the exact **inflection point** across Land Efficiency (`G/d`), Capital Compounding (`%/day`), and Vendor Stock Caps:
 1. **Plot-Filling**: Uses cheap, high-compounding crops (like Dress Lettuce) to ensure no farm tile sits idle.
@@ -248,6 +262,11 @@ Harvestella/
 ├── docs/                               # 📁 Detailed Mathematical & Economic Guides
 │   ├── crop_solver_guide.md            # MILP formulation, Big-M method, and Solver Walkthrough
 │   └── crop_metrics_guide.md           # ROI & Daily Profit Formulas
+│
+├── images/                             # 📁 In-Game Proof & Benchmark Screenshots
+│   ├── 20261105222120_1.jpg            # 1. 756,040 Grilla wallet proof
+│   ├── 20261105211722_1.jpg            # 2. Level 6 Farm (294 tiles) on Summer Breeze 30th, Year 1
+│   └── 20261105223005_1.jpg            # 3. Year 1 Summer Quietus (end of Month 2) save proof
 │
 ├── configs/                            # 📁 User Season Configurations (Gold, Plots, Horizons)
 │   ├── spring.yaml, summer.yaml, fall.yaml, winter.yaml
