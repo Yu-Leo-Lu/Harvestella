@@ -16,7 +16,7 @@ cave_plots: 81        # Biome capacity (default: 81)
 
 # Reserved plots excluded from optimizer (fruit trees, quest crops, makers)
 reserve_plots:
-  farm: 47
+  farm: 62
   waterside: 4
   cave: 0
 
@@ -26,12 +26,11 @@ reserve_plots:
 planted:
   - { crop: Lantern Pumpkin, day: 1, count: 2 }
   - { crop: Rainbow Bean, day: 1, count: 29 }
-  - { crop: Royal Eggplant, day: 1, count: 6 }
   - { crop: Rainbow Bean, day: 3, count: 1 }
-  - { crop: Royal Eggplant, day: 3, count: 43 }
+  - { crop: Royal Eggplant, day: 3, count: 42 }
   - { crop: Morrocorn, day: 8, count: 14 }
   - { crop: Unionion, day: 9, count: 24 }
-  - { crop: Royal Eggplant, day: 10, count: 47 }
+  - { crop: Royal Eggplant, day: 10, count: 46 }
   - { crop: Grass, day: 11, count: 41 }
   - { crop: Royal Eggplant, day: 11, count: 79 }
   - { crop: Stellar Wheat, day: 11, count: 99 }
@@ -48,7 +47,7 @@ planted:
 # ------------------------------------------------------------------------------
 seed_stock:
   # Lethe
-  Royal Eggplant:          29 # +60.0 G/d
+  Royal Eggplant:          29 # +73.3 G/d
   Morrocorn (Lethe):       50 # +42.5 G/d
   Unionion (Lethe):        50 # +21.7 G/d
   Dress Lettuce:           99 # +15.0 G/d

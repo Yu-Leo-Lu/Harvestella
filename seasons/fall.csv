@@ -1,5 +1,5 @@
 Crop Name,Vendor Town,Vendor Stock,Seed Cost (G),NQ Sale (G),HQ Sale (G),Mature (Days),Regrowth (Days),Max Harvests,Growth Season,Fruit Season,Biome,Daily NQ Profit (G/d),Cash Compound Rate (%/d),Production (Days),Planting Schedule
-Royal Eggplant,Lethe,99,780,480,960,7,2,3,Fa,Fa,Farm,60.0,5.24,11,"19, 8"
+Royal Eggplant,Lethe,99,780,480,960,5,2,3,Fa,Fa,Farm,73.3,6.32,9,"21, 12, 3"
 Morrocorn,Shatolla,99,200,400,500,4,,1,"Su, Fa","Su, Fa",Farm,50.0,14.87,4,"26, 22, 18, 14, 10, 6, 2"
 Revol Pepper,Argene,99,560,265,330,4,3,5,"Sp, Su, Fa","Sp, Su, Fa",Cave,47.8,5.2,16,14
 Morrocorn,Lethe,50,230,400,500,4,,1,"Su, Fa","Su, Fa",Farm,42.5,11.7,4,"26, 22, 18, 14, 10, 6, 2"
